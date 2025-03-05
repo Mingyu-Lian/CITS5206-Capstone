@@ -91,3 +91,7 @@ project-root/
 ## API Documentation
 
 API documentation is available at `/api/docs/` when running the backend server.
+
+
+## Issue relevant
+A new branch will be created automatically when you create an issue.
