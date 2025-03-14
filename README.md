@@ -14,15 +14,15 @@ This system digitalizes traditional Working Method Statements (WMS) by leveragin
 
 # Technology Stack
 ## Frontend:
-Vue.js 3 + Vite - Reactive and fast UI development
-Element-Plus - UI component library
-TypeScript - Type-safe JavaScript
-Pinia - State management
+- Vue.js 3 + Vite - Reactive and fast UI development
+- Element-Plus - UI component library
+- TypeScript - Type-safe JavaScript
+- Pinia - State management
 
 ## Backend:
-Node.js - Backend framework
-MongoDB - NoSQL database for managing WMS records
-JWT (JSON Web Tokens) - Authentication and authorization
+- Node.js - Backend framework
+- MongoDB - NoSQL database for managing WMS records
+- JWT (JSON Web Tokens) - Authentication and authorization
 
 # System Architecture
 ## Frontend (Web UI)
@@ -49,22 +49,22 @@ JWT (JSON Web Tokens) - Authentication and authorization
 `cd CITS5206-Capstone`
 
 `# Install dependencies`
-`npm install
+`npm install`
 
 ## 3. Run the Application
 
 ## 4. Environment Variables
 
 # Contributors
-Dr. Bin Zhu 
-Dr. Licai Fang 
-Zulqarnain Gilani
+Dr. Bin Zhu <br/>
+Dr. Licai Fang <br/>
+Zulqarnain Gilani<br/>
 
-Lian Liu (24022721)
-Dhanyavi Goti (24096172)
-Ethan He (24154773)
-Alex Wang (24123115)
-Arthur Lian (24046428)
-Raunak Chhabra (23914274)
+Lian Liu (24022721)<br/>
+Dhanyavi Goti (24096172)<br/>
+Ethan He (24154773)<br/>
+Alex Wang (24123115)<br/>
+Arthur Lian (24046428)<br/>
+Raunak Chhabra (23914274)<br/>
 
 
