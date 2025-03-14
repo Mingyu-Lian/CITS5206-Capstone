@@ -36,7 +36,7 @@ This system digitalizes traditional Working Method Statements (WMS) by leveragin
 - Syncs offline data when network restores.
 
 # Setup Instructions
-## 1️. Prerequisites
+## 1. Prerequisites
 - Node.js (v16+)
 - MongoDB (Latest)
 - Git (Latest)
@@ -58,7 +58,7 @@ This system digitalizes traditional Working Method Statements (WMS) by leveragin
 # Contributors
 Dr. Bin Zhu <br/>
 Dr. Licai Fang <br/>
-Zulqarnain Gilani<br/>
+Dr. Zulqarnain Gilani<br/>
 
 Lian Liu (24022721)<br/>
 Dhanyavi Goti (24096172)<br/>
