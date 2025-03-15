@@ -52,7 +52,8 @@ This system digitalizes traditional Working Method Statements (WMS) by leveragin
 `npm install`
 
 ## 3. Run the Application
-
+`Start front-end`
+`npm install`
 ## 4. Environment Variables
 
 # Contributors
