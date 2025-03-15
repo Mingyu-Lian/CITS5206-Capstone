@@ -6,7 +6,7 @@ services:
     ports:
       - "5000:5000"    # Expose backend on port 5000
     environment:
-      - MONGO_URL=mongodb://mongodb:27017/myDatabase # MongoDB connection string
+      - MONGO_URI=mongodb://mongodb:27017/test # MongoDB connection string
     depends_on:
       - mongodb
 
