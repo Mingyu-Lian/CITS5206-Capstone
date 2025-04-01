@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"    # Expose backend on port 5000
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/test # MongoDB connection string
+    depends_on:
+      - mongodb
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"         # Expose frontend on port 3000
+    depends_on:
+      - backend
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    volumes:
+      - mongodb_data:/data/db  # Persist MongoDB data
+    ports:
+      - "27017:27017"  # Expose MongoDB on port 27017
+volumes:
+  mongodb_data:
+
+
+
+
