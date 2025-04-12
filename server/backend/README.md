@@ -6,13 +6,13 @@ This repo is designed to store the Back-end and MongoDB code.
 ## How to run the code?
 
 Step 1:  
-`npm install`  
-to install the dependency packages
+cd to server folder
 
 Step 2:  
-`npx nodemon server.js`  
-to run the server at `http://localhost:5001`
+docker-compose build
+docker-compose up
 
-## Contributions
-Feel free to open issues and submit pull requests to help improve this project.
-
+step 3:
+Expose frontend on port 3000
+Expose backend on port 5000
+Expose backend on port 5000/api-docs
