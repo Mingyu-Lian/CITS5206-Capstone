@@ -1,7 +1,18 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const User = require("../models/User");
- 
+const path = require("path");
+const fs = require("fs");
+const {
+    User,
+    LocoType,
+    Baseline,
+    Asset,
+    Project,
+    WMS,
+    Task,
+    Discipline,
+    Log
+  } = require("../models/DBschema");
 const connectDB = async () => {
    
     try {
@@ -11,6 +22,19 @@ const connectDB = async () => {
             useUnifiedTopology: true,
         });
         console.log("MongoDB Connected!");
+          // Optionally clear existing data before seeding (remove if not needed)
+        await Promise.all([
+        User.deleteMany({}),
+        LocoType.deleteMany({}),
+        Baseline.deleteMany({}),
+        Asset.deleteMany({}),
+        Project.deleteMany({}),
+        WMS.deleteMany({}),
+        Task.deleteMany({}),
+        Discipline.deleteMany({}),
+        Log.deleteMany({})
+        ]);
+        console.log("Existing data cleared.");
 
         // Create a superuser if it doesn't already exist
         const existingSuperUser = await User.findOne({ Username: "admin" });
@@ -32,45 +56,24 @@ const connectDB = async () => {
             console.error("Error creating admin user:", error);
         }
         }
-        // Create an engineer user if it doesn't already exist
-        const existingEngineer = await User.findOne({ Username: "engineer" });
-        if (!existingEngineer) {
-            try {
-                const hashedPassword = await bcrypt.hash("123456", 10); // Replace with a secure password
-                const engineerUser = new User({
-                    _id: new mongoose.Types.ObjectId(),
-                    Username: "engineer",
-                    personName: "engineer",
-                    email: "engineer@gmail.com",
-                    passwordHash: hashedPassword,
-                    role: "engineer",
-                });
-                await engineerUser.save();
-                console.log("Engineer user created successfully!");
-            } catch (error) {
-                console.error("Error creating engineer user:", error);
-            }
-        }
+         // Path to your JSON file containing sample data.
+         // Make sure sampleData.json is in the same folder as this script or adjust the path accordingly.
+        const dataPath = path.join(__dirname, "../sample.json");
+        const jsonData = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
+        await Promise.all([
+            LocoType.insertMany(jsonData.locoTypes),
+            Baseline.insertMany(jsonData.baselines),
+            Asset.insertMany(jsonData.assets),
+            Project.insertMany(jsonData.projects),
+            WMS.insertMany(jsonData.wms),
+            Task.insertMany(jsonData.tasks),
+            Discipline.insertMany(jsonData.disciplines),
+            Log.insertMany(jsonData.logs)
+          ]);
+      
+          console.log("Sample data seeded successfully!");
 
-        // Create a supervisor user if it doesn't already exist
-        const existingSupervisor = await User.findOne({ Username: "supervisor" });
-        if (!existingSupervisor) {
-            try {
-                const hashedPassword = await bcrypt.hash("123456", 10); // Replace with a secure password
-                const supervisorUser = new User({
-                    _id: new mongoose.Types.ObjectId(),
-                    Username: "supervisor",
-                    personName: "supervisor",
-                    email: "supervisor@gmail.com",
-                    passwordHash: hashedPassword,
-                    role: "supervisor",
-                });
-                await supervisorUser.save();
-                console.log("Supervisor user created successfully!");
-            } catch (error) {
-                console.error("Error creating supervisor user:", error);
-            }
-        }
+       
     }
     catch (error) {
         console.error("MongoDB Connection Failed:", error);

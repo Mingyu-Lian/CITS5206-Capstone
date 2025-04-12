@@ -1,22 +1,19 @@
 const express = require("express");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
-
 const router = express.Router();
+const { register, login, getMe } = require("../controllers/authController");
 
 /**
  * @swagger
  * tags:
  *   name: Auth
- *   description: user authentication and registration
+ *   description: User authentication and registration
  */
 
 /**
  * @swagger
  * /api/auth/register:
  *   post:
- *     summary: register new user
+ *     summary: Register a new user
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -25,49 +22,60 @@ const router = express.Router();
  *           schema:
  *             type: object
  *             required:
- *               - name
+ *               - username
  *               - email
  *               - password
+ *               - role
  *             properties:
- *               name:
+ *               username:
  *                 type: string
- *                 example: Alice
+ *                 example: admin
  *               email:
  *                 type: string
- *                 example: alice@example.com
+ *                 example: admin@example.com
  *               password:
  *                 type: string
- *                 example: password123
+ *                 example: 123456
+ *               role:
+ *                 type: string
+ *                 example: admin
  *     responses:
  *       201:
- *         description: register successfully
+ *         description: User registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: 643d1f2e5f1b2c0012345678
+ *                     username:
+ *                       type: string
+ *                       example: admin
+ *                     email:
+ *                       type: string
+ *                       example: admin@example.com
+ *                     role:
+ *                       type: string
+ *                       example: admin
  *       400:
- *         description: user already exists
+ *         description: Registration error or invalid input
  *       500:
- *         description: server error
+ *         description: Server error
  */
-router.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
-
-  try {
-    const userExists = await User.findOne({ email });
-    if (userExists) return res.status(400).json({ message: "User already exists" });
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ name, email, password: hashedPassword });
-    await user.save();
-
-    res.status(201).json({ message: "User registered successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
 
 /**
  * @swagger
  * /api/auth/login:
  *   post:
- *     summary: user login
+ *     summary: User login
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -81,37 +89,79 @@ router.post("/register", async (req, res) => {
  *             properties:
  *               email:
  *                 type: string
- *                 example: alice@example.com
+ *                 example: admin@example.com
  *               password:
  *                 type: string
- *                 example: password123
+ *                 example: 123456
  *     responses:
  *       200:
- *         description:     login successfully
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: 643d1f2e5f1b2c0012345678
+ *                     username:
+ *                       type: string
+ *                       example: admin
+ *                     email:
+ *                       type: string
+ *                       example: admin@example.com
+ *                     role:
+ *                       type: string
+ *                       example: admin
  *       400:
- *         description:     invalid credentials or user not found
+ *         description: Invalid credentials or user not found
  *       500:
- *         description:    server error
+ *         description: Server error
  */
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
 
-  try {
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "User not found" });
+/**
+ * @swagger
+ * /api/auth/me:
+ *   get:
+ *     summary: Get current authenticated user
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   example: 643d1f2e5f1b2c0012345678
+ *                 username:
+ *                   type: string
+ *                   example: admin
+ *                 email:
+ *                   type: string
+ *                   example: admin@example.com
+ *                 role:
+ *                   type: string
+ *                   example: admin
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Server error
+ */
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
-    res.json({
-      token,
-      user: { id: user._id, name: user.name, email: user.email }
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
+// Define the routes with their corresponding controller functions
+router.post("/register", register);
+router.post("/login", login);
+router.get("/me", getMe);
 
 module.exports = router;
