@@ -12,7 +12,10 @@ Step 2:
 docker-compose build
 docker-compose up
 
-step 3:
-Expose frontend on port 3000
-Expose backend on port 5000
+Step 3:
+
+Expose the frontend on port 3000
+
+Expose the backend on port 5000
+
 Expose backend on port 5000/api-docs
