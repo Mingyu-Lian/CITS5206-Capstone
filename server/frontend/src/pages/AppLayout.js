@@ -49,22 +49,6 @@ const App = () => {
             },
           ]}
         />
-        {/* <Menu>
-          <Menu.Item>
-            <a target="_blank" rel="noopener noreferrer" href="/profile">
-              个人资料
-            </a>
-          </Menu.Item>
-          <Menu.Item>
-            <a target="_blank" rel="noopener noreferrer" href="/settings">
-              设置
-            </a>
-          </Menu.Item>
-          <Menu.Divider />
-          <Menu.Item>
-            <a href="/logout">登出</a>
-          </Menu.Item>
-        </Menu> */}
       </Sider>
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }}>
