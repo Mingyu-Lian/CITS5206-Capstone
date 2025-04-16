@@ -1,0 +1,17 @@
+.user-photos-tab{
+
+}
+
+.user-photos-tab-upload-container{
+  /* width:100%; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin:10%;
+  background-color: #fff;
+  
+}
+.user-photos-tab-upload{
+  width:50%;
+  margin:20px;
+}
