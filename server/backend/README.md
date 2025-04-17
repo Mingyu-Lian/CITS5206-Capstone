@@ -16,6 +16,6 @@ Step 3:
 
 Expose the frontend on port 3000
 
-Expose the backend on port 5000
+Expose the backend on port 5001
 
-Expose backend on port 5000/api-docs
+Expose backend on port 5001/api-docs

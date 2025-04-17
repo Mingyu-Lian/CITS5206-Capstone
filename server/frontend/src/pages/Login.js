@@ -10,7 +10,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const { data } = await axios.post("http://localhost:5000/api/auth/login", { username, password });
+            const { data } = await axios.post("http://localhost:5001/api/auth/login", { username, password });
             login(data.token); 
             alert(`Login successful! You are logged in as ${data.user.role} with token ${data.token}.`);
             localStorage.setItem("role", data.user.role);
