@@ -9,7 +9,10 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Dashboard from "./pages/Dashboard";
 import UserManagement from "./pages/UserManagement";
 import ProjectManagement from "./pages/ProjectManagement";
-import TaskManagement from './pages/TaskManagement';
+import WMSListPage from "./pages/WMSListPage";
+import LocomotiveListPage from "./pages/LocomotiveListPage";
+import TaskListPage from "./pages/TaskListPage";
+import SubtaskDetailPage from "./pages/SubtaskDetailPage";
 import TaskDeatil from './pages/task/Taskdetail';
 
 function App() {
@@ -23,7 +26,10 @@ function App() {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/users" element={<UserManagement />} />
                 <Route path="/projects" element={<ProjectManagement />} />
-                <Route path="/tasks" element={<TaskManagement />} />
+                <Route path="/tasks" element={<LocomotiveListPage />} />
+                <Route path="/tasks/:locomotiveId/wms" element={<WMSListPage />} />
+                <Route path="/tasks/:locomotiveId/wms/:wmsId" element={<TaskListPage />} />
+                <Route path="/tasks/:locomotiveId/wms/:wmsId/task/:taskId" element={<SubtaskDetailPage />} />
                 <Route path="/taskdetail" element={<TaskDeatil />} />
 
             </Routes>
