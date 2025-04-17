@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 
 import axios from 'axios';
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Login1 from "./pages/Login/Login";
-import Register from "./pages/Register/Register";
 import Home from "./pages/Home";
 import AppLayout from "./pages/AppLayout";
 import Login from "./pages/Login";
@@ -19,10 +17,7 @@ function App() {
         <Router>
             <Routes>
                 <Route path="/home" element={<Home />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/login1" element={<Login1/>} />
                 <Route path="/layout" element={<AppLayout />} />
-                <Route path="/" element={<Navigate to="/login" />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/dashboard" element={<Dashboard />} />
