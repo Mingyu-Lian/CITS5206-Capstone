@@ -34,7 +34,7 @@ const DashboardLayout = ({ children }) => {
     });
   }
 
-  // ✅ NEW: Add Task Management for all roles
+  //Task Management for all roles
   if (["Admin", "Supervisor", "Engineer"].includes(role)) {
     menuItems.push({
     label: "Task Management",
