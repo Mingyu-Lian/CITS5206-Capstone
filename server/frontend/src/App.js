@@ -1,31 +1,38 @@
-// App.js
-import React, { useContext } from "react";
+import React, { useState, useEffect } from 'react';
+
+import axios from 'axios';
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./pages/Login";
+import Login1 from "./pages/Login/Login";
+import Register from "./pages/Register/Register";
 import Home from "./pages/Home";
-import { AuthContext } from "./AuthContext";
+import AppLayout from "./pages/AppLayout";
+import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
+import Dashboard from "./pages/Dashboard";
+import UserManagement from "./pages/UserManagement";
+import ProjectManagement from "./pages/ProjectManagement";
+import TaskManagement from './pages/TaskManagement';
+import TaskDeatil from './pages/task/Taskdetail';
 
-const App = () => {
-  const { isAuthenticated } = useContext(AuthContext);
+function App() {
+    return (
+        <Router>
+            <Routes>
+                <Route path="/home" element={<Home />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/login1" element={<Login1/>} />
+                <Route path="/layout" element={<AppLayout />} />
+                <Route path="/" element={<Navigate to="/login" />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/users" element={<UserManagement />} />
+                <Route path="/projects" element={<ProjectManagement />} />
+                <Route path="/tasks" element={<TaskManagement />} />
+                <Route path="/taskdetail" element={<TaskDeatil />} />
 
-  return (
-    <Router>
-      <Routes>
-        <Route
-          path="/login"
-          element={isAuthenticated ? <Navigate to="/home" replace /> : <Login />}
-        />
-        <Route
-          path="/home"
-          element={isAuthenticated ? <Home /> : <Navigate to="/login" replace />}
-        />
-        <Route
-          path="*"
-          element={<Navigate to={isAuthenticated ? "/home" : "/login"} replace />}
-        />
-      </Routes>
-    </Router>
-  );
-};
-
+            </Routes>
+        </Router>
+    );
+}
 export default App;

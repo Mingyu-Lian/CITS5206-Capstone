@@ -1,24 +1,15 @@
-import { useContext } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { AuthContext } from "../AuthContext";
-const Home = () => {
-  const { logout } = useContext(AuthContext);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const role = location.state?.role || "unknown";
+import React from 'react';
 
-  const handleLogout = () => {
-    logout(); // Update authentication state
-    navigate("/login");
-  };
-
+const HomePage = () => {
   return (
     <div>
-      <h1>Welcome to the Home Page</h1>
-      <p>You are logged in as: <strong>{role}</strong></p>
-      <button onClick={handleLogout}>Logout</button>
+      <h1>Welcome to My Application!</h1>
+      <p>This is the home page of your React app.</p>
+      <p>Feel free to explore the app!</p>
     </div>
   );
 };
 
-export default Home;
+export default HomePage;
+
+
