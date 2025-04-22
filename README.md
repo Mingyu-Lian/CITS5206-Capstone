@@ -77,6 +77,11 @@ run `docker-compose up --build`
 
 or `docker compose up --build` (when the first command does not work)
 
+Step 4: For the Future Run
+
+run `docker-compose up`
+or `docker compose up`
+
 #### This will:
 
 Build all containers (frontend, backend, database)
