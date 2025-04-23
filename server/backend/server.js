@@ -42,6 +42,20 @@ const swaggerOptions = {
       version: '1.0.0',
       description: 'API documentation for your backend'
     },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
   },
   apis: ['./routes/*.js'], // 
 };

@@ -136,8 +136,8 @@ const {
 // Route definitions
 router.get("/", getAllDisciplines);
 router.get("/:id", getDisciplineById);
-router.post("/", createDiscipline);
-router.put("/:id", updateDiscipline);
+router.post("/",authenticate, authorize(["admin", "supervisor"]), createDiscipline);
+router.put("/:id",authenticate, authorize(["admin", "supervisor"]), updateDiscipline);
 router.delete("/:id", deleteDiscipline);
 
 module.exports = router;

@@ -145,8 +145,8 @@ const {
 // Route definitions
 router.get("/", getAllProjects);
 router.get("/:id", getProjectById);
-router.post("/", createProject);
-router.put("/:id", updateProject);
+router.post("/",authenticate, authorize(["admin", "supervisor"]), createProject);
+router.put("/:id",authenticate, authorize(["admin", "supervisor"]), updateProject);
 router.delete("/:id", deleteProject);
 
 module.exports = router;
