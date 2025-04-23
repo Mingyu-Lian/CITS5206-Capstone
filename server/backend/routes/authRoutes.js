@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { register, login, getMe } = require("../controllers/authController");
+const { register, login, getMe, logout,getAllUsers } = require("../controllers/authController");
 
 /**
  * @swagger
@@ -30,6 +30,9 @@ const { register, login, getMe } = require("../controllers/authController");
  *               username:
  *                 type: string
  *                 example: admin
+ *               personName:
+ *                 type: string
+ *                 example: Admin User
  *               email:
  *                 type: string
  *                 example: admin@example.com
@@ -84,12 +87,12 @@ const { register, login, getMe } = require("../controllers/authController");
  *           schema:
  *             type: object
  *             required:
- *               - email
+ *               - username
  *               - password
  *             properties:
- *               email:
+ *               username:
  *                 type: string
- *                 example: admin@example.com
+ *                 example: admin
  *               password:
  *                 type: string
  *                 example: 123456
@@ -158,10 +161,72 @@ const { register, login, getMe } = require("../controllers/authController");
  *       500:
  *         description: Server error
  */
+/**
+ * @swagger
+ * /api/auth/logout:
+ *   post:
+ *     summary: Logout the current user
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Logged out successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Logged out successfully
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * /api/auth/users:
+ *   get:
+ *     summary: Get all users
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved all users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 users:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: 643d1f2e5f1b2c0012345678
+ *                       username:
+ *                         type: string
+ *                         example: admin
+ *                       email:
+ *                         type: string
+ *                         example: admin@example.com
+ *                       role:
+ *                         type: string
+ *                         example: admin
+ *       500:
+ *         description: Server error
+ */
 
 // Define the routes with their corresponding controller functions
 router.post("/register", register);
 router.post("/login", login);
 router.get("/me", getMe);
-
+router.post("/logout",logout);
+router.get("/users",getAllUsers);
 module.exports = router;

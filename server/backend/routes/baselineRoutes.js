@@ -181,9 +181,9 @@ const {
 
 // Route definitions
 router.get("/", getAllBaselines);
-router.post("/", createBaseline);
+router.post("/", authenticate, authorize(["admin", "supervisor"]),createBaseline);
 router.get("/:id", getBaselineById);
-router.put("/:id", updateBaseline);
+router.put("/:id", authenticate, authorize(["admin", "supervisor"]),updateBaseline);
 router.delete("/:id", deleteBaseline);
 
 module.exports = router;

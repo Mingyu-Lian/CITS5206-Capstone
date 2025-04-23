@@ -7,7 +7,7 @@ const {
   updateTask,
   deleteTask,
 } = require("../controllers/taskController");
-
+const { authenticate, authorize } = require("../middleware/middleware");
 /**
  * @swagger
  * tags:
@@ -67,6 +67,8 @@ const {
  *   post:
  *     summary: Create a new task
  *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -81,14 +83,12 @@ const {
  *               status:
  *                 type: string
  *                 example: "Pending"
- *               // Add additional task fields as needed...
  *     responses:
  *       201:
  *         description: Task created successfully
  *       500:
  *         description: Server error
  */
-
 /**
  * @swagger
  * /api/tasks/{id}:
@@ -146,8 +146,8 @@ const {
 // Route definitions
 router.get("/", getAllTasks);
 router.get("/:id", getTaskById);
-router.post("/", createTask);
+router.post("/", authenticate, authorize(["admin", "supervisor"]), createTask); // Admin/Supervisor only
 router.put("/:id", updateTask);
-router.delete("/:id", deleteTask);
+router.delete("/:id", authenticate, authorize(["admin", "supervisor"]), deleteTask); // Admin/Supervisor only
 
 module.exports = router;
