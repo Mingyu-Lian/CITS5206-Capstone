@@ -2,6 +2,7 @@ import DashboardLayout from "../../components/DashboardLayout";
 import { Card, List, Tag, Typography } from "antd";
 import { CheckCircleOutlined, ClockCircleOutlined } from "@ant-design/icons";
 
+
 const tasks = [
   { title: "Assign task to Engineer A", status: "Pending" },
   { title: "Review Loco B progress", status: "In Progress" },
@@ -15,8 +16,6 @@ const statusColors = {
 
 const SupervisorDashboard = () => {
   return (
-    <DashboardLayout>
-
     <div style={{ padding: 24 }}>
       <Typography.Title level={2}>Supervisor Dashboard</Typography.Title>
 
@@ -38,7 +37,6 @@ const SupervisorDashboard = () => {
         />
       </Card>
     </div>
-    </DashboardLayout>
   );
 };
 

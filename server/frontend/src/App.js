@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import axios from 'axios';
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+
 import Home from "./pages/Home";
 import AppLayout from "./pages/AppLayout";
 import Login from "./pages/Login";
@@ -15,25 +16,85 @@ import TaskListPage from "./pages/TaskListPage";
 import SubtaskDetailPage from "./pages/SubtaskDetailPage";
 import TaskDeatil from './pages/task/Taskdetail';
 
-function App() {
-    return (
-        <Router>
-            <Routes>
-                <Route path="/home" element={<Home />} />
-                <Route path="/layout" element={<AppLayout />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/users" element={<UserManagement />} />
-                <Route path="/projects" element={<ProjectManagement />} />
-                <Route path="/tasks" element={<LocomotiveListPage />} />
-                <Route path="/tasks/:locomotiveId/wms" element={<WMSListPage />} />
-                <Route path="/tasks/:locomotiveId/wms/:wmsId" element={<TaskListPage />} />
-                <Route path="/tasks/:locomotiveId/wms/:wmsId/task/:taskId" element={<SubtaskDetailPage />} />
-                <Route path="/taskdetail" element={<TaskDeatil />} />
+import DashboardLayout from "./components/DashboardLayout"; // ✅ 加了这一行
 
-            </Routes>
-        </Router>
-    );
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/home" element={<Home />} />
+        <Route path="/layout" element={<AppLayout />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+
+        {/* add net status check */}
+        <Route
+          path="/dashboard"
+          element={
+            <DashboardLayout>
+              <Dashboard />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <DashboardLayout>
+              <UserManagement />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/projects"
+          element={
+            <DashboardLayout>
+              <ProjectManagement />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/tasks"
+          element={
+            <DashboardLayout>
+              <LocomotiveListPage />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/tasks/:locomotiveId/wms"
+          element={
+            <DashboardLayout>
+              <WMSListPage />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/tasks/:locomotiveId/wms/:wmsId"
+          element={
+            <DashboardLayout>
+              <TaskListPage />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/tasks/:locomotiveId/wms/:wmsId/task/:taskId"
+          element={
+            <DashboardLayout>
+              <SubtaskDetailPage />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/taskdetail"
+          element={
+            <DashboardLayout>
+              <TaskDeatil />
+            </DashboardLayout>
+          }
+        />
+      </Routes>
+    </Router>
+  );
 }
+
 export default App;

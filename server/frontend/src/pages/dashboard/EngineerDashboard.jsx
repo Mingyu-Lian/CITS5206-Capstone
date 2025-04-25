@@ -11,8 +11,6 @@ const EngineerDashboard = () => {
   };
 
   return (
-    <DashboardLayout>
-
     <div style={{ padding: 24 }}>
       <Typography.Title level={2}>Engineer Dashboard</Typography.Title>
 
@@ -33,7 +31,6 @@ const EngineerDashboard = () => {
         />
       </Card>
     </div>
-    </DashboardLayout>
   );
 };
 
