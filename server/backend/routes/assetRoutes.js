@@ -7,7 +7,7 @@ const {
   updateAsset,
   deleteAsset,
 } = require("../controllers/assetController");
-
+const { authenticate, authorize } = require("../middleware/middleware");
 /**
  * @swagger
  * tags:
