@@ -12,6 +12,7 @@
     "antd-password-input-strength": "^2.0.1",
     "axios": "^1.8.2",
     "file-saver": "^2.0.5",
+    "localforage": "^1.10.0",
     "papaparse": "^5.5.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

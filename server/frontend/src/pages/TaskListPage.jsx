@@ -1,8 +1,9 @@
 // src/pages/TaskListPage.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Table, Button, Tag, Typography } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
+import localforage from "localforage";
 
 const { Title } = Typography;
 
@@ -10,11 +11,7 @@ const TaskListPage = () => {
   const { locomotiveId, wmsId } = useParams();
   const navigate = useNavigate();
   const [filters, setFilters] = useState({});
-
-  const data = [
-    { id: "task1", title: "Check Fuse Box", status: "Pending" },
-    { id: "task2", title: "Install Cabling", status: "Signed Off" },
-  ];
+  const [data, setData] = useState([]);
 
   const fields = [
     { label: "Title", key: "title", type: "text" },
@@ -57,6 +54,31 @@ const TaskListPage = () => {
       ),
     },
   ];
+
+  useEffect(() => {
+    loadTasksData();
+  }, [wmsId]);
+
+  const loadTasksData = async () => {
+    const offlineKey = `offlineTaskList-${wmsId}`;
+
+    if (navigator.onLine) {
+      // Online: load and cache fresh data
+      const onlineData = [
+        { id: "task1", title: "Check Fuse Box", status: "Pending" },
+        { id: "task2", title: "Install Cabling", status: "Signed Off" },
+      ];
+
+      setData(onlineData);
+      await localforage.setItem(offlineKey, onlineData);
+    } else {
+      // Offline: load from cache silently
+      const cachedData = await localforage.getItem(offlineKey);
+      if (cachedData) {
+        setData(cachedData);
+      }
+    }
+  };
 
   return (
     <div className="p-6 bg-white min-h-screen">

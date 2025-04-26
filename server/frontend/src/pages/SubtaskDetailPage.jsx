@@ -1,5 +1,5 @@
 // src/pages/SubtaskDetailPage.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   Checkbox,
@@ -19,6 +19,8 @@ import {
 import { UploadOutlined, FileSearchOutlined, CheckCircleTwoTone } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
+import { createLogEntry, saveAndMaybeSyncLog } from "../utils/offlineSyncHelper";
+import localforage from "localforage";
 
 const { Title, Text } = Typography;
 
@@ -28,11 +30,7 @@ const SubtaskDetailPage = () => {
   const [filters, setFilters] = useState({});
   const [formData, setFormData] = useState({});
   const [completed, setCompleted] = useState({});
-
-  const data = [
-    { id: "sub1", instruction: "Verify voltage levels.", result: "", signedOff: false },
-    { id: "sub2", instruction: "Capture photo of connected cable.", result: "", signedOff: false },
-  ];
+  const [data, setData] = useState([]);
 
   const fields = [
     { label: "Subtask ID", key: "id", type: "text" },
@@ -42,25 +40,6 @@ const SubtaskDetailPage = () => {
 
   const applyFilters = (query) => setFilters(query);
   const clearFilters = () => setFilters({});
-
-  const handleSave = (subId) => {
-    setCompleted((prev) => ({ ...prev, [subId]: true }));
-    message.success(`Subtask ${subId} saved successfully.`);
-  };
-
-  const handleInputChange = (subId, field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [subId]: {
-        ...prev[subId],
-        [field]: value
-      }
-    }));
-  };
-
-  const handleViewRedirect = (subId) => {
-    navigate(`/task-tabs/instruction-tab?subtaskId=${subId}`);
-  };
 
   const filtered = data.filter((item) => {
     return (!filters.rules || filters.rules.every(r => {
@@ -74,6 +53,81 @@ const SubtaskDetailPage = () => {
       }
     }));
   });
+
+  useEffect(() => {
+    loadSubtasksData();
+  }, [taskId]);
+
+  const loadSubtasksData = async () => {
+    const offlineKey = `offlineSubtaskList-${taskId}`;
+
+    if (navigator.onLine) {
+      const onlineData = [
+        { id: "sub1", instruction: "Verify voltage levels.", result: "", signedOff: false },
+        { id: "sub2", instruction: "Capture photo of connected cable.", result: "", signedOff: false },
+      ];
+
+      setData(onlineData);
+      await localforage.setItem(offlineKey, onlineData);
+    } else {
+      const cachedData = await localforage.getItem(offlineKey);
+      if (cachedData) {
+        setData(cachedData);
+      }
+    }
+  };
+
+  const handleSave = (subId) => {
+    setCompleted((prev) => ({ ...prev, [subId]: true }));
+
+    const currentData = formData[subId] || {};
+
+    const saveLog = createLogEntry("click_save_subtask", {
+      subtaskId: subId,
+      taskId,
+    });
+    saveAndMaybeSyncLog(saveLog);
+
+    if (currentData.result?.trim()) {
+      const noteLog = createLogEntry("write_note", {
+        subtaskId: subId,
+        taskId,
+        content: currentData.result,
+      });
+      saveAndMaybeSyncLog(noteLog);
+    }
+
+    if (!navigator.onLine) {
+      message.info("You are offline. Your changes have been saved locally.");
+    } else {
+      message.success(`Subtask ${subId} saved.`);
+    }
+  };
+
+  const handleInputChange = (subId, field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [subId]: {
+        ...prev[subId],
+        [field]: value
+      }
+    }));
+  };
+
+  const handleSignOffChange = (subId, checked) => {
+    handleInputChange(subId, "signedOff", checked);
+
+    const log = createLogEntry("toggle_signoff", {
+      subtaskId: subId,
+      taskId,
+      checked,
+    });
+    saveAndMaybeSyncLog(log);
+  };
+
+  const handleViewRedirect = (subId) => {
+    navigate(`/task-tabs/instruction-tab?subtaskId=${subId}`);
+  };
 
   const total = filtered.length;
   const done = Object.keys(completed).length;
@@ -125,7 +179,7 @@ const SubtaskDetailPage = () => {
                   <Form.Item>
                     <Checkbox
                       checked={currentData.signedOff || false}
-                      onChange={(e) => handleInputChange(sub.id, "signedOff", e.target.checked)}
+                      onChange={(e) => handleSignOffChange(sub.id, e.target.checked)}
                     >
                       Mark as Signed Off
                     </Checkbox>
