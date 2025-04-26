@@ -8,7 +8,6 @@ const {
   updateWMS,
   deleteWMS,
 } = require("../controllers/wmsController");
-
 /**
  * @swagger
  * tags:
