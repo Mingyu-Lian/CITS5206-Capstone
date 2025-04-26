@@ -6,7 +6,7 @@ import loco0 from "../../../img/loco0.jpg";
 import loco1 from "../../../img/loco1.jpg";
 import loco2 from "../../../img/loco2.jpg";
 import "./userphotostab.css";
-export default function UserPhoto() {
+export default function UserPhotosTab() {
   // State for take photo modal
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false)
   const { Title } = Typography

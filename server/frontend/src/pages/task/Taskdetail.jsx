@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Flex, Layout } from 'antd';
 import axios from "axios";
-import InstructionsTab from "./task-tabs/instruction-tab.jsx"
+import InstructionsTab from "./TaskTabs/InstructionsTab.jsx"
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons"
 
 // import ComponentsTab from "./task-tabs/components-tab"
-import NotesTab from "./task-tabs/notes-tab.jsx"
-import UserPhotosTab from "./task-tabs/user-photos-tab.jsx"
+import NotesTab from "./TaskTabs/NotesTab.jsx"
+import UserPhotosTab from "./TaskTabs/UserPhotosTab.jsx"
 import { Button, Typography, Select, Tabs, Badge } from 'antd';
 import "./TaskDetail.css";
 const { Header, Footer, Sider, Content } = Layout

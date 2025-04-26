@@ -4,7 +4,7 @@ import { Input, Button, List, Card, Typography } from 'antd';
 const { TextArea } = Input;
 const { Title } = Typography;
 
-export default function NotePage() {
+export default function NotesTab() {
   const [note, setNote] = useState('');
   const [notes, setNotes] = useState([]);
 

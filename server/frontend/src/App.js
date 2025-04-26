@@ -12,8 +12,8 @@ import Dashboard from "./pages/Dashboard";
 import UserManagement from "./pages/UserManagement";
 import ProjectManagement from "./pages/ProjectManagement";
 import TaskManagement from './pages/TaskManagement';
-import TaskDeatil from './pages/task/Taskdetail';
-import CommissionDetail from './pages/commission/CommissionDetail';
+import TaskDeatil from './pages/Task/Taskdetail';
+import CommissionDetail from './pages/Commission/CommissionDetail';
 
 
 function App() {
