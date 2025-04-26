@@ -8,7 +8,6 @@ const {
   updateWMS,
   deleteWMS,
 } = require("../controllers/wmsController");
-const { authenticate, authorize } = require("../middleware/middleware");
 /**
  * @swagger
  * tags:

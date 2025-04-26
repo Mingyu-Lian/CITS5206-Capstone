@@ -8,7 +8,7 @@ const {
   updateBaseline,
   deleteBaseline,
 } = require("../controllers/baselineController");
-const { authenticate, authorize } = require("../middleware/middleware");
+
 /**
  * @swagger
  * tags:
