@@ -11,8 +11,9 @@ const userSchema = new mongoose.Schema({
 
 // Loco_Types Schema
 const locoTypeSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    description: { type: String }
+  name: { type: String, required: true },
+  description: { type: String },
+  isActive: { type: Boolean, default: true }, 
 });
 
 // Baselines Schema
