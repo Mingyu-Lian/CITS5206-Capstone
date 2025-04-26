@@ -7,7 +7,7 @@ const { getAllLocoTypes,
   updateLocoType,
   deleteLocoType,
 } = require("../controllers/locoTypeController");
-
+const { authenticate, authorize } = require("../middleware/middleware");
 /**
  * @swagger
  * tags:

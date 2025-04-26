@@ -8,7 +8,7 @@ const {
   updateProject,
   deleteProject,
 } = require("../controllers/projectController");
-
+const { authenticate, authorize } = require("../middleware/middleware");
 /**
  * @swagger
  * tags:

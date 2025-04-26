@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { authenticate, authorize } = require("../middleware/middleware");
 const { getAllLogs, createLog, updateLog, deleteLog } = require("../controllers/logController");
-
+const { authenticate, authorize } = require("../middleware/middleware");
 /**
  * @swagger
  * tags:

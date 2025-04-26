@@ -8,7 +8,7 @@ const {
   updateDiscipline,
   deleteDiscipline,
 } = require("../controllers/disciplineController");
-
+const { authenticate, authorize } = require("../middleware/middleware");
 /**
  * @swagger
  * tags:
