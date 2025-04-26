@@ -1,0 +1,165 @@
+{
+  "$id": "1",
+  "$type": "MVX.Events.Work.WorkMethodPublished, RioTinto.AutoHaul.Core",
+  "WorkMethodHistoryID": "f12d9b40-23ab-4b61-a1c5-9cb9873d12e5",
+  "Definition": {
+    "$id": "2",
+    "$type": "MVX.Domain.Work.WorkMethodDefinition, RioTinto.AutoHaul.Core",
+    "Tasks": [],
+    "WorkStatements": [],
+    "WorkTables": [
+      {
+        "$id": "3",
+        "$type": "MVX.Domain.Work.WorkTableDefinition, RioTinto.AutoHaul.Core",
+        "ID": "table-01",
+        "Title": "Test Equipment Records",
+        "ReferenceName": "Table 1",
+        "ManualCompleteAllowed": true,
+        "ShowCurrentProgress": true,
+        "ApplyGlobalChanges": false,
+        "Columns": [
+          {
+            "ID": 1,
+            "HeaderText": "Item"
+          },
+          {
+            "ID": 2,
+            "HeaderText": "Description"
+          },
+          {
+            "ID": 3,
+            "HeaderText": "Make"
+          },
+          {
+            "ID": 4,
+            "HeaderText": "Model"
+          },
+          {
+            "ID": 5,
+            "HeaderText": "Serial Number"
+          },
+          {
+            "ID": 6,
+            "HeaderText": "Calibration Due Date"
+          },
+          {
+            "ID": 7,
+            "HeaderText": "Inputted By"
+          }
+        ],
+        "Rows": [
+          {
+            "ID": 1,
+            "HeaderRowText": "",
+            "Cells": [
+              {
+                "ColumnID": 1,
+                "LabelText": "1",
+                "VerticalMerge": 1,
+                "Metadata": "",
+                "LegacyLabelText": ""
+              },
+              {
+                "ColumnID": 2,
+                "LabelText": "Multimeter",
+                "VerticalMerge": 1,
+                "Metadata": "",
+                "LegacyLabelText": ""
+              },
+              {
+                "ColumnID": 3,
+                "LabelText": "Fluke",
+                "VerticalMerge": 1,
+                "Metadata": "",
+                "LegacyLabelText": ""
+              },
+              {
+                "ColumnID": 4,
+                "LabelText": "87V",
+                "VerticalMerge": 1,
+                "Metadata": "",
+                "LegacyLabelText": ""
+              },
+              {
+                "ColumnID": 5,
+                "LabelText": "12345",
+                "VerticalMerge": 1,
+                "Metadata": "",
+                "LegacyLabelText": ""
+              },
+              {
+                "ColumnID": 6,
+                "LabelText": "2025-12-31",
+                "VerticalMerge": 1,
+                "Metadata": "",
+                "LegacyLabelText": ""
+              },
+              {
+                "ColumnID": 7,
+                "LabelText": "John Smith",
+                "VerticalMerge": 1,
+                "Metadata": "",
+                "LegacyLabelText": ""
+              }
+            ]
+          },
+          {
+            "ID": 2,
+            "HeaderRowText": "",
+            "Cells": [
+              {
+                "ColumnID": 1,
+                "LabelText": "2",
+                "VerticalMerge": 1,
+                "Metadata": "",
+                "LegacyLabelText": ""
+              },
+              {
+                "ColumnID": 2,
+                "LabelText": "Oscilloscope",
+                "VerticalMerge": 1,
+                "Metadata": "",
+                "LegacyLabelText": ""
+              },
+              {
+                "ColumnID": 3,
+                "LabelText": "Tektronix",
+                "VerticalMerge": 1,
+                "Metadata": "",
+                "LegacyLabelText": ""
+              },
+              {
+                "ColumnID": 4,
+                "LabelText": "TBS1052B",
+                "VerticalMerge": 1,
+                "Metadata": "",
+                "LegacyLabelText": ""
+              },
+              {
+                "ColumnID": 5,
+                "LabelText": "67890",
+                "VerticalMerge": 1,
+                "Metadata": "",
+                "LegacyLabelText": ""
+              },
+              {
+                "ColumnID": 6,
+                "LabelText": "2026-06-15",
+                "VerticalMerge": 1,
+                "Metadata": "",
+                "LegacyLabelText": ""
+              },
+              {
+                "ColumnID": 7,
+                "LabelText": "Jane Doe",
+                "VerticalMerge": 1,
+                "Metadata": "",
+                "LegacyLabelText": ""
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
