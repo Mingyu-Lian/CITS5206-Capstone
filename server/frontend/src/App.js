@@ -12,7 +12,9 @@ import Dashboard from "./pages/Dashboard";
 import UserManagement from "./pages/UserManagement";
 import ProjectManagement from "./pages/ProjectManagement";
 import TaskManagement from './pages/TaskManagement';
-import TaskDeatil from './pages/task/Taskdetail';
+import TaskDeatil from './pages/task/TaskDetail';
+import CommissionDetail from './pages/commission/CommissionDetail';
+
 
 function App() {
     return (
@@ -30,6 +32,8 @@ function App() {
                 <Route path="/projects" element={<ProjectManagement />} />
                 <Route path="/tasks" element={<TaskManagement />} />
                 <Route path="/taskdetail" element={<TaskDeatil />} />
+                <Route path="/commissiondetail" element={<CommissionDetail />} />
+
 
             </Routes>
         </Router>
