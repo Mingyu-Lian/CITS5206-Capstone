@@ -1,7 +1,10 @@
+// src/pages/Login.jsx
 import { useState } from "react";
-import { Form, Input, Button, message } from "antd";
+import { Form, Input, Button, Select, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { isStrongPassword } from "../utils/validators";
+
+const { Option } = Select;
 
 // Mock login function
 const mockLogin = async (email, password) => {
@@ -27,11 +30,18 @@ const Login = () => {
       return message.error("Weak password (uppercase, lowercase, number, 8+ chars).");
     }
 
+    if (!values.discipline && values.role !== "Admin") {
+      return message.error("Please select a discipline.");
+    }
+
     setLoading(true);
     try {
       const { data } = await mockLogin(values.email, values.password);
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
+      if (data.role !== "Admin") {
+        localStorage.setItem("discipline", values.discipline);
+      }
       message.success("Login successful!");
 
       switch (data.role) {
@@ -58,11 +68,23 @@ const Login = () => {
     <div style={{ maxWidth: 400, margin: "auto", marginTop: 100 }}>
       <h2>eWMS Login</h2>
       <Form layout="vertical" onFinish={onFinish}>
-        <Form.Item name="email" label="Email" rules={[{ required: true, type: "email" }]}>
+        <Form.Item name="email" label="Email" rules={[{ required: true, type: "email" }]}> 
           <Input />
         </Form.Item>
-        <Form.Item name="password" label="Password" rules={[{ required: true }]}>
+        <Form.Item name="password" label="Password" rules={[{ required: true }]}> 
           <Input.Password />
+        </Form.Item>
+        <Form.Item
+          name="discipline"
+          label="Select Discipline"
+          rules={[{ required: false }]}
+        >
+          <Select placeholder="Select a discipline">
+            <Option value="Electrical">Electrical</Option>
+            <Option value="Mechanical">Mechanical</Option>
+            <Option value="Quality">Quality</Option>
+            <Option value="Mechanical Electrical">Mechanical Electrical</Option>
+          </Select>
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit" block loading={loading}>Login</Button>

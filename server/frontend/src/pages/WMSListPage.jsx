@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Table, Button, Typography } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
+import PageLayout from "../components/PageLayout";
 
 const { Title } = Typography;
 
@@ -55,11 +56,13 @@ const WMSListPage = () => {
   ];
 
   return (
+    <PageLayout>
     <div className="p-6 bg-white min-h-screen">
       <Title level={3}>WMS Documents for Locomotive {locomotiveId}</Title>
       <QueryBuilder fields={fields} onApply={applyFilters} onClear={clearFilters} />
       <Table rowKey="id" columns={columns} dataSource={filtered} bordered pagination={{ pageSize: 5 }} />
     </div>
+    </PageLayout>
   );
 };
 

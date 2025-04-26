@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Card, Button, Typography, Row, Col } from "antd";
 import { useNavigate } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
+import PageLayout from "../components/PageLayout";
+
 
 const { Title } = Typography;
 
@@ -38,6 +40,7 @@ const LocomotiveListPage = () => {
   });
 
   return (
+    <PageLayout>
     <div className="p-6 bg-gray-50 min-h-screen">
       <Title level={2}>Locomotive Overview</Title>
       <QueryBuilder fields={fields} onApply={applyFilters} onClear={clearFilters} />
@@ -56,6 +59,7 @@ const LocomotiveListPage = () => {
         ))}
       </Row>
     </div>
+    </PageLayout>
   );
 };
 

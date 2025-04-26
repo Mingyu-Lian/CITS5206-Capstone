@@ -19,6 +19,8 @@ import {
 import { UploadOutlined, FileSearchOutlined, CheckCircleTwoTone } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
+import PageLayout from "../components/PageLayout";
+
 
 const { Title, Text } = Typography;
 
@@ -29,9 +31,12 @@ const SubtaskDetailPage = () => {
   const [formData, setFormData] = useState({});
   const [completed, setCompleted] = useState({});
 
+  const role = localStorage.getItem("role");
+  const userDiscipline = localStorage.getItem("discipline");
+
   const data = [
-    { id: "sub1", instruction: "Verify voltage levels.", result: "", signedOff: false },
-    { id: "sub2", instruction: "Capture photo of connected cable.", result: "", signedOff: false },
+    { id: "sub1", instruction: "Verify voltage levels.", result: "", signedOff: false, discipline: "Electrical" },
+    { id: "sub2", instruction: "Capture photo of connected cable.", result: "", signedOff: false, discipline: "Mechanical" },
   ];
 
   const fields = [
@@ -79,7 +84,16 @@ const SubtaskDetailPage = () => {
   const done = Object.keys(completed).length;
   const percent = total === 0 ? 0 : Math.round((done / total) * 100);
 
+  const isSignOffDisabled = (subDiscipline) => {
+    if (role === "Admin") return false;
+    if (!subDiscipline) return true;
+    if (subDiscipline === userDiscipline) return false;
+    if (subDiscipline.includes("Mechanical Electrical") && (userDiscipline === "Mechanical" || userDiscipline === "Electrical")) return false;
+    return true;
+  };
+
   return (
+    <PageLayout>
     <div className="p-8 bg-gray-100 min-h-screen">
       <div className="flex items-center justify-between mb-6">
         <Title level={2}>Subtasks for Task: {taskId}</Title>
@@ -91,6 +105,7 @@ const SubtaskDetailPage = () => {
       <Row gutter={[24, 24]}>
         {filtered.map((sub) => {
           const currentData = formData[sub.id] || {};
+          const disabled = isSignOffDisabled(sub.discipline);
           return (
             <Col xs={24} sm={24} md={12} key={sub.id}>
               <Card
@@ -115,23 +130,25 @@ const SubtaskDetailPage = () => {
                       placeholder="Enter result or notes"
                       value={currentData.result || ""}
                       onChange={(e) => handleInputChange(sub.id, "result", e.target.value)}
+                      disabled={disabled}
                     />
                   </Form.Item>
                   <Form.Item label="Attachment">
-                    <Upload>
-                      <Button icon={<UploadOutlined />}>Upload Image/Video</Button>
+                    <Upload disabled={disabled}>
+                      <Button icon={<UploadOutlined />} disabled={disabled}>Upload Image/Video</Button>
                     </Upload>
                   </Form.Item>
                   <Form.Item>
                     <Checkbox
                       checked={currentData.signedOff || false}
                       onChange={(e) => handleInputChange(sub.id, "signedOff", e.target.checked)}
+                      disabled={disabled}
                     >
                       Mark as Signed Off
                     </Checkbox>
                   </Form.Item>
                   <Form.Item>
-                    <Button type="primary" onClick={() => handleSave(sub.id)}>
+                    <Button type="primary" onClick={() => handleSave(sub.id)} disabled={disabled}>
                       Save Subtask
                     </Button>
                   </Form.Item>
@@ -142,6 +159,7 @@ const SubtaskDetailPage = () => {
         })}
       </Row>
     </div>
+    </PageLayout>
   );
 };
 

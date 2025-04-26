@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Table, Button, Tag, Typography } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
+import PageLayout from "../components/PageLayout";
 
 const { Title } = Typography;
 
@@ -59,11 +60,13 @@ const TaskListPage = () => {
   ];
 
   return (
+    <PageLayout>
     <div className="p-6 bg-white min-h-screen">
       <Title level={3}>Tasks for WMS: {wmsId}</Title>
       <QueryBuilder fields={fields} onApply={applyFilters} onClear={clearFilters} />
       <Table rowKey="id" columns={columns} dataSource={filtered} bordered />
     </div>
+    </PageLayout>
   );
 };
 

@@ -22,6 +22,7 @@ import {
 } from "@ant-design/icons";
 import { saveAs } from "file-saver";
 import { unparse } from "papaparse";
+import PageLayout from "../components/PageLayout";
 
 const roles = ["Admin", "Supervisor", "Engineer"];
 const currentRole = (localStorage.getItem("role") || "").trim();
@@ -224,6 +225,7 @@ const UserManagement = () => {
   
 
   return (
+    <PageLayout>
     <div style={{ padding: 24 }}>
       <Typography.Title level={2}>User Management</Typography.Title>
 
@@ -288,6 +290,7 @@ const UserManagement = () => {
         </Form>
       </Modal>
     </div>
+    </PageLayout>
   );
 };
 
