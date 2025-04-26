@@ -10,6 +10,7 @@ const getAllLocoTypes = async (req, res) => {
   }
 };
 
+
 // Get a specific loco type by id (not filter by isActive)
 const getLocoTypeById = async (req, res) => {
   try {
