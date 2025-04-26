@@ -7,7 +7,7 @@ const login = async (req, res) => {
     const { username, password } = req.body;
   
     try {
-      const user = await User.findOne({ Username: username });
+      const user = await User.findOne({ username: username });
       if (!user) return res.status(400).json({ message: "User not found" });
   
       const isMatch = await bcrypt.compare(password, user.passwordHash);
@@ -23,7 +23,7 @@ const login = async (req, res) => {
         token,
         user: {
           id: user._id,
-          username: user.Username,
+          username: user.username,
           role: user.role,
         },
       });
@@ -35,14 +35,13 @@ const login = async (req, res) => {
 
   // Register logic
 const register = async (req, res) => {
-  // Expecting: { Username, personName, email, password, role }
-  const { Username, personName, email, password, role } = req.body;
-
+  // Expecting: { username, personName, email, password, role }
+  const { username, personName, email, password, role } = req.body;
   try {
     const passwordHash = await bcrypt.hash(password, 10);
 
     // Create user – note: _id, createdAt, and updatedAt are automatically handled by Mongoose
-    const user = await User.create({ Username, personName, email, passwordHash, role });
+    const user = await User.create({ username, personName, email, passwordHash, role });
 
     // Generate JWT token
     const token = jwt.sign(
@@ -53,20 +52,62 @@ const register = async (req, res) => {
 
     // Include createdAt in the response
     res.status(201).json({ token, user });
+     
+    // Include createdAt in the response
+    
   } catch (error) {
     res.status(500).json({ message: "Registration error", error });
   }
 };
     
+const logout = async (req, res) => {
+  try {
+    // Clear the token from the client by setting an expired cookie
+    res.cookie("token", "", { httpOnly: true, expires: new Date(0) });
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Error during logout:", error);
+    res.status(500).json({ message: "Server error during logout", error });
+  }
+};
+// Get all users logic
+const getAllUsers = async (req, res) => {
+  try {
+    // Fetch all users from the database, excluding sensitive fields like passwordHash
+    const users = await User.find().select("-passwordHash");
+
+    res.status(200).json({
+      users,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Unable to retrieve users", error });
+  }
+};
 
 // Get user details logic 
 const getMe = async (req, res) => {
-  // It is assumed that a middleware authenticates the token and sets req.user.
   try {
-    res.json(req.user);
+    // Use the user object already attached by the authenticate middleware
+    const user = req.user;
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Return user details in a consistent format
+    res.status(200).json({
+      user: {
+        id: user._id,
+        username: user.username,
+        personName: user.personName,
+        email: user.email,
+        role: user.role,
+        createdAt: user.createdAt,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: "Unable to retrieve user", error });
   }
 };
 
-module.exports = { register, login, getMe };
+module.exports = { register, login, getMe,logout,getAllUsers };

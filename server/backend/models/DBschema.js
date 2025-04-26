@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 // User Schema
 const userSchema = new mongoose.Schema({
-    Username: { type: String, required: true, unique: true }, // Username
+    username: { type: String, required: true, unique: false }, // Username
     personName: { type: String, required: true }, // Full name
     email: { type: String, required: true, unique: true }, // Login Email
     passwordHash: { type: String, required: true }, // Encrypted password
@@ -67,8 +67,61 @@ const wmsSchema = new mongoose.Schema({
     assignedSupervisor: { type: [mongoose.Schema.Types.ObjectId], ref: "User" },
     assignedEngineer: { type: [mongoose.Schema.Types.ObjectId], ref: "User" },
     isActive: { type: Boolean, default: true },
-    comments: { type: String }
+    comments: { type: String },
+    historyVersionId:{ type: String }
 });
+// Work Tables Schema
+const workTableSchema = new mongoose.Schema({
+    tableId: { type: String, required: true }, // Unique table ID
+    title: { type: String, required: true }, // Title of the table
+    referenceName: { type: String }, // Reference name (e.g., "Table 1")
+    assignedSupervisor: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Assigned supervisor
+    assignedEngineer: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Assigned engineer
+    disciplineRequire: { type: mongoose.Schema.Types.ObjectId, ref: "Discipline" }, // Discipline required
+    parentsWMS: { type: mongoose.Schema.Types.ObjectId, ref: "WMS" }, // Parent WMS reference
+    historyVersionTableId: { type: String }, // Previous version ID
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // User who created the table
+    createdAt: { type: Date, default: Date.now }, // Creation timestamp
+    updateHistory: [
+      {
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // User who updated
+        updatedAt: { type: Date, default: Date.now }, // Update timestamp
+      },
+    ],
+    isActive: { type: Boolean, default: true }, // Active status
+  
+    columns: [
+      {
+        id: { type: Number, required: true }, // Column ID
+        headerText: { type: String, required: true }, // Column title
+        columnData: { type: String }, // Optional data
+        widthWeight: { type: Number }, // UI layout weight
+        columnType: { type: Number }, // Column type (e.g., 0 = Text, 4 = User Input)
+        isOptional: { type: Boolean, default: false },
+        isHidden: { type: Boolean, default: false },
+        resetValueOnLocalChange: { type: Boolean, default: false },
+        forceResetValueOnGlobalChange: { type: Boolean, default: false },
+        resetValueOnGlobalChange: { type: Boolean, default: false },
+        postChangeResetAction: { type: Boolean, default: false },
+      },
+    ],
+  
+    rows: [
+      {
+        id: { type: Number, required: true }, // Row ID
+        headerRowText: { type: String }, // Instructional header
+        cells: [
+          {
+            columnId: { type: Number, required: true }, // Column this cell belongs to
+            labelText: { type: String }, // Cell content
+            verticalMerge: { type: Number }, // For UI merging
+            metadata: { type: String },
+            legacyLabelText: { type: String },
+          },
+        ],
+      },
+    ],
+  });
 
 // Tasks Schema
 const taskSchema = new mongoose.Schema({
@@ -120,5 +173,6 @@ module.exports = {
     WMS: mongoose.model("WMS", wmsSchema),
     Task: mongoose.model("Task", taskSchema),
     Discipline: mongoose.model("Discipline", disciplineSchema),
-    Log: mongoose.model("Log", logSchema)
+    Log: mongoose.model("Log", logSchema),
+    WorkTable: mongoose.model("WorkTable", workTableSchema)
 };

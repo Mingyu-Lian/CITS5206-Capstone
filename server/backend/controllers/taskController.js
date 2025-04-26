@@ -1,4 +1,4 @@
-const { Task } = require("../models/DBschema");
+const { Task, Log } = require("../models/DBschema");
 
 // List tasks by WMS id or task id query parameter
 const getAllTasks = async (req, res) => {
@@ -38,6 +38,16 @@ const createTask = async (req, res) => {
 const updateTask = async (req, res) => {
   try {
     await Task.findByIdAndUpdate(req.params.id, req.body);
+
+    await Log.create({
+      userId: req.user._id, // User performing the action (from authenticate middleware)
+      action: "Task Updated",
+      locoID: updatedTask.locoID || null, // If the task is associated with a locomotive type
+      details: `Task with ID ${req.params.id} was updated.`,
+      actionTime: new Date(),
+      ip: req.ip|| null,// IP address  
+    });
+
     res.json({ message: "Task updated successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });

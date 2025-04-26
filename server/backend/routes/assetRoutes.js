@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { authenticate, authorize } = require("../middleware/middleware");
 const {
   getAllAssets,
   getAssetById,
@@ -171,8 +172,8 @@ const {
 // Route definitions
 router.get("/", getAllAssets);
 router.get("/:id", getAssetById);
-router.post("/", createAsset);
-router.put("/:id", updateAsset);
+router.post("/", authenticate, authorize(["admin", "supervisor"]), createAsset);
+router.put("/:id", authenticate, authorize(["admin", "supervisor"]),updateAsset);
 router.delete("/:id", deleteAsset);
 
 module.exports = router;
