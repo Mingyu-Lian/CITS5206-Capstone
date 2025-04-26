@@ -18,13 +18,9 @@ const CommissionDetail = () => {
   const [name, setName] = useState('');
   const inputRef = useRef(null);
   const onNameChange = event => {
-    console.log("before setName", name, event.target.value)
-    console.log("softwareVersions: ", softwareVersions)
     setName(event.target.value);
-    console.log(name, event.target.value)
   };
   const handleChange = (version) => {
-    console.log(`Selected: ${version}`);
     if (currentEditingKey) {
       const newData = [...data]
       const index = newData.findIndex((item) => item.key === currentEditingKey)
@@ -39,15 +35,11 @@ const CommissionDetail = () => {
 
   };
   const addSoftwareVersion = e => {
-    console.log(e)
 
-    console.log("inputRef", inputRef)
-    console.log("inputRef", inputRef.current.input.value)
-
-    let test = inputRef.current.input.value
+    let addVersionInput = inputRef.current.input.value
     e.preventDefault();
     // The input must not be empty
-    if (test.length > 1) {
+    if (addVersionInput.length > 1) {
       setSoftwareVersions([...softwareVersions, name]);
       setName("")
     }
@@ -114,43 +106,43 @@ const CommissionDetail = () => {
       dataIndex: "action",
       key: "action",
       width: 60,
-      className: "styles.darkHeader",
-      render: (text, record) => <div className={"styles.actionCell"}>{text}</div>,
+      className: "",
+      render: (text, record) => <div className={""}>{text}</div>,
     },
     {
       title: "Configuration Item",
       dataIndex: "configItem",
       key: "configItem",
       width: 120,
-      className: "styles.darkHeader",
+      className: "",
     },
     {
       title: "AIMS Reference",
       dataIndex: "aimsReference",
       key: "aimsReference",
       width: 120,
-      className: "styles.darkHeader",
+      className: "",
     },
     {
       title: (
         <div>
           Software Generic Version
-          <EditOutlined className={"styles.editIcon"} />
+          <EditOutlined className={""} />
         </div>
       ),
       dataIndex: "softwareGenericVersion",
       key: "softwareGenericVersion",
       width: 200,
-      className: "styles.darkHeader",
+      className: "",
       render: (text, record) => (
         <div
-          className={"styles.editableCell"}
+          className={""}
           onClick={() => {
             setCurrentEditingKey(record.key)
             setIsVersionModalOpen(true)
           }}
         >
-          {text} <EditOutlined className={"styles.editIcon"} />
+          {text} <EditOutlined className={""} />
         </div>
       ),
     },
@@ -158,31 +150,30 @@ const CommissionDetail = () => {
       title: (
         <div>
           Software Loco Specific Data
-          <EditOutlined className={"styles.editIcon"} />
+          <EditOutlined className={""} />
         </div>
       ),
       dataIndex: "softwareLocoSpecificData",
       key: "softwareLocoSpecificData",
       width: 200,
-      className: "styles.darkHeader",
+      className: "",
     },
     {
       title: "Install by",
       dataIndex: "installBy",
       key: "installBy",
       width: 100,
-      className: "styles.darkHeader",
+      className: "",
     },
     {
       title: "Verify by",
       dataIndex: "verifyBy",
       key: "verifyBy",
       width: 100,
-      className: " styles.darkHeader",
+      className: "",
       render: (text, record) => (
-        //  console.log("verify by", text, record) 
         <div
-          className={text === "(Click to sign)" ? "styles.clickToSign " : ""}
+          className={text === "(Click to sign)" ? "clickToSign " : ""}
           onClick={() => text === "(Click to sign)" && handleSign(record.key, "verifyBy")}
         >
           {text}
@@ -194,10 +185,10 @@ const CommissionDetail = () => {
       dataIndex: "validateBy",
       key: "validateBy",
       width: 100,
-      className: "styles.darkHeader",
+      className: "",
       render: (text, record) => (
         <div
-          className={text === "(Click to sign)" ? "styles.clickToSign" : ""}
+          className={text === "(Click to sign)" ? "clickToSign" : ""}
           onClick={() => text === "(Click to sign)" && handleSign(record.key, "validateBy")}
         >
           {text}
@@ -209,7 +200,7 @@ const CommissionDetail = () => {
       dataIndex: "note",
       key: "note",
       width: 100,
-      className: "styles.darkHeader",
+      className: "",
       render: (text, record) => (
         <div
           className=""
@@ -279,7 +270,6 @@ const CommissionDetail = () => {
   }
   // Component to truncate text and show popover on hover
   const TruncatedText = ({ text }) => {
-    console.log("truncated text:", text)
     const isTruncated = text.length > 10
     const truncatedText = isTruncated ? `${text.slice(0, 10)}...` : text
 
@@ -348,8 +338,7 @@ const CommissionDetail = () => {
         pagination={false}
         bordered
         size="middle"
-        className={"styles.table"}
-        rowClassName={(record, index) => (index % 2 === 0 ? "styles.evenRow" : "styles.oddRow")}
+        className={""}
       />
     </div>
   );
