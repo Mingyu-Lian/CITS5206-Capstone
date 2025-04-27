@@ -20,9 +20,34 @@ const locoTypeSchema = new mongoose.Schema({
 
 // Baselines Schema
 const baselineSchema = new mongoose.Schema({
-    softwareName: { type: String, required: true },
-    softwareVersion: { type: [String], required: true },
-    description: { type: String }
+  softwareName: { type: String, required: true }, // Name of the software
+  description: { type: String }, // Overall description
+  isActive: { type: Boolean, default: true }, // If still active/deleted
+
+  versions: [
+    {
+      versionId: { type: String, required: true }, // Unique version ID
+      version: { type: String, required: true }, // Version string (e.g., "1.01")
+      createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Who created this version
+      createdAt: { type: Date, default: Date.now }, // Version creation time
+      note: { type: String }, // Optional notes
+      isActive: { type: Boolean, default: true }, // If still active/deleted
+
+      usageHistory: [
+        {
+          usedInLoco: [{ type: Number }], // LocoIDs, refer to Assets.locoID
+          userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Usage userID
+          usedAt: { type: Date, default: Date.now }, // Use time
+        },
+      ],
+      updateHistory: [
+        {
+          userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Update userID
+          updatedAt: { type: Date, default: Date.now }, // Update time
+        },
+      ],
+    },
+  ],
 });
 
 // Assets Schema
