@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { register, login, getMe, logout,getAllUsers } = require("../controllers/authController");
+const { register, login, getMe, logout,getAllUsers,updateUser } = require("../controllers/authController");
 const { authenticate, authorize } = require("../middleware/middleware");
 /**
  * @swagger
@@ -42,6 +42,12 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *               role:
  *                 type: string
  *                 example: admin
+ *              discipline:
+ *                type: array
+ *              items:
+ *                type: string
+ *              example: Mechanical
+ * 
  *     responses:
  *       201:
  *         description: User registered successfully
@@ -89,6 +95,7 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *             required:
  *               - username
  *               - password
+ *               - discipline
  *             properties:
  *               username:
  *                 type: string
@@ -96,6 +103,11 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *               password:
  *                 type: string
  *                 example: 123456
+ *             discipline:
+ *              type: array
+ *            items:
+ *             type: string
+ *           example: Mechanical
  *     responses:
  *       200:
  *         description: Login successful
@@ -122,6 +134,11 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *                     role:
  *                       type: string
  *                       example: admin
+ *                 discipline:
+ *                 type: array
+ *               items:
+ *               type: string
+ *              example: Mechanical
  *       400:
  *         description: Invalid credentials or user not found
  *       500:
@@ -156,6 +173,11 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *                 role:
  *                   type: string
  *                   example: admin
+ *               discipline:
+ *             type: array
+ *           items:
+ *           type: string
+ *         example: Mechanical
  *       401:
  *         description: Unauthorized
  *       500:
@@ -219,6 +241,11 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *                       role:
  *                         type: string
  *                         example: admin
+ *                     discipline:
+ *                   type: array
+ *                 items:
+ *                  type: string
+ *               example: Mechanical
  *       500:
  *         description: Server error
  */
@@ -229,4 +256,5 @@ router.post("/login", login);
 router.get("/me", getMe);
 router.post("/logout",logout);
 router.get("/users",getAllUsers);
+router.patch("/users/:id",updateUser);
 module.exports = router;

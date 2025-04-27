@@ -7,6 +7,8 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true }, // Login Email
     passwordHash: { type: String, required: true }, // Encrypted password
     role: { type: String, required: true }, // Role: admin, supervisor, engineer, etc.
+    discipline: [{ type: mongoose.Schema.Types.ObjectId, ref: "Discipline" }], // Reference to the discipline}
+    isActive: { type: Boolean, default: true }, 
 }, { timestamps: true }); // Automatically adds createdAt and updatedAt fields
 
 // Loco_Types Schema
