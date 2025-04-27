@@ -1,20 +1,26 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { User } = require("../models/DBschema");
+const { User,Discipline } = require("../models/DBschema");
 
 // Login logic
 const login = async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password,selectedDiscipline} = req.body;
   
     try {
-      const user = await User.findOne({ username: username });
+      const user = await User.findOne({ username: username }).populate("disciplines");
       if (!user) return res.status(400).json({ message: "User not found" });
-  
+        // Check if the password matches
       const isMatch = await bcrypt.compare(password, user.passwordHash);
       if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
-  
+
+       // Check if the selected discipline exists in the user's disciplines
+      const disciplineDoc = user.discipline.find(d => d.name === selectedDiscipline);
+      if (!disciplineDoc) {
+        return res.status(400).json({ message: "Selected discipline is not associated with the user" });
+      }
+      
       const token = jwt.sign(
-        { id: user._id, role: user.role },
+        { id: user._id, role: user.role,discipline: selectedDiscipline},
         process.env.JWT_SECRET || "your_jwt_secret",
         { expiresIn: "1h" }
       );
@@ -25,6 +31,7 @@ const login = async (req, res) => {
           id: user._id,
           username: user.username,
           role: user.role,
+          selectedDiscipline:disciplineDoc.name,
         },
       });
     } catch (error) {
@@ -36,12 +43,18 @@ const login = async (req, res) => {
   // Register logic
 const register = async (req, res) => {
   // Expecting: { username, personName, email, password, role }
-  const { username, personName, email, password, role } = req.body;
+  const { username, personName, email, password, role, discipline } = req.body;
   try {
     const passwordHash = await bcrypt.hash(password, 10);
+    
+    // Find disciplines by name
+    const disciplineDocs = await Discipline.find({ name: { $in: disciplines } });
+    if (disciplineDocs.length !== disciplines.length) {
+      return res.status(400).json({ message: "One or more disciplines not found" });
+    }
 
     // Create user – note: _id, createdAt, and updatedAt are automatically handled by Mongoose
-    const user = await User.create({ username, personName, email, passwordHash, role });
+    const user = await User.create({ username, personName, email, passwordHash, role, discipline });
 
     // Generate JWT token
     const token = jwt.sign(
@@ -51,8 +64,18 @@ const register = async (req, res) => {
     );
 
     // Include createdAt in the response
-    res.status(201).json({ token, user });
-     
+    res.status(201).json({
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        personName: user.personName,
+        email: user.email,
+        role: user.role,
+        disciplines: disciplineDocs.map(d => d.name), // Return discipline names
+        createdAt: user.createdAt,
+      },
+    });
     // Include createdAt in the response
     
   } catch (error) {
@@ -102,6 +125,7 @@ const getMe = async (req, res) => {
         personName: user.personName,
         email: user.email,
         role: user.role,
+        disciplines: user.discipline,
         createdAt: user.createdAt,
       },
     });
@@ -109,5 +133,50 @@ const getMe = async (req, res) => {
     res.status(500).json({ message: "Unable to retrieve user", error });
   }
 };
+const updateUser = async (req, res) => {
+  const updates = req.body; // All fields to be updated are passed in the request body
 
-module.exports = { register, login, getMe,logout,getAllUsers };
+  try {
+    // Ensure the user is authenticated and their ID is available
+    const userId = req.user._id;
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Update fields dynamically
+    for (const key in updates) {
+      if (key === "password") {
+        // Hash the password before updating
+        const passwordHash = await bcrypt.hash(updates[key], 10);
+        user.passwordHash = passwordHash;
+      } else if (user[key] !== undefined) {
+        // Update only fields that exist in the user schema
+        user[key] = updates[key];
+      }
+    }
+
+    // Save the updated user
+    await user.save();
+
+    res.status(200).json({
+      message: "User updated successfully",
+      user: {
+        id: user._id,
+        username: user.username,
+        personName: user.personName,
+        email: user.email,
+        role: user.role,
+        discipline: user.discipline,
+      },
+    });
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ message: "Unable to update user", error });
+  }
+};
+
+module.exports = { register, login, getMe, logout, getAllUsers, updateUser };
+ 
