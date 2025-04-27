@@ -6,7 +6,6 @@ const {
   getAssetById,
   createAsset,
   updateAsset,
-  deleteAsset,
 } = require("../controllers/assetController");
 
 /**
@@ -80,13 +79,13 @@ const {
  *                 example: A1001
  *               name:
  *                 type: string
- *                 example: Asset Name
- *               description:
- *                 type: string
- *                 example: Asset description
+ *                 example: Asset Name          
  *               assetType:
  *                 type: string
  *                 example: TypeA
+ *              description:
+ *                 type: string
+ *                 example: Asset description
  *               locoID:
  *                 type: number
  *                 example: 123
@@ -149,31 +148,10 @@ const {
  *         description: Server error
  */
 
-/**
- * @swagger
- * /api/assets/{id}:
- *   delete:
- *     summary: Delete an asset
- *     tags: [Assets]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: Asset id
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Asset deleted successfully
- *       500:
- *         description: Server error
- */
-
 // Route definitions
 router.get("/", getAllAssets);
 router.get("/:id", getAssetById);
 router.post("/", authenticate, authorize(["admin", "supervisor"]), createAsset);
 router.put("/:id", authenticate, authorize(["admin", "supervisor"]),updateAsset);
-router.delete("/:id", deleteAsset);
 
 module.exports = router;

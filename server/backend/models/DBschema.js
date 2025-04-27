@@ -27,12 +27,13 @@ const baselineSchema = new mongoose.Schema({
 const assetSchema = new mongoose.Schema({
     code: { type: String, required: true },
     name: { type: String, required: true },
+    description: { type: String },
     assetType: { type: String, required: true },
     locoID: { type: Number },
-    description: { type: String },
     locoType: { type: mongoose.Schema.Types.ObjectId, ref: "LocoType" },
     status: { type: String, required: true },
-    parentAsset: { type: mongoose.Schema.Types.ObjectId, ref: "Asset" }
+    parentAsset: { type: mongoose.Schema.Types.ObjectId, ref: "Asset" },
+    isActive: { type: Boolean, default: true }, 
 });
 
 // Projects Schema
