@@ -18,6 +18,56 @@ const {
 /**
  * @swagger
  * /api/projects:
+ *   post:
+ *     summary: Create a new project
+ *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - startDate
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: New Project
+ *               description:
+ *                 type: string
+ *                 example: This is a project description.
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-01-01"
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-12-31"
+ *     responses:
+ *       201:
+ *         description: Project created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Project created successfully
+ *                 project:
+ *                   type: object
+ *       500:
+ *         description: Server error
+ */
+
+
+/**
+ * @swagger
+ * /api/projects:
  *   get:
  *     summary: List all active projects
  *     tags: [Projects]
@@ -64,55 +114,6 @@ const {
  *                   isActive:
  *                     type: boolean
  *                     example: true
- *       500:
- *         description: Server error
- */
-
-/**
- * @swagger
- * /api/projects:
- *   post:
- *     summary: Create a new project
- *     tags: [Projects]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - name
- *               - startDate
- *             properties:
- *               name:
- *                 type: string
- *                 example: New Project
- *               description:
- *                 type: string
- *                 example: This is a project description.
- *               startDate:
- *                 type: string
- *                 format: date
- *                 example: "2025-01-01"
- *               endDate:
- *                 type: string
- *                 format: date
- *                 example: "2025-12-31"
- *     responses:
- *       201:
- *         description: Project created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Project created successfully
- *                 project:
- *                   type: object
  *       500:
  *         description: Server error
  */
@@ -229,6 +230,7 @@ const {
  *       500:
  *         description: Server error
  */
+
 
 // Route definitions
 router.get("/", getAllProjects);
