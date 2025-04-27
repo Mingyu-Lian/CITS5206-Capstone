@@ -37,13 +37,17 @@ const assetSchema = new mongoose.Schema({
 
 // Projects Schema
 const projectSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    description: { type: String },
-    startDate: { type: Date, required: true },
-    endDate: { type: Date },
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now }
+  name: { type: String, required: true },
+  description: { type: String },
+  startDate: { type: Date, required: true },
+  endDate: { type: Date },
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  createdAt: { type: Date, default: Date.now },
+  updateHistory: [{
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      updatedAt: { type: Date, default: Date.now }
+  }],
+  isActive: { type: Boolean, default: true }
 });
 
 // WMSs Schema
