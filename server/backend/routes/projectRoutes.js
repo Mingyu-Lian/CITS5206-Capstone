@@ -8,6 +8,15 @@ const {
   updateProject,
 } = require("../controllers/projectController");
 
+
+// Route definitions
+router.get("/", getAllProjects);
+router.get("/:id", getProjectById);
+router.post("/", authenticate, authorize(["admin", "supervisor"]), createProject);
+router.patch("/:id", authenticate, authorize(["admin", "supervisor"]), updateProject);
+
+module.exports = router;
+
 /**
  * @swagger
  * tags:
@@ -18,62 +27,12 @@ const {
 /**
  * @swagger
  * /api/projects:
- *   post:
- *     summary: Create a new project
- *     tags: [Projects]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - name
- *               - startDate
- *             properties:
- *               name:
- *                 type: string
- *                 example: New Project
- *               description:
- *                 type: string
- *                 example: This is a project description.
- *               startDate:
- *                 type: string
- *                 format: date
- *                 example: "2025-01-01"
- *               endDate:
- *                 type: string
- *                 format: date
- *                 example: "2025-12-31"
- *     responses:
- *       201:
- *         description: Project created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Project created successfully
- *                 project:
- *                   type: object
- *       500:
- *         description: Server error
- */
-
-
-/**
- * @swagger
- * /api/projects:
  *   get:
  *     summary: List all active projects
  *     tags: [Projects]
  *     responses:
  *       200:
- *         description: An array of active projects (only isActive: true)
+ *         description: List of active projects
  *         content:
  *           application/json:
  *             schema:
@@ -87,6 +46,9 @@ const {
  *                   name:
  *                     type: string
  *                     example: Project Alpha
+ *                   description:
+ *                     type: string
+ *                     example: Short description of the project
  *                   startDate:
  *                     type: string
  *                     format: date
@@ -120,9 +82,78 @@ const {
 
 /**
  * @swagger
+ * /api/projects:
+ *   post:
+ *     summary: Create a new project
+ *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - startDate
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: New Project
+ *               description:
+ *                 type: string
+ *                 example: Detailed project description.
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-01-01"
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-12-31"
+ *     responses:
+ *       201:
+ *         description: Project created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Project created successfully
+ *                 project:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     description:
+ *                       type: string
+ *                     startDate:
+ *                       type: string
+ *                       format: date
+ *                     endDate:
+ *                       type: string
+ *                       format: date
+ *                     createdBy:
+ *                       type: string
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     isActive:
+ *                       type: boolean
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
  * /api/projects/{id}:
  *   get:
- *     summary: Retrieve detailed information for a specific active project
+ *     summary: Get details of a specific project
  *     tags: [Projects]
  *     parameters:
  *       - in: path
@@ -133,7 +164,7 @@ const {
  *           type: string
  *     responses:
  *       200:
- *         description: Full project details
+ *         description: Project detail
  *         content:
  *           application/json:
  *             schema:
@@ -169,7 +200,7 @@ const {
  *                 isActive:
  *                   type: boolean
  *       404:
- *         description: Project not found or not active
+ *         description: Project not found
  *       500:
  *         description: Server error
  */
@@ -178,7 +209,7 @@ const {
  * @swagger
  * /api/projects/{id}:
  *   patch:
- *     summary: Update a project (including deactivate by setting isActive to false)
+ *     summary: Update project details
  *     tags: [Projects]
  *     security:
  *       - bearerAuth: []
@@ -190,7 +221,6 @@ const {
  *         schema:
  *           type: string
  *     requestBody:
- *       description: Fields to update (partial updates supported)
  *       required: true
  *       content:
  *         application/json:
@@ -225,17 +255,28 @@ const {
  *                   example: Project updated successfully
  *                 project:
  *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     description:
+ *                       type: string
+ *                     startDate:
+ *                       type: string
+ *                       format: date
+ *                     endDate:
+ *                       type: string
+ *                       format: date
+ *                     createdBy:
+ *                       type: string
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     isActive:
+ *                       type: boolean
  *       404:
  *         description: Project not found
  *       500:
  *         description: Server error
  */
-
-
-// Route definitions
-router.get("/", getAllProjects);
-router.get("/:id", getProjectById);
-router.post("/", authenticate, authorize(["admin", "supervisor"]), createProject);
-router.patch("/:id", authenticate, authorize(["admin", "supervisor"]), updateProject);
-
-module.exports = router;
