@@ -181,8 +181,10 @@ const taskSchema = new mongoose.Schema({
 
 // Disciplines Schema
 const disciplineSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    description: { type: String }
+  name: { type: String, required: true },
+  description: { type: String },
+  client: { type: String },
+  isActive: { type: Boolean, default: true },
 });
 
 // Logs Schema
