@@ -77,7 +77,18 @@ const SubtaskDetailPage = () => {
     }
   };
 
-  const handleSave = (subId) => {
+  const updateOfflineSubtask = async (subId, field, value) => {
+    const offlineKey = `offlineSubtaskList-${taskId}`;
+    const cached = await localforage.getItem(offlineKey);
+    if (cached) {
+      const updated = cached.map(sub =>
+        sub.id === subId ? { ...sub, [field]: value } : sub
+      );
+      await localforage.setItem(offlineKey, updated);
+    }
+  };
+
+  const handleSave = async (subId) => {
     setCompleted((prev) => ({ ...prev, [subId]: true }));
 
     const currentData = formData[subId] || {};
@@ -86,7 +97,7 @@ const SubtaskDetailPage = () => {
       subtaskId: subId,
       taskId,
     });
-    saveAndMaybeSyncLog(saveLog);
+    await saveAndMaybeSyncLog(saveLog);
 
     if (currentData.result?.trim()) {
       const noteLog = createLogEntry("write_note", {
@@ -94,7 +105,10 @@ const SubtaskDetailPage = () => {
         taskId,
         content: currentData.result,
       });
-      saveAndMaybeSyncLog(noteLog);
+      await saveAndMaybeSyncLog(noteLog);
+
+      // ✅ Update cached result when clicking Save
+      await updateOfflineSubtask(subId, "result", currentData.result);
     }
 
     if (!navigator.onLine) {
@@ -114,7 +128,7 @@ const SubtaskDetailPage = () => {
     }));
   };
 
-  const handleSignOffChange = (subId, checked) => {
+  const handleSignOffChange = async (subId, checked) => {
     handleInputChange(subId, "signedOff", checked);
 
     const log = createLogEntry("toggle_signoff", {
@@ -122,7 +136,9 @@ const SubtaskDetailPage = () => {
       taskId,
       checked,
     });
-    saveAndMaybeSyncLog(log);
+    await saveAndMaybeSyncLog(log);
+
+    await updateOfflineSubtask(subId, "signedOff", checked);
   };
 
   const handleViewRedirect = (subId) => {
