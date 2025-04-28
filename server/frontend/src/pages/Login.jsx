@@ -1,20 +1,32 @@
+// src/pages/Login.jsx
 import { useState } from "react";
 import { Form, Input, Button, Select, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { isStrongPassword } from "../utils/validators";
+import users from "../mock/mockUsers"; // ✅ Import real users list
 
 const { Option } = Select;
 
+// ✅ New real login function
 const mockLogin = async (username, password) => {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
-      resolve({
-        data: {
-          token: "mocked-jwt-token",
-          role: username.includes("admin") ? "Admin" :
-                username.includes("supervisor") ? "Supervisor" : "Engineer"
-        }
-      });
+      const user = users.find(
+        (u) => u.username.toLowerCase() === username.toLowerCase() && u.password === password
+      );      
+      if (user) {
+        resolve({
+          data: {
+            token: "mocked-jwt-token",
+            role: user.role,
+            discipline: user.discipline,
+            name: user.name,
+            email: user.email,
+          }
+        });
+      } else {
+        reject(new Error("Invalid username or password"));
+      }
     }, 1000);
   });
 };
@@ -23,8 +35,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-
-  const [form] = Form.useForm(); // 🌟 Create form instance
+  const [form] = Form.useForm(); // Form instance
 
   const onFinish = async (values) => {
     if (!isStrongPassword(values.password)) {
@@ -40,9 +51,9 @@ const Login = () => {
       const { data } = await mockLogin(values.username, values.password);
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
-      if (data.role !== "Admin") {
-        localStorage.setItem("discipline", values.discipline);
-      }
+      localStorage.setItem("discipline", data.discipline || "");
+      localStorage.setItem("name", data.name || "");
+      localStorage.setItem("email", data.email || "");
       message.success("Login successful!");
 
       switch (data.role) {
@@ -59,13 +70,12 @@ const Login = () => {
           navigate("/dashboard");
       }
     } catch (err) {
-      message.error("Login failed");
+      message.error("Login failed: Invalid credentials");
     } finally {
       setLoading(false);
     }
   };
 
-  // 🌟 Detect username changes correctly using Form event
   const handleValuesChange = (changedValues) => {
     if (changedValues.username !== undefined) {
       const username = changedValues.username.toLowerCase();
@@ -84,19 +94,19 @@ const Login = () => {
         layout="vertical"
         form={form}
         onFinish={onFinish}
-        onValuesChange={handleValuesChange} // 🌟 properly detect username
+        onValuesChange={handleValuesChange}
       >
-        <Form.Item 
-          name="username" 
-          label="Username" 
+        <Form.Item
+          name="username"
+          label="Username"
           rules={[{ required: true, message: "Please input your username!" }]}
         >
           <Input />
         </Form.Item>
 
-        <Form.Item 
-          name="password" 
-          label="Password" 
+        <Form.Item
+          name="password"
+          label="Password"
           rules={[{ required: true, message: "Please input your password!" }]}
         >
           <Input.Password />

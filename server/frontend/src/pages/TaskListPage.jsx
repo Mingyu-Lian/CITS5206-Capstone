@@ -4,6 +4,7 @@ import { Table, Button, Tag, Typography } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
 import PageLayout from "../components/PageLayout";
+import { useTasks } from "../hooks/useMockData"; // ✅ Hook
 
 const { Title } = Typography;
 
@@ -11,21 +12,17 @@ const TaskListPage = () => {
   const { locomotiveId, wmsId } = useParams();
   const navigate = useNavigate();
   const [filters, setFilters] = useState({});
-
-  const data = [
-    { id: "task1", title: "Check Fuse Box", status: "Pending" },
-    { id: "task2", title: "Install Cabling", status: "Signed Off" },
-  ];
+  const { tasks, loading } = useTasks(locomotiveId, wmsId);
 
   const fields = [
     { label: "Title", key: "title", type: "text" },
-    { label: "Status", key: "status", type: "select", options: ["Pending", "Signed Off"] },
+    { label: "Status", key: "status", type: "select", options: ["Pending", "In Progress", "Completed", "Signed Off"] },
   ];
 
   const applyFilters = (query) => setFilters(query);
   const clearFilters = () => setFilters({});
 
-  const filtered = data.filter((item) => {
+  const filtered = tasks.filter((item) => {
     return (!filters.rules || filters.rules.every(r => {
       const val = item[r.field]?.toString().toLowerCase();
       const q = r.value.toString().toLowerCase();
@@ -45,27 +42,31 @@ const TaskListPage = () => {
       dataIndex: "status",
       key: "status",
       render: (status) => (
-        <Tag color={status === "Signed Off" ? "green" : "orange"}>{status}</Tag>
+        <Tag color={status === "Completed" ? "blue" : status === "Signed Off" ? "green" : "orange"}>
+          {status}
+        </Tag>
       ),
     },
     {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <Button type="link" onClick={() => navigate(`/tasks/${locomotiveId}/wms/${wmsId}/task/${record.id}`)}>
+        <Button type="link" onClick={() => navigate(`/tasks/${locomotiveId}/wms/${wmsId}/task/${record.taskId}`)}>
           View Subtasks
         </Button>
       ),
     },
   ];
 
+  if (loading) return <div>Loading Tasks...</div>;
+
   return (
     <PageLayout>
-    <div className="p-6 bg-white min-h-screen">
-      <Title level={3}>Tasks for WMS: {wmsId}</Title>
-      <QueryBuilder fields={fields} onApply={applyFilters} onClear={clearFilters} />
-      <Table rowKey="id" columns={columns} dataSource={filtered} bordered />
-    </div>
+      <div className="p-6 bg-white min-h-screen">
+        <Title level={3}>Tasks for WMS: {wmsId}</Title>
+        <QueryBuilder fields={fields} onApply={applyFilters} onClear={clearFilters} />
+        <Table rowKey="taskId" columns={columns} dataSource={filtered} bordered />
+      </div>
     </PageLayout>
   );
 };

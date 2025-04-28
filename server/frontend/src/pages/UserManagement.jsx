@@ -1,295 +1,246 @@
+// src/pages/UserManagement.jsx
 import { useState, useEffect } from "react";
-import {
-  Table,
-  Button,
-  Modal,
-  Form,
-  Input,
-  Select,
-  message,
-  Typography,
-  Popconfirm,
-  Tag,
-  Dropdown,
-} from "antd";
-import {
-  EyeOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  PlusOutlined,
-  DownOutlined,
-  FilterOutlined,
-} from "@ant-design/icons";
-import { saveAs } from "file-saver";
-import { unparse } from "papaparse";
+import { Table, Button, Modal, Form, Input, Select, message, Popconfirm } from "antd";
+import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import PageLayout from "../components/PageLayout";
+import { fetchUsers, addUser, deleteUser, updateUser } from "../mock/mockApi";
 
-const roles = ["Admin", "Supervisor", "Engineer"];
-const currentRole = (localStorage.getItem("role") || "").trim();
-const currentEmail = (localStorage.getItem("email") || "").trim();
+const { Option } = Select;
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
-  const [editingUser, setEditingUser] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [form] = Form.useForm();
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const [activeRoleFilter, setActiveRoleFilter] = useState("All");
-  const [columnVisibility, setColumnVisibility] = useState({
-    name: true,
-    email: true,
-    role: true,
-  });
+  const [filterRole, setFilterRole] = useState("All");
+  const [filterDiscipline, setFilterDiscipline] = useState("All");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [form] = Form.useForm();
+
+  const loadUsers = async () => {
+    const data = await fetchUsers();
+    setUsers([...data]);
+    setFilteredUsers([...data]);
+  };
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("userList"));
-    if (stored?.length) {
-      setUsers(stored);
-    } else {
-      const initial = [
-        { id: 1, name: "Admin User", email: "admin@example.com", role: "Admin" },
-        { id: 2, name: "Supervisor Jane", email: "jane@company.com", role: "Supervisor" },
-        { id: 3, name: "Engineer John", email: "john@company.com", role: "Engineer" }
-      ];
-      localStorage.setItem("userList", JSON.stringify(initial));
-      setUsers(initial);
-    }
+    loadUsers();
   }, []);
 
-  const openModal = (user = null) => {
-    setEditingUser(user);
-    if (user) form.setFieldsValue(user);
-    else form.resetFields();
+  const applyFilters = () => {
+    let filtered = [...users];
+    if (filterRole !== "All") {
+      filtered = filtered.filter((user) => user.role === filterRole);
+    }
+    if (filterDiscipline !== "All") {
+      filtered = filtered.filter((user) => user.discipline === filterDiscipline);
+    }
+    if (searchText.trim() !== "") {
+      filtered = filtered.filter(
+        (user) =>
+          user.name.toLowerCase().includes(searchText.toLowerCase()) ||
+          user.email.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
+    setFilteredUsers(filtered);
+  };
+
+  const openAddUserModal = () => {
+    setEditingUser(null);
+    form.resetFields();
     setIsModalVisible(true);
   };
 
-  const handleSave = async () => {
-    const values = await form.validateFields();
+  const openEditUserModal = (user) => {
+    setEditingUser(user);
+    form.setFieldsValue(user);
+    setIsModalVisible(true);
+  };
 
-    if (!editingUser && currentRole !== "Admin") {
-      message.error("Only Admins can add users.");
-      return;
-    }
-
-    if (
-      editingUser &&
-      currentRole === "Supervisor" &&
-      editingUser.email !== currentEmail
-    ) {
-      message.error("Supervisors can only edit their profile.");
-      return;
-    }
-
-    let updatedUsers = [...users];
-    if (editingUser) {
-      const index = users.findIndex((u) => u.id === editingUser.id);
-      updatedUsers[index] = { ...editingUser, ...values };
-      message.success("User updated");
+  const handleDeleteUser = async (userId) => {
+    const success = await deleteUser(userId);
+    if (success) {
+      message.success("User deleted successfully!");
+      await loadUsers();
     } else {
-      updatedUsers.push({ ...values, id: Date.now() });
-      message.success("User created");
+      message.error("Failed to delete user.");
     }
+  };
 
-    setUsers(updatedUsers);
-    localStorage.setItem("userList", JSON.stringify(updatedUsers));
+  const handleFinish = async (values) => {
+    if (editingUser) {
+      await updateUser(editingUser.id, values);
+      message.success("User updated successfully!");
+    } else {
+      const newUser = {
+        ...values,
+        id: `user-${Math.floor(1000 + Math.random() * 9000)}`,
+        createdDate: new Date().toISOString().split("T")[0],
+      };
+      await addUser(newUser);
+      message.success("User added successfully!");
+    }
     setIsModalVisible(false);
+    await loadUsers();
   };
 
-  const handleDelete = (id) => {
-    const updated = users.filter((u) => u.id !== id);
-    setUsers(updated);
-    localStorage.setItem("userList", JSON.stringify(updated));
-    message.success("User deleted");
-  };
-
-  const canEdit = (user) => {
-    if (currentRole === "Admin") return true;
-    if (currentRole === "Supervisor") {
-      return user.email === currentEmail;
-    }
-    return false;
-  };
-
-  const exportToCSV = () => {
-    const csv = unparse(users);
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    saveAs(blob, "user_data.csv");
-  };
-
-  const filteredUsers = users.filter(
-    (user) =>
-      user.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchText.toLowerCase())
-  );
-
-  const roleFilteredUsers = filteredUsers.filter((user) =>
-    activeRoleFilter === "All" ? true : user.role === activeRoleFilter
-  );
-
-  const visibleColumns = [];
-
-  if (columnVisibility.name) {
-    visibleColumns.push({
+  const columns = [
+    {
       title: "Name",
       dataIndex: "name",
+      key: "name",
       sorter: (a, b) => a.name.localeCompare(b.name),
-    });
-  }
-
-  if (columnVisibility.email) {
-    visibleColumns.push({
+    },
+    {
       title: "Email",
       dataIndex: "email",
-      sorter: (a, b) => a.email.localeCompare(b.email),
-    });
-  }
-
-  if (columnVisibility.role) {
-    visibleColumns.push({
+      key: "email",
+    },
+    {
       title: "Role",
       dataIndex: "role",
-    });
-  }
-
-  visibleColumns.push({
-    title: "Actions",
-    render: (_, record) => (
-      <>
-        <Button icon={<EyeOutlined />} onClick={() => openModal(record)} style={{ marginRight: 8 }} />
-        {canEdit(record) && (
-          <Button icon={<EditOutlined />} onClick={() => openModal(record)} style={{ marginRight: 8 }} />
-        )}
-        {currentRole === "Admin" && (
-          <Popconfirm title="Delete user?" onConfirm={() => handleDelete(record.id)}>
-            <Button danger icon={<DeleteOutlined />} />
+      key: "role",
+      filters: [
+        { text: "Admin", value: "Admin" },
+        { text: "Supervisor", value: "Supervisor" },
+        { text: "Engineer", value: "Engineer" },
+      ],
+      onFilter: (value, record) => record.role === value,
+    },
+    {
+      title: "Discipline",
+      dataIndex: "discipline",
+      key: "discipline",
+      filters: [
+        { text: "Electrical", value: "Electrical" },
+        { text: "Mechanical", value: "Mechanical" },
+        { text: "Software", value: "Software" },
+        { text: "Quality", value: "Quality" },
+        { text: "Mechanical Electrical", value: "Mechanical Electrical" },
+      ],
+      onFilter: (value, record) => record.discipline === value,
+    },
+    {
+      title: "Created Date",
+      dataIndex: "createdDate",
+      key: "createdDate",
+      sorter: (a, b) => new Date(a.createdDate) - new Date(b.createdDate),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <>
+          <Button icon={<EditOutlined />} onClick={() => openEditUserModal(record)} type="link">
+            Edit
+          </Button>
+          <Popconfirm title="Are you sure to delete this user?" onConfirm={() => handleDeleteUser(record.id)}>
+            <Button icon={<DeleteOutlined />} type="link" danger>
+              Delete
+            </Button>
           </Popconfirm>
-        )}
-      </>
-    ),
-  });
-
-  const queryMenu = (
-    <div
-      style={{
-        padding: 16,
-        maxWidth: 300,
-        backgroundColor: "#f0f2f5", // background 
-        borderRadius: 8,
-        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)"
-      }}
-    >
-      <Input.Search
-        placeholder="Search by name or email"
-        allowClear
-        onChange={(e) => setSearchText(e.target.value)}
-        style={{ marginBottom: 16, width: "100%" }}
-      />
-  
-      <div style={{ marginBottom: 16 }}>
-        <strong>Filter by Role:</strong><br />
-        {["All", "Admin", "Supervisor", "Engineer"].map((role) => (
-          <Tag.CheckableTag
-            key={role}
-            checked={activeRoleFilter === role}
-            onChange={() => setActiveRoleFilter(role)}
-          >
-            {role}
-          </Tag.CheckableTag>
-        ))}
-      </div>
-  
-      <div style={{ marginBottom: 16 }}>
-        <strong>Visible Columns:</strong><br />
-        {Object.keys(columnVisibility).map((colKey) => (
-          <label key={colKey} style={{ display: "inline-block", marginBottom: 8 }}>
-            <input
-              type="checkbox"
-              checked={columnVisibility[colKey]}
-              onChange={(e) =>
-                setColumnVisibility({
-                  ...columnVisibility,
-                  [colKey]: e.target.checked,
-                })
-              }
-            />{" "}
-            {colKey.charAt(0).toUpperCase() + colKey.slice(1)}
-          </label>
-        ))}
-      </div>
-  
-      <Button block onClick={exportToCSV}>
-        Export to CSV
-      </Button>
-    </div>
-  );
-  
+        </>
+      ),
+    },
+  ];
 
   return (
     <PageLayout>
-    <div style={{ padding: 24 }}>
-      <Typography.Title level={2}>User Management</Typography.Title>
-
-      <div style={{ marginBottom: 24, display: "flex", justifyContent: "space-between" }}>
-        {currentRole === "Admin" && (
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => openModal()}
-          >
+      <div className="p-6 bg-white min-h-screen">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">User Management</h2>
+          <Button type="primary" icon={<PlusOutlined />} onClick={openAddUserModal}>
             Add User
           </Button>
-        )}
+        </div>
 
-        <Dropdown overlay={queryMenu} trigger={["click"]} placement="bottomRight">
-          <Button icon={<FilterOutlined />}>
-            Query Options <DownOutlined />
-          </Button>
-        </Dropdown>
+        {/* Filter Section */}
+        <div className="flex gap-4 mb-4">
+          <Select
+            value={filterRole}
+            onChange={(val) => { setFilterRole(val); applyFilters(); }}
+            style={{ width: 180 }}
+          >
+            <Option value="All">All Roles</Option>
+            <Option value="Admin">Admin</Option>
+            <Option value="Supervisor">Supervisor</Option>
+            <Option value="Engineer">Engineer</Option>
+          </Select>
+
+          <Select
+            value={filterDiscipline}
+            onChange={(val) => { setFilterDiscipline(val); applyFilters(); }}
+            style={{ width: 220 }}
+          >
+            <Option value="All">All Disciplines</Option>
+            <Option value="Electrical">Electrical</Option>
+            <Option value="Mechanical">Mechanical</Option>
+            <Option value="Software">Software</Option>
+            <Option value="Quality">Quality</Option>
+            <Option value="Mechanical Electrical">Mechanical Electrical</Option>
+          </Select>
+
+          <Input.Search
+            value={searchText}
+            onChange={(e) => { setSearchText(e.target.value); applyFilters(); }}
+            placeholder="Search by Name or Email"
+            allowClear
+            style={{ width: 240 }}
+          />
+        </div>
+
+        {/* User Table */}
+        <Table
+          rowKey="id"
+          columns={columns}
+          dataSource={filteredUsers}
+          bordered
+          pagination={{ pageSize: 8 }}
+        />
+
+        {/* Add/Edit User Modal */}
+        <Modal
+          title={editingUser ? "Edit User" : "Add User"}
+          open={isModalVisible}
+          onCancel={() => setIsModalVisible(false)}
+          footer={null}
+        >
+          <Form form={form} layout="vertical" onFinish={handleFinish}>
+            <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item name="email" label="Email" rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item name="password" label="Password" rules={[{ required: true }]}>
+              <Input.Password />
+            </Form.Item>
+            <Form.Item name="role" label="Role" rules={[{ required: true }]}>
+              <Select placeholder="Select Role">
+                <Option value="Admin">Admin</Option>
+                <Option value="Supervisor">Supervisor</Option>
+                <Option value="Engineer">Engineer</Option>
+              </Select>
+            </Form.Item>
+            <Form.Item name="discipline" label="Discipline" rules={[{ required: true }]}>
+              <Select placeholder="Select Discipline">
+                <Option value="Electrical">Electrical</Option>
+                <Option value="Mechanical">Mechanical</Option>
+                <Option value="Software">Software</Option>
+                <Option value="Quality">Quality</Option>
+                <Option value="Mechanical Electrical">Mechanical Electrical</Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item>
+              <Button type="primary" htmlType="submit" block>
+                {editingUser ? "Update User" : "Add User"}
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+
       </div>
-
-      <Table
-        rowKey="id"
-        dataSource={roleFilteredUsers}
-        columns={visibleColumns}
-        pagination={{ pageSize: 5 }}
-      />
-
-      <Modal
-        title={editingUser ? "Edit User" : "Add User"}
-        open={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
-        onOk={handleSave}
-        okText="Save"
-      >
-        <Form layout="vertical" form={form}>
-          <Form.Item
-            name="name"
-            label="Name"
-            rules={[{ required: true }, { max: 50 }]}
-          >
-            <Input placeholder="Full name" />
-          </Form.Item>
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[{ required: true }, { type: "email" }]}
-          >
-            <Input placeholder="Email address" disabled={editingUser && currentRole !== "Admin"} />
-          </Form.Item>
-          <Form.Item
-            name="role"
-            label="Role"
-            rules={[{ required: true }]}
-          >
-            <Select disabled={currentRole !== "Admin"}>
-              {roles.map((r) => (
-                <Select.Option key={r} value={r}>{r}</Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Form>
-      </Modal>
-    </div>
     </PageLayout>
   );
 };
