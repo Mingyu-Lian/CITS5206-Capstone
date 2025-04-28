@@ -1,29 +1,29 @@
 import React, { useState } from "react";
-import { Flex, Layout } from 'antd';
-import axios from "axios";
-import InstructionsTab from "./task-tabs/instruction-tab.jsx"
-import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons"
-
-// import ComponentsTab from "./task-tabs/components-tab"
-import NotesTab from "./task-tabs/notes-tab"
-import UserPhotosTab from "./task-tabs/user-photos-tab"
-import { Button, Typography, Select, Tabs, Badge } from 'antd';
+import { useParams, useNavigate } from "react-router-dom";
+import { Layout, Tabs, Badge, Button } from 'antd';
+import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import InstructionsTab from "./task-tabs/instruction-tab.jsx";
+import NotesTab from "./task-tabs/notes-tab.jsx";
+import UserPhotosTab from "./task-tabs/user-photos-tab.jsx";
 import "./Taskdetail.css";
-const { Header, Footer, Sider, Content } = Layout
+
+
+const { Header, Footer, Sider, Content } = Layout;
+
 const Taskdetail = () => {
-  const { Option } = Select;
-  const [activeTab, setActiveTab] = useState("instructions")
+  const { subtaskId } = useParams();      // ✨ get subtaskId from URL
+  const navigate = useNavigate();         // ✨ for "Back" button
+  const [activeTab, setActiveTab] = useState("instructions");
 
   const handleTabChange = (key) => {
-    setActiveTab(key)
-  }
+    setActiveTab(key);
+  };
+
+  const handleBack = () => {
+    navigate(-1); // go back to previous page
+  };
 
   const headerStyle = {
-    // textAlign: 'center',
-    // color: '#fff',
-    // height: 64,
-    // paddingInline: 48,
-    // lineHeight: '64px',
     backgroundColor: '#bf8c8c',
   };
   const contentStyle = {
@@ -34,14 +34,10 @@ const Taskdetail = () => {
     backgroundColor: '#2e2d2d',
   };
   const siderStyle = {
-    // textAlign: 'center',
     lineHeight: '120px',
     color: '#fff',
     backgroundColor: '#807c7c',
     width: "10%",
-    color: '#fff',
-
-
   };
   const footerStyle = {
     textAlign: 'center',
@@ -55,25 +51,23 @@ const Taskdetail = () => {
     maxWidth: 'calc(100% - 8px)',
     height: '100%',
   };
+
   return (
     <div className="taskdetail-container">
       <Layout style={layoutStyle}>
-        <Header style={headerStyle} className="">
+        <Header style={headerStyle}>
           <div className="task-header">
-
             <div className="task-title">
-              1.1 Sign on to permit of isolation and lock on
+              Subtask: {subtaskId} {/* ✨ show the subtask ID dynamically */}
             </div>
 
             <div className="task-role">
-              <span>Role:</span>
-              Permit Officer
+              <span>Role:</span> Permit Officer {/* Hardcoded for now */}
             </div>
-            <div className="">Completed by Ross Richardson on 18-Feb-19 17:03</div>
-
+            <div>Completed by Ross Richardson on 18-Feb-19 17:03</div> {/* Hardcoded for now */}
           </div>
-
         </Header>
+
         <Layout>
           <Sider style={siderStyle}>
             <Tabs
@@ -107,7 +101,7 @@ const Taskdetail = () => {
                   key: "userPhotos",
                   label: (
                     <span>
-                      User Photos <Badge count={0} showZero className="ml-1" />
+                      User Photos <Badge count={0} showZero />
                     </span>
                   ),
                   children: null,
@@ -115,36 +109,56 @@ const Taskdetail = () => {
               ]}
             />
           </Sider>
+
           <Content style={contentStyle}>
             <div className="flex">
               <div className="flex-1 mr-4">
                 {activeTab === "instructions" && <InstructionsTab />}
-                {/* {activeTab === "components" && <ComponentsTab />}*/}
+                {/* {activeTab === "components" && <ComponentsTab />} */}
                 {activeTab === "notes" && <NotesTab />}
                 {activeTab === "userPhotos" && <UserPhotosTab />}
               </div>
             </div>
           </Content>
         </Layout>
+
         <Footer className="task-footer">
-          <Button type="primary" className="w-[120px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowLeftOutlined />}>
-            Previous
+          <Button 
+            type="primary" 
+            onClick={handleBack} 
+            className="w-[120px] bg-[#d32f2f] hover:bg-[#b71c1c]" 
+            icon={<ArrowLeftOutlined />}
+          >
+            Back
           </Button>
 
-          <Button type="primary" className="w-[150px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowLeftOutlined />}>
+          <Button 
+            type="primary" 
+            className="w-[150px] bg-[#d32f2f] hover:bg-[#b71c1c]" 
+            icon={<ArrowLeftOutlined />}
+          >
             Prev Permit Officer
           </Button>
 
-          <Button type="primary" className="w-[150px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowRightOutlined />}>
+          <Button 
+            type="primary" 
+            className="w-[150px] bg-[#d32f2f] hover:bg-[#b71c1c]" 
+            icon={<ArrowRightOutlined />}
+          >
             Next Permit Officer
           </Button>
 
-          <Button type="primary" className="w-[120px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowRightOutlined />}>
+          <Button 
+            type="primary" 
+            className="w-[120px] bg-[#d32f2f] hover:bg-[#b71c1c]" 
+            icon={<ArrowRightOutlined />}
+          >
             Next
           </Button>
-        </Footer>    </Layout>
-    </div >
-
+        </Footer>
+      </Layout>
+    </div>
   );
 };
+
 export default Taskdetail;

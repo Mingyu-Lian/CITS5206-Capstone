@@ -1,6 +1,6 @@
 // src/components/PageLayout.jsx
 import { Layout, Menu, Typography } from "antd";
-import { UserOutlined, DashboardOutlined, LogoutOutlined, FolderOpenOutlined, CheckCircleOutlined } from "@ant-design/icons";
+import { DashboardOutlined, LogoutOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const { Header, Content } = Layout;
@@ -13,7 +13,6 @@ const PageLayout = ({ children }) => {
 
   const menuItems = [
     { label: "Dashboard", key: "/dashboard", icon: <DashboardOutlined /> },
-    { label: "Project Management", key: "/projects", icon: <FolderOpenOutlined /> },
     { label: "Task Management", key: "/tasks", icon: <CheckCircleOutlined /> },
     { label: "Logout", key: "logout", icon: <LogoutOutlined /> },
   ];

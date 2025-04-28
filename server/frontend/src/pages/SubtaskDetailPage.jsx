@@ -14,15 +14,16 @@ import {
   Col,
   Progress,
   message,
-  Space
+  Space,
+  Select
 } from "antd";
 import { UploadOutlined, FileSearchOutlined, CheckCircleTwoTone } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
 import PageLayout from "../components/PageLayout";
 
-
 const { Title, Text } = Typography;
+const { Option } = Select;
 
 const SubtaskDetailPage = () => {
   const { taskId } = useParams();
@@ -30,9 +31,12 @@ const SubtaskDetailPage = () => {
   const [filters, setFilters] = useState({});
   const [formData, setFormData] = useState({});
   const [completed, setCompleted] = useState({});
+  const [assignedEngineers, setAssignedEngineers] = useState({});
 
   const role = localStorage.getItem("role");
   const userDiscipline = localStorage.getItem("discipline");
+
+  const engineers = ["Engineer A", "Engineer B", "Engineer C"];
 
   const data = [
     { id: "sub1", instruction: "Verify voltage levels.", result: "", signedOff: false, discipline: "Electrical" },
@@ -64,7 +68,12 @@ const SubtaskDetailPage = () => {
   };
 
   const handleViewRedirect = (subId) => {
-    navigate(`/task-tabs/instruction-tab?subtaskId=${subId}`);
+    navigate(`/taskdetail/${subId}`);
+  };
+
+  const handleAssignEngineer = (subId, engineer) => {
+    setAssignedEngineers(prev => ({ ...prev, [subId]: engineer }));
+    message.success(`Engineer assigned to subtask ${subId}`);
   };
 
   const filtered = data.filter((item) => {
@@ -94,71 +103,86 @@ const SubtaskDetailPage = () => {
 
   return (
     <PageLayout>
-    <div className="p-8 bg-gray-100 min-h-screen">
-      <div className="flex items-center justify-between mb-6">
-        <Title level={2}>Subtasks for Task: {taskId}</Title>
-        <Progress type="circle" percent={percent} width={60} strokeColor="#52c41a" />
+      <div className="p-8 bg-gray-100 min-h-screen">
+        <div className="flex items-center justify-between mb-6">
+          <Title level={2}>Subtasks for Task: {taskId}</Title>
+          <Progress type="circle" percent={percent} width={60} strokeColor="#52c41a" />
+        </div>
+
+        <QueryBuilder fields={fields} onApply={applyFilters} onClear={clearFilters} />
+
+        <Row gutter={[24, 24]}>
+          {filtered.map((sub) => {
+            const currentData = formData[sub.id] || {};
+            const disabled = isSignOffDisabled(sub.discipline);
+            return (
+              <Col xs={24} sm={24} md={12} key={sub.id}>
+                <Card
+                  title={<Text strong>{`Subtask ID: ${sub.id}`}</Text>}
+                  extra={
+                    <Space>
+                      {completed[sub.id] && <CheckCircleTwoTone twoToneColor="#52c41a" />}
+                      <Tooltip title="Go to Task Details">
+                        <Button icon={<FileSearchOutlined />} onClick={() => handleViewRedirect(sub.id)} />
+                      </Tooltip>
+                    </Space>
+                  }
+                  className="shadow-md rounded-xl border border-gray-200 hover:shadow-lg transition-all"
+                >
+                  <Form layout="vertical">
+                    <Form.Item label={<Text strong>Instruction</Text>}>
+                      <Text>{sub.instruction}</Text>
+                    </Form.Item>
+
+                    {role === "Supervisor" && (
+                      <Form.Item label="Assign Engineer">
+                        <Select
+                          placeholder="Assign Engineer"
+                          value={assignedEngineers[sub.id]}
+                          onChange={(value) => handleAssignEngineer(sub.id, value)}
+                        >
+                          {engineers.map((eng) => (
+                            <Option key={eng} value={eng}>{eng}</Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    )}
+
+                    <Form.Item label="Result / Notes">
+                      <Input.TextArea
+                        rows={3}
+                        placeholder="Enter result or notes"
+                        value={currentData.result || ""}
+                        onChange={(e) => handleInputChange(sub.id, "result", e.target.value)}
+                        disabled={disabled}
+                      />
+                    </Form.Item>
+                    <Form.Item label="Attachment">
+                      <Upload disabled={disabled}>
+                        <Button icon={<UploadOutlined />} disabled={disabled}>Upload Image/Video</Button>
+                      </Upload>
+                    </Form.Item>
+                    <Form.Item>
+                      <Checkbox
+                        checked={currentData.signedOff || false}
+                        onChange={(e) => handleInputChange(sub.id, "signedOff", e.target.checked)}
+                        disabled={disabled}
+                      >
+                        Mark as Signed Off
+                      </Checkbox>
+                    </Form.Item>
+                    <Form.Item>
+                      <Button type="primary" onClick={() => handleSave(sub.id)} disabled={disabled}>
+                        Save Subtask
+                      </Button>
+                    </Form.Item>
+                  </Form>
+                </Card>
+              </Col>
+            );
+          })}
+        </Row>
       </div>
-
-      <QueryBuilder fields={fields} onApply={applyFilters} onClear={clearFilters} />
-
-      <Row gutter={[24, 24]}>
-        {filtered.map((sub) => {
-          const currentData = formData[sub.id] || {};
-          const disabled = isSignOffDisabled(sub.discipline);
-          return (
-            <Col xs={24} sm={24} md={12} key={sub.id}>
-              <Card
-                title={<Text strong>{`Subtask ID: ${sub.id}`}</Text>}
-                extra={
-                  <Space>
-                    {completed[sub.id] && <CheckCircleTwoTone twoToneColor="#52c41a" />}
-                    <Tooltip title="Go to Task Details">
-                      <Button icon={<FileSearchOutlined />} onClick={() => handleViewRedirect(sub.id)} />
-                    </Tooltip>
-                  </Space>
-                }
-                className="shadow-md rounded-xl border border-gray-200 hover:shadow-lg transition-all"
-              >
-                <Form layout="vertical">
-                  <Form.Item label={<Text strong>Instruction</Text>}>
-                    <Text>{sub.instruction}</Text>
-                  </Form.Item>
-                  <Form.Item label="Result / Notes">
-                    <Input.TextArea
-                      rows={3}
-                      placeholder="Enter result or notes"
-                      value={currentData.result || ""}
-                      onChange={(e) => handleInputChange(sub.id, "result", e.target.value)}
-                      disabled={disabled}
-                    />
-                  </Form.Item>
-                  <Form.Item label="Attachment">
-                    <Upload disabled={disabled}>
-                      <Button icon={<UploadOutlined />} disabled={disabled}>Upload Image/Video</Button>
-                    </Upload>
-                  </Form.Item>
-                  <Form.Item>
-                    <Checkbox
-                      checked={currentData.signedOff || false}
-                      onChange={(e) => handleInputChange(sub.id, "signedOff", e.target.checked)}
-                      disabled={disabled}
-                    >
-                      Mark as Signed Off
-                    </Checkbox>
-                  </Form.Item>
-                  <Form.Item>
-                    <Button type="primary" onClick={() => handleSave(sub.id)} disabled={disabled}>
-                      Save Subtask
-                    </Button>
-                  </Form.Item>
-                </Form>
-              </Card>
-            </Col>
-          );
-        })}
-      </Row>
-    </div>
     </PageLayout>
   );
 };

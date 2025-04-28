@@ -25,15 +25,6 @@ const DashboardLayout = ({ children }) => {
     });
   }
 
-   //Project Management menu item (for all roles)
-   if (["Admin", "Supervisor", "Engineer"].includes(role)) {
-    menuItems.push({
-      label: "Project Management",
-      key: "/projects",
-      icon: <FolderOpenOutlined />,
-    });
-  }
-
   //Task Management for all roles
   if (["Admin", "Supervisor", "Engineer"].includes(role)) {
     menuItems.push({
