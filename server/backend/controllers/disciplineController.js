@@ -1,9 +1,9 @@
 const { Discipline } = require("../models/DBschema");
 
-// List all disciplines
+// List all active disciplines (short)
 const getAllDisciplines = async (req, res) => {
   try {
-    const disciplines = await Discipline.find();
+    const disciplines = await Discipline.find({ isActive: true }).select('name client isActive');
     res.json(disciplines);
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
@@ -14,7 +14,7 @@ const getAllDisciplines = async (req, res) => {
 const getDisciplineById = async (req, res) => {
   try {
     const discipline = await Discipline.findById(req.params.id);
-    if (!discipline) return res.status(404).json({ message: "Not found" });
+    if (!discipline) return res.status(404).json({ message: "Discipline not found" });
     res.json(discipline);
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
@@ -23,36 +23,33 @@ const getDisciplineById = async (req, res) => {
 
 // Create a new discipline
 const createDiscipline = async (req, res) => {
-    const { name, description } = req.body;
-  
-    try {
-      const discipline = await Discipline.create({ name, description });
-      res.status(201).json({
-        message: "Discipline created successfully",
-        _id: discipline._id,
-        name: discipline.name,
-        description: discipline.description,
-      });
-    } catch (error) {
-      console.error("Error creating discipline:", error);
-      res.status(500).json({ message: "Server error", error });
-    }
-  };
-// Update discipline
-const updateDiscipline = async (req, res) => {
+  const { name, description, client } = req.body;
+
   try {
-    await Discipline.findByIdAndUpdate(req.params.id, req.body);
-    res.json({ message: "Discipline updated successfully" });
+    const discipline = await Discipline.create({ name, description, client });
+    res.status(201).json({
+      message: "Discipline created successfully",
+      discipline,
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }
 };
 
-// Delete discipline
-const deleteDiscipline = async (req, res) => {
+// Update discipline (PATCH)
+const updateDiscipline = async (req, res) => {
   try {
-    await Discipline.findByIdAndDelete(req.params.id);
-    res.json({ message: "Discipline deleted successfully" });
+    const updatedDiscipline = await Discipline.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    if (!updatedDiscipline) return res.status(404).json({ message: "Discipline not found" });
+
+    res.json({
+      message: "Discipline updated successfully",
+      discipline: updatedDiscipline,
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }
@@ -63,5 +60,4 @@ module.exports = {
   getDisciplineById,
   createDiscipline,
   updateDiscipline,
-  deleteDiscipline,
 };

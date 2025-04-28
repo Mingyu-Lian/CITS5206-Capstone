@@ -6,7 +6,6 @@ const {
   getDisciplineById,
   createDiscipline,
   updateDiscipline,
-  deleteDiscipline,
 } = require("../controllers/disciplineController");
 
 /**
@@ -20,33 +19,26 @@ const {
  * @swagger
  * /api/disciplines:
  *   get:
- *     summary: List all disciplines
+ *     summary: List all active disciplines (short)
  *     tags: [Disciplines]
  *     responses:
  *       200:
- *         description: An array of disciplines
- *       500:
- *         description: Server error
- */
-
-/**
- * @swagger
- * /api/disciplines/{id}:
- *   get:
- *     summary: Retrieve a specific discipline by id
- *     tags: [Disciplines]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: Discipline id
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: A discipline object
- *       404:
- *         description: Discipline not found
+ *         description: List of active disciplines
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                   name:
+ *                     type: string
+ *                   client:
+ *                     type: string
+ *                   isActive:
+ *                     type: boolean
  *       500:
  *         description: Server error
  */
@@ -57,6 +49,8 @@ const {
  *   post:
  *     summary: Create a new discipline
  *     tags: [Disciplines]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -65,14 +59,14 @@ const {
  *             type: object
  *             required:
  *               - name
- *               - description
+ *               - client
  *             properties:
  *               name:
  *                 type: string
- *                 example: Mechanical
  *               description:
  *                 type: string
- *                 example: Mechanical discipline description
+ *               client:
+ *                 type: string
  *     responses:
  *       201:
  *         description: Discipline created successfully
@@ -83,18 +77,40 @@ const {
 /**
  * @swagger
  * /api/disciplines/{id}:
- *   put:
- *     summary: Update a discipline
+ *   get:
+ *     summary: Get a specific discipline
  *     tags: [Disciplines]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Discipline id
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Discipline object
+ *       404:
+ *         description: Discipline not found
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * /api/disciplines/{id}:
+ *   patch:
+ *     summary: Update a discipline
+ *     tags: [Disciplines]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
  *         schema:
  *           type: string
  *     requestBody:
- *       description: Discipline update data
+ *       description: Fields to update
  *       required: true
  *       content:
  *         application/json:
@@ -103,42 +119,25 @@ const {
  *             properties:
  *               name:
  *                 type: string
- *                 example: Updated Mechanical
  *               description:
  *                 type: string
- *                 example: Updated discipline description
+ *               client:
+ *                 type: string
+ *               isActive:
+ *                 type: boolean
  *     responses:
  *       200:
  *         description: Discipline updated successfully
+ *       404:
+ *         description: Discipline not found
  *       500:
  *         description: Server error
  */
 
-/**
- * @swagger
- * /api/disciplines/{id}:
- *   delete:
- *     summary: Delete a discipline
- *     tags: [Disciplines]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: Discipline id
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Discipline deleted successfully
- *       500:
- *         description: Server error
- */
-
-// Route definitions
+// Routes
 router.get("/", getAllDisciplines);
+router.post("/", authenticate, authorize(["admin"]), createDiscipline);
 router.get("/:id", getDisciplineById);
-router.post("/",authenticate, authorize(["admin", "supervisor"]), createDiscipline);
-router.put("/:id",authenticate, authorize(["admin", "supervisor"]), updateDiscipline);
-router.delete("/:id", deleteDiscipline);
+router.patch("/:id", authenticate, authorize(["admin"]), updateDiscipline);
 
 module.exports = router;
