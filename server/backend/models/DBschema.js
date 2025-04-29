@@ -189,13 +189,13 @@ const disciplineSchema = new mongoose.Schema({
 
 // Logs Schema
 const logSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    action: { type: String, required: true },
-    locoID: { type: mongoose.Schema.Types.ObjectId, ref: "LocoType" },
-    details: { type: String },
-    actionTime: { type: Date, required: true },
-    recordTime: { type: Date, default: Date.now },
-    ip: { type: String }
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  action: { type: String, required: true },
+  locoID: { type: mongoose.Schema.Types.ObjectId, ref: "Asset" },
+  details: { type: String },
+  actionTime: { type: Date, required: true },
+  recordTime: { type: Date, default: Date.now },
+  ip: { type: String },
 });
 
 // Exporting Models
