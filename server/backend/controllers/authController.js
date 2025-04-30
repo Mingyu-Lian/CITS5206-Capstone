@@ -48,14 +48,13 @@ const register = async (req, res) => {
     const passwordHash = await bcrypt.hash(password, 10);
     
     // Find disciplines by name
-    const disciplineDocs = await Discipline.find({ name: { $in: disciplines } });
-    if (disciplineDocs.length !== disciplines.length) {
+    const disciplineDocs = await Discipline.find({ name: { $in: discipline } });
+    if (disciplineDocs.length !== discipline.length) {
       return res.status(400).json({ message: "One or more disciplines not found" });
     }
-
+    const disciplineIds = disciplineDocs.map(d => d._id);
     // Create user – note: _id, createdAt, and updatedAt are automatically handled by Mongoose
-    const user = await User.create({ username, personName, email, passwordHash, role, discipline });
-
+    const user = await User.create({ username, personName, email, passwordHash, role, discipline: disciplineIds});
     // Generate JWT token
     const token = jwt.sign(
       { id: user._id, role: user.role },
@@ -66,15 +65,7 @@ const register = async (req, res) => {
     // Include createdAt in the response
     res.status(201).json({
       token,
-      user: {
-        id: user._id,
-        username: user.username,
-        personName: user.personName,
-        email: user.email,
-        role: user.role,
-        disciplines: disciplineDocs.map(d => d.name), // Return discipline names
-        createdAt: user.createdAt,
-      },
+      user,
     });
     // Include createdAt in the response
     
