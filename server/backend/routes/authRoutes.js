@@ -8,7 +8,6 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *   name: Auth
  *   description: User authentication and registration
  */
-
 /**
  * @swagger
  * /api/auth/register:
@@ -42,44 +41,19 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *               role:
  *                 type: string
  *                 example: admin
- *              discipline:
- *                type: array
- *              items:
- *                type: string
- *              example: Mechanical
- * 
+ *               discipline:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["Mechanical"]
  *     responses:
  *       201:
  *         description: User registered successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 token:
- *                   type: string
- *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
- *                 user:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: 643d1f2e5f1b2c0012345678
- *                     username:
- *                       type: string
- *                       example: admin
- *                     email:
- *                       type: string
- *                       example: admin@example.com
- *                     role:
- *                       type: string
- *                       example: admin
  *       400:
  *         description: Registration error or invalid input
  *       500:
  *         description: Server error
  */
-
 /**
  * @swagger
  * /api/auth/login:
@@ -95,7 +69,6 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *             required:
  *               - username
  *               - password
- *               - discipline
  *             properties:
  *               username:
  *                 type: string
@@ -103,48 +76,14 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *               password:
  *                 type: string
  *                 example: 123456
- *             discipline:
- *              type: array
- *            items:
- *             type: string
- *           example: Mechanical
  *     responses:
  *       200:
  *         description: Login successful
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 token:
- *                   type: string
- *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
- *                 user:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: 643d1f2e5f1b2c0012345678
- *                     username:
- *                       type: string
- *                       example: admin
- *                     email:
- *                       type: string
- *                       example: admin@example.com
- *                     role:
- *                       type: string
- *                       example: admin
- *                 discipline:
- *                 type: array
- *               items:
- *               type: string
- *              example: Mechanical
  *       400:
  *         description: Invalid credentials or user not found
  *       500:
  *         description: Server error
  */
-
 /**
  * @swagger
  * /api/auth/me:
@@ -207,7 +146,6 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *       500:
  *         description: Server error
  */
-
 /**
  * @swagger
  * /api/auth/users:
@@ -241,15 +179,58 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *                       role:
  *                         type: string
  *                         example: admin
- *                     discipline:
- *                   type: array
- *                 items:
- *                  type: string
- *               example: Mechanical
+ *                       discipline:
+ *                         type: array
+ *                         items:
+ *                           type: string
+ *                         example: ["Mechanical"]
  *       500:
  *         description: Server error
  */
-
+/**
+ * @swagger
+ * /api/auth/users/{id}:
+ *   patch:
+ *     summary: Update a user
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: admin
+ *               email:
+ *                 type: string
+ *                 example: admin@example.com
+ *               role:
+ *                 type: string
+ *                 example: admin
+ *               discipline:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["Mechanical"]
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *       400:
+ *         description: Invalid input
+ *       500:
+ *         description: Server error
+ */
 // Define the routes with their corresponding controller functions
 router.post("/register", register);
 router.post("/login", login);
