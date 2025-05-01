@@ -8,19 +8,12 @@ import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import Dashboard from "./pages/Dashboard";
 import UserManagement from "./pages/UserManagement";
-<<<<<<< HEAD
-import ProjectManagement from "./pages/ProjectManagement";
-import TaskManagement from './pages/TaskManagement';
-import TaskDeatil from './pages/Task/Taskdetail';
-import CommissionDetail from './pages/Commission/CommissionDetail';
-
-=======
+import CommissionDetail from './pages/commission/CommissionDetail';
 import LocomotiveListPage from "./pages/LocomotiveListPage";
 import WMSListPage from "./pages/WMSListPage";
 import TaskListPage from "./pages/TaskListPage";
 import SubtaskDetailPage from "./pages/SubtaskDetailPage";
 import TaskDeatil from './pages/task/Taskdetail';
->>>>>>> dhanyavi-front
 
 function App() {
     return (
@@ -32,21 +25,14 @@ function App() {
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/users" element={<UserManagement />} />
-<<<<<<< HEAD
-                <Route path="/projects" element={<ProjectManagement />} />
-                <Route path="/tasks" element={<TaskManagement />} />
-                <Route path="/taskdetail" element={<TaskDeatil />} />
-                <Route path="/commissiondetail" element={<CommissionDetail />} />
-
-=======
                 <Route path="/tasks" element={<LocomotiveListPage />} />
                 <Route path="/tasks/:locomotiveId/wms" element={<WMSListPage />} />
                 <Route path="/tasks/:locomotiveId/wms/:wmsId" element={<TaskListPage />} />
                 <Route path="/tasks/:locomotiveId/wms/:wmsId/task/:taskId" element={<SubtaskDetailPage />} />
                 <Route path="/taskdetail/:subtaskId" element={<TaskDeatil />} />
+                <Route path="/commissiondetail" element={<CommissionDetail />} />
                 {/* Default redirect */}
                 <Route path="/" element={<Navigate to="/login" />} />
->>>>>>> dhanyavi-front
 
             </Routes>
         </Router>
