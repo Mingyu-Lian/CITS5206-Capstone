@@ -3,17 +3,16 @@ import { useState } from "react";
 import { Form, Input, Button, Select, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { isStrongPassword } from "../utils/validators";
-import users from "../mock/mockUsers"; // ✅ Import real users list
+import users from "../mock/mockUsers"; // ✅ Import mock users
 
 const { Option } = Select;
 
-// ✅ New real login function
 const mockLogin = async (username, password) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       const user = users.find(
         (u) => u.username.toLowerCase() === username.toLowerCase() && u.password === password
-      );      
+      );
       if (user) {
         resolve({
           data: {
@@ -22,7 +21,7 @@ const mockLogin = async (username, password) => {
             discipline: user.discipline,
             name: user.name,
             email: user.email,
-          }
+          },
         });
       } else {
         reject(new Error("Invalid username or password"));
@@ -34,26 +33,32 @@ const mockLogin = async (username, password) => {
 const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [form] = Form.useForm(); // Form instance
+  const [form] = Form.useForm();
+  const [showDiscipline, setShowDiscipline] = useState(true); // hide for admin
 
   const onFinish = async (values) => {
     if (!isStrongPassword(values.password)) {
-      return message.error("Weak password (must have uppercase, lowercase, number, and 8+ characters).");
-    }
-
-    if (!values.discipline && !isAdmin) {
-      return message.error("Please select a discipline.");
+      return message.error(
+        "Weak password (must have uppercase, lowercase, number, and 8+ characters)."
+      );
     }
 
     setLoading(true);
     try {
       const { data } = await mockLogin(values.username, values.password);
+
+      // Only require discipline if not Admin
+      if (data.role !== "Admin" && !values.discipline) {
+        setLoading(false);
+        return message.error("Please select a discipline.");
+      }
+
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
-      localStorage.setItem("discipline", data.discipline || "");
+      localStorage.setItem("discipline", data.discipline || values.discipline || "");
       localStorage.setItem("name", data.name || "");
       localStorage.setItem("email", data.email || "");
+
       message.success("Login successful!");
 
       switch (data.role) {
@@ -78,11 +83,14 @@ const Login = () => {
 
   const handleValuesChange = (changedValues) => {
     if (changedValues.username !== undefined) {
-      const username = changedValues.username.toLowerCase();
-      if (username.includes("admin")) {
-        setIsAdmin(true);
+      const enteredUser = users.find(
+        (u) => u.username.toLowerCase() === changedValues.username.toLowerCase()
+      );
+      if (enteredUser?.role === "Admin") {
+        setShowDiscipline(false);
+        form.setFieldsValue({ discipline: undefined });
       } else {
-        setIsAdmin(false);
+        setShowDiscipline(true);
       }
     }
   };
@@ -112,39 +120,29 @@ const Login = () => {
           <Input.Password />
         </Form.Item>
 
-        <Form.Item
-          name="discipline"
-          label="Select Discipline"
-          rules={[{ required: false }]}
-        >
-          <Select
-            placeholder={isAdmin ? "Discipline not required for Admin" : "Select a discipline"}
-            disabled={isAdmin}
+        {showDiscipline && (
+          <Form.Item
+            name="discipline"
+            label="Select Discipline"
+            rules={[{ required: false }]}
           >
-            <Option value="Electrical">Electrical</Option>
-            <Option value="Mechanical">Mechanical</Option>
-            <Option value="Quality">Quality</Option>
-            <Option value="Mechanical Electrical">Mechanical Electrical</Option>
-          </Select>
-        </Form.Item>
+            <Select placeholder="Select a discipline">
+              <Option value="Electrical">Electrical</Option>
+              <Option value="Mechanical">Mechanical</Option>
+              <Option value="Quality">Quality</Option>
+              <Option value="Mechanical Electrical">Mechanical Electrical</Option>
+            </Select>
+          </Form.Item>
+        )}
 
         <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            block
-            loading={loading}
-          >
+          <Button type="primary" htmlType="submit" block loading={loading}>
             Login
           </Button>
         </Form.Item>
 
         <Form.Item>
-          <Button
-            type="link"
-            onClick={() => navigate("/forgot-password")}
-            block
-          >
+          <Button type="link" onClick={() => navigate("/forgot-password")} block>
             Forgot Password?
           </Button>
         </Form.Item>
