@@ -12,7 +12,7 @@ const { authenticate, authorize } = require("../middleware/middleware");
  * @swagger
  * /api/auth/register:
  *   post:
- *     summary: Register a new user
+ *     summary: Register a new user 
  *     tags: [Auth]
  *     requestBody:
  *       required: true
