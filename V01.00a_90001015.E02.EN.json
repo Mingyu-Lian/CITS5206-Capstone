@@ -1,0 +1,249 @@
+{
+  "_id": "cd565826-9ff7-4ac1-9e9a-eafc664b12f5",
+  "document_id": "90001015.E02.EN",
+  "name": "V01.00a_90001015.E02.EN",
+  "projectId": "b77943ca-3d9f-4fee-8503-0cae0171e3b9",
+  "version": "01.00",
+  "description": "Auto-generated from Word file",
+  "importantNote": "",
+  "importantNoteAcceptedBy": [],
+  "workStyle": "Commissioning",
+  "locoId": "590ca954-5aac-4f48-8d53-f1b3b1e1bbc2",
+  "fileType": "docx",
+  "filePath": "/files/V01.00a_90001015.E02.EN.docx",
+  "createdBy": "c94fa98f-b74f-458c-9f05-fb455b8b7979",
+  "createdAt": "2025-04-30T05:22:30.907522Z",
+  "updateHistory": [],
+  "documentAuthors": "AutoImport System",
+  "authorisedBy": "",
+  "verifiedBy": "",
+  "approvedBy": "",
+  "assignedSupervisor": [],
+  "assignedEngineer": [],
+  "isActive": true,
+  "comments": "",
+  "historyVersionId": null,
+  "WorkTables": [
+    {
+      "_id": "e023dde5-2de7-4f5c-8971-3dbd70a662a1",
+      "tableId": "71336f91-80af-4902-92e4-a6d0264f236c",
+      "title": "Test Equipment Records",
+      "referenceName": "Table 1",
+      "assignedSupervisor": null,
+      "assignedEngineer": null,
+      "disciplineRequire": "Commissioning",
+      "parentsWMS": "07d79459-5c95-45f6-9a7d-75d0900c51f1",
+      "historyVersionTableId": null,
+      "status": "pending",
+      "createdBy": "f5064ba0-bb55-4c30-b1b5-c11cda08d3d1",
+      "createdAt": "2025-04-30T05:22:30.907612Z",
+      "updateHistory": [],
+      "isActive": true,
+      "columns": [
+        {
+          "id": 1,
+          "headerText": "Item",
+          "columnData": "",
+          "widthWeight": 1,
+          "columnType": 0,
+          "isOptional": false,
+          "isHidden": false,
+          "resetValueOnLocalChange": false,
+          "forceResetValueOnGlobalChange": false,
+          "resetValueOnGlobalChange": false,
+          "postChangeResetAction": false
+        },
+        {
+          "id": 2,
+          "headerText": "Description",
+          "columnData": "",
+          "widthWeight": 1,
+          "columnType": 0,
+          "isOptional": false,
+          "isHidden": false,
+          "resetValueOnLocalChange": false,
+          "forceResetValueOnGlobalChange": false,
+          "resetValueOnGlobalChange": false,
+          "postChangeResetAction": false
+        },
+        {
+          "id": 3,
+          "headerText": "Make",
+          "columnData": "",
+          "widthWeight": 1,
+          "columnType": 0,
+          "isOptional": false,
+          "isHidden": false,
+          "resetValueOnLocalChange": false,
+          "forceResetValueOnGlobalChange": false,
+          "resetValueOnGlobalChange": false,
+          "postChangeResetAction": false
+        },
+        {
+          "id": 4,
+          "headerText": "Model",
+          "columnData": "",
+          "widthWeight": 1,
+          "columnType": 0,
+          "isOptional": false,
+          "isHidden": false,
+          "resetValueOnLocalChange": false,
+          "forceResetValueOnGlobalChange": false,
+          "resetValueOnGlobalChange": false,
+          "postChangeResetAction": false
+        },
+        {
+          "id": 5,
+          "headerText": "Serial Number",
+          "columnData": "",
+          "widthWeight": 1,
+          "columnType": 0,
+          "isOptional": false,
+          "isHidden": false,
+          "resetValueOnLocalChange": false,
+          "forceResetValueOnGlobalChange": false,
+          "resetValueOnGlobalChange": false,
+          "postChangeResetAction": false
+        },
+        {
+          "id": 6,
+          "headerText": "Calibration Due Date",
+          "columnData": "",
+          "widthWeight": 1,
+          "columnType": 0,
+          "isOptional": false,
+          "isHidden": false,
+          "resetValueOnLocalChange": false,
+          "forceResetValueOnGlobalChange": false,
+          "resetValueOnGlobalChange": false,
+          "postChangeResetAction": false
+        },
+        {
+          "id": 7,
+          "headerText": "Inputted By",
+          "columnData": "",
+          "widthWeight": 1,
+          "columnType": 0,
+          "isOptional": false,
+          "isHidden": false,
+          "resetValueOnLocalChange": false,
+          "forceResetValueOnGlobalChange": false,
+          "resetValueOnGlobalChange": false,
+          "postChangeResetAction": false
+        }
+      ],
+      "rows": [
+        {
+          "id": 1,
+          "headerRowText": "",
+          "cells": [
+            {
+              "columnId": 1,
+              "labelText": "1",
+              "verticalMerge": 1,
+              "metadata": "",
+              "legacyLabelText": ""
+            },
+            {
+              "columnId": 2,
+              "labelText": "Multimeter",
+              "verticalMerge": 1,
+              "metadata": "",
+              "legacyLabelText": ""
+            },
+            {
+              "columnId": 3,
+              "labelText": "Fluke",
+              "verticalMerge": 1,
+              "metadata": "",
+              "legacyLabelText": ""
+            },
+            {
+              "columnId": 4,
+              "labelText": "87V",
+              "verticalMerge": 1,
+              "metadata": "",
+              "legacyLabelText": ""
+            },
+            {
+              "columnId": 5,
+              "labelText": "12345",
+              "verticalMerge": 1,
+              "metadata": "",
+              "legacyLabelText": ""
+            },
+            {
+              "columnId": 6,
+              "labelText": "2025-12-31",
+              "verticalMerge": 1,
+              "metadata": "",
+              "legacyLabelText": ""
+            },
+            {
+              "columnId": 7,
+              "labelText": "John Smith",
+              "verticalMerge": 1,
+              "metadata": "",
+              "legacyLabelText": ""
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "headerRowText": "",
+          "cells": [
+            {
+              "columnId": 1,
+              "labelText": "2",
+              "verticalMerge": 1,
+              "metadata": "",
+              "legacyLabelText": ""
+            },
+            {
+              "columnId": 2,
+              "labelText": "Oscilloscope",
+              "verticalMerge": 1,
+              "metadata": "",
+              "legacyLabelText": ""
+            },
+            {
+              "columnId": 3,
+              "labelText": "Tektronix",
+              "verticalMerge": 1,
+              "metadata": "",
+              "legacyLabelText": ""
+            },
+            {
+              "columnId": 4,
+              "labelText": "TBS1052B",
+              "verticalMerge": 1,
+              "metadata": "",
+              "legacyLabelText": ""
+            },
+            {
+              "columnId": 5,
+              "labelText": "67890",
+              "verticalMerge": 1,
+              "metadata": "",
+              "legacyLabelText": ""
+            },
+            {
+              "columnId": 6,
+              "labelText": "2026-06-15",
+              "verticalMerge": 1,
+              "metadata": "",
+              "legacyLabelText": ""
+            },
+            {
+              "columnId": 7,
+              "labelText": "Jane Doe",
+              "verticalMerge": 1,
+              "metadata": "",
+              "legacyLabelText": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
