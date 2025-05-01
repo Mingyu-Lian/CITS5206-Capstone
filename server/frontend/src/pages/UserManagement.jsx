@@ -8,6 +8,7 @@ import { fetchUsers, addUser, deleteUser, updateUser } from "../mock/mockApi";
 const { Option } = Select;
 
 const UserManagement = () => {
+  const role = localStorage.getItem("role"); // Get current user's role
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchText, setSearchText] = useState("");
@@ -58,6 +59,7 @@ const UserManagement = () => {
   };
 
   const handleDeleteUser = async (userId) => {
+    if (role !== "Admin") return message.error("Permission denied.");
     const success = await deleteUser(userId);
     if (success) {
       message.success("User deleted successfully!");
@@ -68,6 +70,7 @@ const UserManagement = () => {
   };
 
   const handleFinish = async (values) => {
+    if (role !== "Admin") return message.error("Permission denied.");
     if (editingUser) {
       await updateUser(editingUser.id, values);
       message.success("User updated successfully!");
@@ -129,18 +132,19 @@ const UserManagement = () => {
     {
       title: "Action",
       key: "action",
-      render: (_, record) => (
-        <>
-          <Button icon={<EditOutlined />} onClick={() => openEditUserModal(record)} type="link">
-            Edit
-          </Button>
-          <Popconfirm title="Are you sure to delete this user?" onConfirm={() => handleDeleteUser(record.id)}>
-            <Button icon={<DeleteOutlined />} type="link" danger>
-              Delete
+      render: (_, record) =>
+        role === "Admin" ? (
+          <>
+            <Button icon={<EditOutlined />} onClick={() => openEditUserModal(record)} type="link">
+              Edit
             </Button>
-          </Popconfirm>
-        </>
-      ),
+            <Popconfirm title="Are you sure to delete this user?" onConfirm={() => handleDeleteUser(record.id)}>
+              <Button icon={<DeleteOutlined />} type="link" danger>
+                Delete
+              </Button>
+            </Popconfirm>
+          </>
+        ) : null,
     },
   ];
 
@@ -149,16 +153,21 @@ const UserManagement = () => {
       <div className="p-6 bg-white min-h-screen">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">User Management</h2>
-          <Button type="primary" icon={<PlusOutlined />} onClick={openAddUserModal}>
-            Add User
-          </Button>
+          {role === "Admin" && (
+            <Button type="primary" icon={<PlusOutlined />} onClick={openAddUserModal}>
+              Add User
+            </Button>
+          )}
         </div>
 
         {/* Filter Section */}
         <div className="flex gap-4 mb-4">
           <Select
             value={filterRole}
-            onChange={(val) => { setFilterRole(val); applyFilters(); }}
+            onChange={(val) => {
+              setFilterRole(val);
+              applyFilters();
+            }}
             style={{ width: 180 }}
           >
             <Option value="All">All Roles</Option>
@@ -169,7 +178,10 @@ const UserManagement = () => {
 
           <Select
             value={filterDiscipline}
-            onChange={(val) => { setFilterDiscipline(val); applyFilters(); }}
+            onChange={(val) => {
+              setFilterDiscipline(val);
+              applyFilters();
+            }}
             style={{ width: 220 }}
           >
             <Option value="All">All Disciplines</Option>
@@ -182,7 +194,10 @@ const UserManagement = () => {
 
           <Input.Search
             value={searchText}
-            onChange={(e) => { setSearchText(e.target.value); applyFilters(); }}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+              applyFilters();
+            }}
             placeholder="Search by Name or Email"
             allowClear
             style={{ width: 240 }}
@@ -190,15 +205,9 @@ const UserManagement = () => {
         </div>
 
         {/* User Table */}
-        <Table
-          rowKey="id"
-          columns={columns}
-          dataSource={filteredUsers}
-          bordered
-          pagination={{ pageSize: 8 }}
-        />
+        <Table rowKey="id" columns={columns} dataSource={filteredUsers} bordered pagination={{ pageSize: 8 }} />
 
-        {/* Add/Edit User Modal */}
+        {/* Add/Edit Modal */}
         <Modal
           title={editingUser ? "Edit User" : "Add User"}
           open={isModalVisible}
@@ -231,7 +240,6 @@ const UserManagement = () => {
                 <Option value="Mechanical Electrical">Mechanical Electrical</Option>
               </Select>
             </Form.Item>
-
             <Form.Item>
               <Button type="primary" htmlType="submit" block>
                 {editingUser ? "Update User" : "Add User"}
@@ -239,7 +247,6 @@ const UserManagement = () => {
             </Form.Item>
           </Form>
         </Modal>
-
       </div>
     </PageLayout>
   );
