@@ -1,17 +1,12 @@
 const { Baseline } = require("../models/DBschema");
 
-// Get all baselines with pagination
+// Get all baselines  
 const getAllBaselines = async (req, res) => {
-  const { page = 1, limit = 10 } = req.query;
   try {
-    const baselines = await Baseline.find()
-      .limit(limit * 1)
-      .skip((page - 1) * limit);
-    const total = await Baseline.countDocuments();
+    const baselines = await Baseline.find(); // Fetch all baselines without pagination
     res.json({
       baselines,
-      totalPages: Math.ceil(total / limit),
-      currentPage: page,
+      total: baselines.length, // Return the total count of baselines
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
@@ -64,11 +59,73 @@ const updateBaseline = async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 };
+const addVersion = async (req, res) => {
+  const { baselineId } = req.params;
+  const { version, note } = req.body;
 
+  try {
+    const baseline = await Baseline.findById(baselineId);
+    if (!baseline) {
+      return res.status(404).json({ message: "Baseline not found" });
+    }
 
+    const newVersion = {
+      versionId: `v${baseline.versions.length + 1}`,
+      version,
+      note,
+      createdBy: req.user._id,
+      createdAt: new Date(),
+      isActive: true,
+    };
+
+    baseline.versions.push(newVersion);
+    await baseline.save();
+
+    res.status(201).json({ message: "Version added", version: newVersion });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+const updateVersion = async (req, res) => {
+  const { baselineId, versionId } = req.params;
+  const { version, note, isActive, usageAdd } = req.body;
+
+  try {
+    const baseline = await Baseline.findById(baselineId);
+    if (!baseline) {
+      return res.status(404).json({ message: "Baseline not found" });
+    }
+
+    const versionToUpdate = baseline.versions.find(v => v.versionId === versionId);
+    if (!versionToUpdate) {
+      return res.status(404).json({ message: "Version not found" });
+    }
+
+    if (version) versionToUpdate.version = version;
+    if (note) versionToUpdate.note = note;
+    if (isActive !== undefined) versionToUpdate.isActive = isActive;
+
+    if (usageAdd) {
+      versionToUpdate.usageHistory.push({
+        usedInLoco: [usageAdd.locoId],
+        userId: req.user._id,
+        usedAt: new Date(),
+      });
+    }
+
+    versionToUpdate.updatedAt = new Date();
+    await baseline.save();
+
+    res.status(200).json({ message: "Version updated", version: versionToUpdate });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
 module.exports = {
   getAllBaselines,
   createBaseline,
   getBaselineById,
   updateBaseline,
+  addVersion,
+  updateVersion,
 };

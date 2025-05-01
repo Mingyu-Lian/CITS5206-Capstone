@@ -54,7 +54,7 @@ const connectDB = async () => {
             Task.insertMany(jsonData.tasks),
             Discipline.insertMany(jsonData.disciplines),
             Log.insertMany(jsonData.logs)
-          ]);
+        ]);
       
           console.log("Sample data seeded successfully!");
 

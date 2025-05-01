@@ -148,7 +148,6 @@ const updateUser = async (req, res) => {
         user[key] = updates[key];
       }
     }
-
     // Save the updated user
     await user.save();
 
@@ -169,5 +168,38 @@ const updateUser = async (req, res) => {
   }
 };
 
-module.exports = { register, login, getMe, logout, getAllUsers, updateUser };
+const updateProfile = async (req, res) => {
+  const { password } = req.body; // Extract the password from the request body
+
+  try {
+    // Ensure the user is authenticated and their ID is available
+    const userId = req.user._id;
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if the password is provided
+    if (!password) {
+      return res.status(400).json({ message: "Password is required to update" });
+    }
+
+    // Hash the new password
+    const passwordHash = await bcrypt.hash(password, 10);
+    user.passwordHash = passwordHash;
+
+    // Save the updated user
+    await user.save();
+
+    res.status(200).json({
+      message: "Password updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating password:", error);
+    res.status(500).json({ message: "Unable to update password", error });
+  }
+};
+module.exports = { register, login, getMe, logout, getAllUsers, updateUser,updateProfile };
  

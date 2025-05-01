@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { register, login, getMe, logout,getAllUsers,updateUser } = require("../controllers/authController");
+const { register, login, getMe, logout,getAllUsers,updateUser, updateProfile } = require("../controllers/authController");
 const { authenticate, authorize } = require("../middleware/middleware");
 /**
  * @swagger
@@ -69,6 +69,7 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *             required:
  *               - username
  *               - password
+ *               - selectedDiscipline
  *             properties:
  *               username:
  *                 type: string
@@ -76,6 +77,9 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *               password:
  *                 type: string
  *                 example: 123456
+ *             selectedDiscipline: 
+ *               type: string
+ *             example: Mechanical
  *     responses:
  *       200:
  *         description: Login successful
@@ -231,11 +235,49 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *       500:
  *         description: Server error
  */
+/**
+ * @swagger
+ * /api/auth/profile:
+ *   patch:
+ *     summary: Update the authenticated user's profile
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: newusername
+ *               personName:
+ *                 type: string
+ *                 example: New Name
+ *               email:
+ *                 type: string
+ *                 example: newemail@example.com
+ *               discipline:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["Mechanical"]
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ *       400:
+ *         description: Invalid input
+ *       500:
+ *         description: Server error
+ */
 // Define the routes with their corresponding controller functions
 router.post("/register", register);
 router.post("/login", login);
 router.get("/me", getMe);
 router.post("/logout",logout);
-router.get("/users",getAllUsers);
-router.patch("/users/:id",updateUser);
+router.get("/users",authenticate, authorize(["admin"]),getAllUsers);
+router.patch("/users/:id",authenticate, authorize(["admin"]),updateUser);
+router.patch("/profile", authenticate, updateProfile);
 module.exports = router;
