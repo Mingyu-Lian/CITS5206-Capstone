@@ -19,7 +19,7 @@ const {
  * @swagger
  * /api/baselines:
  *   get:
- *     summary: List all baselines with pagination (Access: All roles/users)
+ *     summary: List all baselines with pagination
  *     tags: [Baselines]
  *     parameters:
  *       - in: query
@@ -56,7 +56,7 @@ const {
  * @swagger
  * /api/baselines:
  *   post:
- *     summary: Create a new baseline (Access: Admin/Supervisor)
+ *     summary: Create a new baseline
  *     tags: [Baselines]
  *     requestBody:
  *       required: true
@@ -104,7 +104,7 @@ const {
  * @swagger
  * /api/baselines/{id}:
  *   get:
- *     summary: Retrieve a specific baseline by id (Access: All roles/users)
+ *     summary: Retrieve a specific baseline by id
  *     tags: [Baselines]
  *     parameters:
  *       - in: path
@@ -125,7 +125,7 @@ const {
  * @swagger
  * /api/baselines/{id}:
  *   put:
- *     summary: Update a baseline (Access: Admin/Supervisor)
+ *     summary: Update a baseline
  *     tags: [Baselines]
  *     parameters:
  *       - in: path

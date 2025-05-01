@@ -19,7 +19,7 @@ const {
  * @swagger
  * /api/disciplines:
  *   get:
- *     summary: List all active disciplines (short) (Access: All roles/users)
+ *     summary: List all active disciplines (short)
  *     tags: [Disciplines]
  *     responses:
  *       200:
@@ -47,7 +47,7 @@ const {
  * @swagger
  * /api/disciplines:
  *   post:
- *     summary: Create a new discipline (Access: Admin)
+ *     summary: Create a new discipline
  *     tags: [Disciplines]
  *     security:
  *       - bearerAuth: []
@@ -78,7 +78,7 @@ const {
  * @swagger
  * /api/disciplines/{id}:
  *   get:
- *     summary: Get a specific discipline (Access: All roles/users)
+ *     summary: Get a specific discipline
  *     tags: [Disciplines]
  *     parameters:
  *       - in: path
@@ -99,7 +99,7 @@ const {
  * @swagger
  * /api/disciplines/{id}:
  *   patch:
- *     summary: Update a discipline (Access: Admin)
+ *     summary: Update a discipline
  *     tags: [Disciplines]
  *     security:
  *       - bearerAuth: []

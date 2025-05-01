@@ -28,7 +28,7 @@ module.exports = router;
  * @swagger
  * /api/projects:
  *   get:
- *     summary: List all active projects (Access: All roles/users)
+ *     summary: List all active projects 
  *     tags: [Projects]
  *     responses:
  *       200:
@@ -84,7 +84,7 @@ module.exports = router;
  * @swagger
  * /api/projects:
  *   post:
- *     summary: Create a new project  (Access: Admin only)
+ *     summary: Create a new project 
  *     tags: [Projects]
  *     security:
  *       - bearerAuth: []
@@ -153,7 +153,7 @@ module.exports = router;
  * @swagger
  * /api/projects/{id}:
  *   get:
- *     summary: Get details of a specific project (Access: All roles/users)
+ *     summary: Get details of a specific project 
  *     tags: [Projects]
  *     parameters:
  *       - in: path
@@ -209,7 +209,7 @@ module.exports = router;
  * @swagger
  * /api/projects/{id}:
  *   patch:
- *     summary: Update project details (Access: Admin only)
+ *     summary: Update project details
  *     tags: [Projects]
  *     security:
  *       - bearerAuth: []

@@ -14,7 +14,7 @@ const { authenticate, authorize } = require("../middleware/middleware");
  * @swagger
  * /api/logs:
  *   get:
- *     summary: List logs with optional filtering by user, loco, and pagination (Access: All roles/users)
+ *     summary: List logs with optional filtering by user, loco, and pagination
  *     tags: [Logs]
  *     security:
  *       - bearerAuth: []
@@ -53,7 +53,7 @@ const { authenticate, authorize } = require("../middleware/middleware");
  * @swagger
  * /api/logs:
  *   post:
- *     summary: Create a new log entry (Access: All roles/users)
+ *     summary: Create a new log entry
  *     tags: [Logs]
  *     security:
  *       - bearerAuth: []
@@ -88,7 +88,7 @@ const { authenticate, authorize } = require("../middleware/middleware");
  * @swagger
  * /api/logs/{id}:
  *   put:
- *     summary: Update a log entry (Access: Admin only)
+ *     summary: Update a log entry
  *     tags: [Logs]
  *     security:
  *       - bearerAuth: []
