@@ -129,7 +129,7 @@ const updateUser = async (req, res) => {
 
   try {
     // Ensure the user is authenticated and their ID is available
-    const userId = req.user._id;
+    const userId = req.params.id; // Get the user ID from the request parameters
 
     // Find the user by ID
     const user = await User.findById(userId);

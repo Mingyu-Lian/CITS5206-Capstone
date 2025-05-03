@@ -16,44 +16,6 @@ const {
  *   name: Baselines
  *   description: Operations related to software baselines
  */
-
-/**
- * @swagger
- * /api/baselines:
- *   get:
- *     summary: List all baselines with pagination
- *     tags: [Baselines]
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *         description: Current page number
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *         description: Number of items per page
- *     responses:
- *       200:
- *         description: Returns baselines, totalPages, and currentPage
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 baselines:
- *                   type: array
- *                   items:
- *                     type: object
- *                 totalPages:
- *                   type: integer
- *                 currentPage:
- *                   type: integer
- *       500:
- *         description: Server error
- */
-
 /**
  * @swagger
  * /api/baselines:
@@ -133,6 +95,66 @@ const {
  *         description: A baseline object
  *       404:
  *         description: Baseline not found
+ *       500:
+ *         description: Server error
+ */
+/**
+ * @swagger
+ * /api/baselines:
+ *   post:
+ *     summary: Create a new baseline
+ *     tags: [Baselines]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - softwareName
+ *               - description
+ *               - isActive
+ *             properties:
+ *               softwareName:
+ *                 type: string
+ *                 example: "ControlSoft"
+ *               description:
+ *                 type: string
+ *                 example: "Initial release of ControlSoft"
+ *               isActive:
+ *                 type: boolean
+ *                 example: true
+ *               versions:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     versionId:
+ *                       type: string
+ *                       example: "v1"
+ *                     version:
+ *                       type: string
+ *                       example: "1.0"
+ *                     note:
+ *                       type: string
+ *                       example: "Initial release"
+ *                     createdBy:
+ *                       type: string
+ *                       example: "644f1a2b3c4d5e6f7g8h9i0j"
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-04-01T00:00:00.000Z"
+ *                     isActive:
+ *                       type: boolean
+ *                       example: true
+ *     responses:
+ *       201:
+ *         description: Baseline created successfully
+ *       400:
+ *         description: Invalid input
  *       500:
  *         description: Server error
  */
