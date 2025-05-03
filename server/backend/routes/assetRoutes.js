@@ -55,7 +55,6 @@ const {
  *       500:
  *         description: Server error
  */
-
 /**
  * @swagger
  * /api/assets:
@@ -79,11 +78,11 @@ const {
  *                 example: A1001
  *               name:
  *                 type: string
- *                 example: Asset Name          
+ *                 example: Asset Name
  *               assetType:
  *                 type: string
  *                 example: TypeA
- *              description:
+ *               description:
  *                 type: string
  *                 example: Asset description
  *               locoID:
@@ -101,10 +100,44 @@ const {
  *     responses:
  *       201:
  *         description: Asset created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Asset created successfully
+ *                 asset:
+ *                   type: object
+ *                   properties:
+ *                     code:
+ *                       type: string
+ *                       example: A1001
+ *                     name:
+ *                       type: string
+ *                       example: Asset Name
+ *                     assetType:
+ *                       type: string
+ *                       example: TypeA
+ *                     description:
+ *                       type: string
+ *                       example: Asset description
+ *                     locoID:
+ *                       type: number
+ *                       example: 123
+ *                     locoType:
+ *                       type: string
+ *                       example: 643d1f2e5f1b2c0012345678
+ *                     status:
+ *                       type: string
+ *                       example: Active
+ *                     parentAsset:
+ *                       type: string
+ *                       example: 643d1f2e5f1b2c0012345678
  *       500:
  *         description: Server error
  */
-
 /**
  * @swagger
  * /api/assets/{id}:

@@ -22,9 +22,11 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *             type: object
  *             required:
  *               - username
+ *              - personName
  *               - email
  *               - password
  *               - role
+ *             - discipline
  *             properties:
  *               username:
  *                 type: string
@@ -239,7 +241,7 @@ const { authenticate, authorize } = require("../middleware/middleware");
  * @swagger
  * /api/auth/profile:
  *   patch:
- *     summary: Update the authenticated user's profile
+ *     summary: Update the authenticated user's password
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
@@ -250,25 +252,22 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *           schema:
  *             type: object
  *             properties:
- *               username:
+ *               password:
  *                 type: string
- *                 example: newusername
- *               personName:
- *                 type: string
- *                 example: New Name
- *               email:
- *                 type: string
- *                 example: newemail@example.com
- *               discipline:
- *                 type: array
- *                 items:
- *                   type: string
- *                 example: ["Mechanical"]
+ *                 example: newpassword123
  *     responses:
  *       200:
- *         description: Profile updated successfully
+ *         description: Password updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Password updated successfully
  *       400:
- *         description: Invalid input
+ *         description: Invalid input (e.g., missing password)
  *       500:
  *         description: Server error
  */
