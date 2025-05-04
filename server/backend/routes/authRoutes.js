@@ -12,7 +12,7 @@ const { authenticate, authorize } = require("../middleware/middleware");
  * @swagger
  * /api/auth/register:
  *   post:
- *     summary: Register a new user 
+ *     summary: Register a new user. Access - All users 
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -22,11 +22,11 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *             type: object
  *             required:
  *               - username
- *              - personName
+ *               - personName
  *               - email
  *               - password
  *               - role
- *             - discipline
+ *               - discipline
  *             properties:
  *               username:
  *                 type: string
@@ -60,7 +60,7 @@ const { authenticate, authorize } = require("../middleware/middleware");
  * @swagger
  * /api/auth/login:
  *   post:
- *     summary: User login
+ *     summary: User login. Access - All users 
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -94,7 +94,7 @@ const { authenticate, authorize } = require("../middleware/middleware");
  * @swagger
  * /api/auth/me:
  *   get:
- *     summary: Get current authenticated user
+ *     summary: Get current authenticated user. Access - All users 
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
@@ -132,7 +132,7 @@ const { authenticate, authorize } = require("../middleware/middleware");
  * @swagger
  * /api/auth/logout:
  *   post:
- *     summary: Logout the current user
+ *     summary: Logout the current user. Access - All users 
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
@@ -156,7 +156,7 @@ const { authenticate, authorize } = require("../middleware/middleware");
  * @swagger
  * /api/auth/users:
  *   get:
- *     summary: Get all users
+ *     summary: Get all users. Access - Admin and Supervisor
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
@@ -197,7 +197,7 @@ const { authenticate, authorize } = require("../middleware/middleware");
  * @swagger
  * /api/auth/users/{id}:
  *   patch:
- *     summary: Update a user
+ *     summary: Update a user from admin side (all info). Access - Admin
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
@@ -241,7 +241,7 @@ const { authenticate, authorize } = require("../middleware/middleware");
  * @swagger
  * /api/auth/profile:
  *   patch:
- *     summary: Update the authenticated user's password
+ *     summary: Update the authenticated user's password. Access - User itself
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
@@ -276,7 +276,7 @@ router.post("/register", register);
 router.post("/login", login);
 router.get("/me", getMe);
 router.post("/logout",logout);
-router.get("/users",authenticate, authorize(["admin"]),getAllUsers);
+router.get("/users",authenticate, authorize(["admin","supervisor"]),getAllUsers);
 router.patch("/users/:id",authenticate, authorize(["admin"]),updateUser);
 router.patch("/profile", authenticate, updateProfile);
 module.exports = router;

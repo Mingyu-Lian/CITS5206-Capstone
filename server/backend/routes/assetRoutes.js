@@ -19,7 +19,7 @@ const {
  * @swagger
  * /api/assets:
  *   get:
- *     summary: List all assets (summary)
+ *     summary: List all assets. Access - All users
  *     tags: [Assets]
  *     responses:
  *       200:
@@ -38,7 +38,7 @@ const {
  * @swagger
  * /api/assets/{id}:
  *   get:
- *     summary: Retrieve asset details
+ *     summary: Retrieve asset details. Access - All users
  *     tags: [Assets]
  *     parameters:
  *       - in: path
@@ -59,7 +59,7 @@ const {
  * @swagger
  * /api/assets:
  *   post:
- *     summary: Create a new asset
+ *     summary: Create a new asset. Access - Admin and Supervisor
  *     tags: [Assets]
  *     requestBody:
  *       required: true
@@ -142,7 +142,7 @@ const {
  * @swagger
  * /api/assets/{id}:
  *   put:
- *     summary: Update an asset
+ *     summary: Update/logical delete an asset. Access - Admin and Supervisor
  *     tags: [Assets]
  *     parameters:
  *       - in: path

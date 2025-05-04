@@ -20,7 +20,7 @@ const {
  * @swagger
  * /api/baselines:
  *   get:
- *     summary: Get all baselines
+ *     summary: Get all baselines. (short info) Access - All users
  *     tags: [Baselines]
  *     responses:
  *       200:
@@ -81,7 +81,7 @@ const {
  * @swagger
  * /api/baselines/{id}:
  *   get:
- *     summary: Retrieve a specific baseline by id
+ *     summary: Retrieve a specific baseline by id. (all info) Access - All users
  *     tags: [Baselines]
  *     parameters:
  *       - in: path
@@ -102,7 +102,7 @@ const {
  * @swagger
  * /api/baselines:
  *   post:
- *     summary: Create a new baseline
+ *     summary: Create a new baseline. Access - Admin and Supervisor
  *     tags: [Baselines]
  *     security:
  *       - bearerAuth: []
@@ -162,7 +162,7 @@ const {
  * @swagger
  * /api/baselines/{baselineId}:
  *   patch:
- *     summary: Update a baseline
+ *     summary: Update/logic delete a baseline (Software). Access - Admin and Supervisor
  *     tags: [Baselines]
  *     security:
  *       - bearerAuth: []
@@ -220,7 +220,7 @@ const {
  * @swagger
  * /api/baselines/{baselineId}/versions:
  *   post:
- *     summary: Add a new version to a baseline
+ *     summary: Add a new version to a specific baseline. Access - Admin and Supervisor
  *     tags: [Baselines]
  *     security:
  *       - bearerAuth: []
@@ -282,7 +282,7 @@ const {
  * @swagger
  * /api/baselines/{baselineId}/versions/{versionId}:
  *   patch:
- *     summary: Update a version of a baseline
+ *     summary: Update/logic delete a version of a specific baseline. Access - Admin and Supervisor
  *     tags: [Baselines]
  *     security:
  *       - bearerAuth: []
