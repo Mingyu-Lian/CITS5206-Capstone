@@ -1,0 +1,166 @@
+{
+  "installation": {
+    "name": "AC - Battery Disconnection Procedure WMS",
+    "description": "Step-by-step procedure for the disconnection and reconnection of the locomotive batteries on AutoHaul locomotives.",
+    "version": "01.00",
+    "date": "2015-12-18",
+    "tasks": [
+      {
+        "task_id": "1.1",
+        "name": "Sign on to permit of isolation and lock on",
+        "description": "Inspect Locomotive entry points. Ensure roads are locked out, locomotive isolated, and safe working protection in place. Refer to Isolation matrix and secure entry walkways.",
+        "status": "pending",
+        "dependencies": [],
+        "metadata": {
+          "location": "Step 1 over pit area",
+          "components": "",
+          "attachments": "",
+          "notes": "Ask Permit Isolation Officer or Administrator if unsure. Watch for trips/falls."
+        }
+      },
+      {
+        "task_id": "1.2",
+        "name": "Preparation – Mandatory",
+        "description": "Follow all WMS steps for safe and efficient completion of task.",
+        "status": "pending",
+        "dependencies": ["1.1"],
+        "metadata": {
+          "location": "",
+          "components": "Platform ladder, container for nuts/bolts, battery rattle gun, impact socket, gloves, safety glasses, spanners, cable ties, hearing protection",
+          "attachments": "",
+          "notes": "Refer to components tab for materials, tools, equipment."
+        }
+      },
+      {
+        "task_id": "1.3",
+        "name": "Flick all breakers off and pull knife switches",
+        "description": "Confirm polarity of BCCB breaker, attach info tag, turn off ECP panel breakers, pull knife switches.",
+        "status": "pending",
+        "dependencies": ["1.2"],
+        "metadata": {
+          "location": "",
+          "components": "",
+          "attachments": "",
+          "notes": "Complete Take 5 for confirming BCCB polarity."
+        }
+      },
+      {
+        "task_id": "1.4",
+        "name": "Test voltage across diode and earth",
+        "description": "Check capacitor voltage, turn BCCB breaker ON to dissipate energy, re-test, place info tag.",
+        "status": "pending",
+        "dependencies": ["1.3"],
+        "metadata": {
+          "location": "",
+          "components": "",
+          "attachments": "",
+          "notes": ""
+        }
+      },
+      {
+        "task_id": "1.5",
+        "name": "Place personal lock on knife switch door hasp",
+        "description": "Ensure master lock secures knife switch door; eliminates risk of load on circuits when batteries connect.",
+        "status": "pending",
+        "dependencies": ["1.4"],
+        "metadata": {
+          "location": "",
+          "components": "",
+          "attachments": "",
+          "notes": ""
+        }
+      },
+      {
+        "task_id": "1.6",
+        "name": "Locate battery cover panels and position platform ladder",
+        "description": "Ensure task can be done comfortably without overreaching.",
+        "status": "pending",
+        "dependencies": ["1.5"],
+        "metadata": {
+          "location": "",
+          "components": "",
+          "attachments": "",
+          "notes": ""
+        }
+      },
+      {
+        "task_id": "1.7",
+        "name": "Remove nuts and washers per panel",
+        "description": "Remove nuts from bottom to top; store nuts/washers in labeled container.",
+        "status": "pending",
+        "dependencies": ["1.6"],
+        "metadata": {
+          "location": "",
+          "components": "",
+          "attachments": "",
+          "notes": "Label container with loco number; no spare parts."
+        }
+      },
+      {
+        "task_id": "1.8",
+        "name": "Remove panels",
+        "description": "Label panels with loco number, store on correct storage shelf.",
+        "status": "pending",
+        "dependencies": ["1.7"],
+        "metadata": {
+          "location": "",
+          "components": "",
+          "attachments": "",
+          "notes": ""
+        }
+      },
+      {
+        "task_id": "1.9",
+        "name": "Remove negative battery terminal",
+        "description": "Disconnect negative terminal first; secure lug with cable tie to avoid accidental contact.",
+        "status": "pending",
+        "dependencies": ["1.8"],
+        "metadata": {
+          "location": "",
+          "components": "",
+          "attachments": "",
+          "notes": "Critical to disconnect negative first to prevent short circuit."
+        }
+      },
+      {
+        "task_id": "1.10",
+        "name": "Remove positive battery terminal",
+        "description": "Disconnect positive terminal, secure lug, store hardware in container.",
+        "status": "pending",
+        "dependencies": ["1.9"],
+        "metadata": {
+          "location": "",
+          "components": "",
+          "attachments": "",
+          "notes": "Notify QC agents 30 min before completion."
+        }
+      },
+      {
+        "task_id": "1.11",
+        "name": "Leading hand quality check",
+        "description": "Verify all prior steps completed before contacting QC Team; sign-off in system.",
+        "status": "pending",
+        "dependencies": ["1.10"],
+        "metadata": {
+          "location": "",
+          "components": "",
+          "attachments": "",
+          "notes": ""
+        }
+      },
+      {
+        "task_id": "1.12",
+        "name": "Final Quality Check (ASTS and Calibre)",
+        "description": "ASTS QC Inspector and Calibre representative jointly inspect and sign off.",
+        "status": "pending",
+        "dependencies": ["1.11"],
+        "metadata": {
+          "location": "",
+          "components": "",
+          "attachments": "",
+          "notes": ""
+        }
+      }
+    ]
+  }
+}
