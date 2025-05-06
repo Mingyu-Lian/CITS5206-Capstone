@@ -14,7 +14,7 @@ import LocomotiveListPage from "./pages/LocomotiveListPage";
 import WMSListPage from "./pages/WMSListPage";
 import TaskListPage from "./pages/TaskListPage";
 import SubtaskDetailPage from "./pages/SubtaskDetailPage";
-import TaskDetail from './pages/Task/Taskdetail';
+import TaskDetail from './pages/task/Taskdetail';
 import DashboardLayout from "./components/DashboardLayout";
 
 function App() {
