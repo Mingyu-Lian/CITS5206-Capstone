@@ -1,12 +1,21 @@
 const express = require("express");
 const router = express.Router();
+const { authenticate, authorize } = require("../middleware/middleware");
 const {
   getAllProjects,
   getProjectById,
   createProject,
   updateProject,
-  deleteProject,
 } = require("../controllers/projectController");
+
+
+// Route definitions
+router.get("/", getAllProjects);
+router.get("/:id", getProjectById);
+router.post("/", authenticate, authorize(["admin", "supervisor"]), createProject);
+router.patch("/:id", authenticate, authorize(["admin", "supervisor"]), updateProject);
+
+module.exports = router;
 
 /**
  * @swagger
@@ -19,33 +28,54 @@ const {
  * @swagger
  * /api/projects:
  *   get:
- *     summary: List all projects (short list)
+ *     summary: List all active projects. Access - All users
  *     tags: [Projects]
  *     responses:
  *       200:
- *         description: An array of projects with limited fields (name, startDate, endDate, createdAt, updatedAt)
- *       500:
- *         description: Server error
- */
-
-/**
- * @swagger
- * /api/projects/{id}:
- *   get:
- *     summary: Retrieve detailed information for a specific project
- *     tags: [Projects]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: Project id
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: A project object with full details
- *       404:
- *         description: Project not found
+ *         description: List of active projects
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     example: 6637db238ae2a21e3e4fa123
+ *                   name:
+ *                     type: string
+ *                     example: Project Alpha
+ *                   description:
+ *                     type: string
+ *                     example: Short description of the project
+ *                   startDate:
+ *                     type: string
+ *                     format: date
+ *                     example: "2025-01-01"
+ *                   endDate:
+ *                     type: string
+ *                     format: date
+ *                     example: "2025-12-31"
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2025-01-01T10:00:00.000Z"
+ *                   updateHistory:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         userId:
+ *                           type: string
+ *                           example: 6637db238ae2a21e3e4fa111
+ *                         updatedAt:
+ *                           type: string
+ *                           format: date-time
+ *                           example: "2025-02-01T10:00:00.000Z"
+ *                   isActive:
+ *                     type: boolean
+ *                     example: true
  *       500:
  *         description: Server error
  */
@@ -54,22 +84,26 @@ const {
  * @swagger
  * /api/projects:
  *   post:
- *     summary: Create a new project
+ *     summary: Create a new project. Access - Admin and Supervisor
  *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             description: Full project fields required for creation
+ *             required:
+ *               - name
+ *               - startDate
  *             properties:
  *               name:
  *                 type: string
  *                 example: New Project
  *               description:
  *                 type: string
- *                 example: Project description
+ *                 example: Detailed project description.
  *               startDate:
  *                 type: string
  *                 format: date
@@ -78,12 +112,39 @@ const {
  *                 type: string
  *                 format: date
  *                 example: "2025-12-31"
- *               createdBy:
- *                 type: string
- *                 example: 643d1f2e5f1b2c0012345678
  *     responses:
  *       201:
  *         description: Project created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Project created successfully
+ *                 project:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     description:
+ *                       type: string
+ *                     startDate:
+ *                       type: string
+ *                       format: date
+ *                     endDate:
+ *                       type: string
+ *                       format: date
+ *                     createdBy:
+ *                       type: string
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     isActive:
+ *                       type: boolean
  *       500:
  *         description: Server error
  */
@@ -91,18 +152,75 @@ const {
 /**
  * @swagger
  * /api/projects/{id}:
- *   put:
- *     summary: Update a project
+ *   get:
+ *     summary: Get details of a specific project. Access - All users
  *     tags: [Projects]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Project id
+ *         description: Project ID
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Project detail
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 startDate:
+ *                   type: string
+ *                   format: date
+ *                 endDate:
+ *                   type: string
+ *                   format: date
+ *                 createdBy:
+ *                   type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updateHistory:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       userId:
+ *                         type: string
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                 isActive:
+ *                   type: boolean
+ *       404:
+ *         description: Project not found
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * /api/projects/{id}:
+ *   patch:
+ *     summary: Update/logic delete project details. Access - Admin and Supervisor
+ *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Project ID
  *         schema:
  *           type: string
  *     requestBody:
- *       description: Full project update data
  *       required: true
  *       content:
  *         application/json:
@@ -111,42 +229,54 @@ const {
  *             properties:
  *               name:
  *                 type: string
- *                 example: Updated Project
+ *                 example: Updated Project Name
  *               description:
  *                 type: string
- *                 example: Updated project description
+ *                 example: Updated description
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *               isActive:
+ *                 type: boolean
+ *                 example: false
  *     responses:
  *       200:
  *         description: Project updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Project updated successfully
+ *                 project:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     description:
+ *                       type: string
+ *                     startDate:
+ *                       type: string
+ *                       format: date
+ *                     endDate:
+ *                       type: string
+ *                       format: date
+ *                     createdBy:
+ *                       type: string
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     isActive:
+ *                       type: boolean
+ *       404:
+ *         description: Project not found
  *       500:
  *         description: Server error
  */
-
-/**
- * @swagger
- * /api/projects/{id}:
- *   delete:
- *     summary: Delete a project
- *     tags: [Projects]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: Project id
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Project deleted successfully
- *       500:
- *         description: Server error
- */
-
-// Route definitions
-router.get("/", getAllProjects);
-router.get("/:id", getProjectById);
-router.post("/", createProject);
-router.put("/:id", updateProject);
-router.delete("/:id", deleteProject);
-
-module.exports = router;

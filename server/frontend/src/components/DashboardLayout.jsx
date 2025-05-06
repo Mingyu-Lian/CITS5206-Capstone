@@ -24,29 +24,32 @@ const DashboardLayout = ({ children }) => {
       key: "/dashboard",
       icon: <DashboardOutlined />,
     },
-    ...(role === "Admin" || role === "Supervisor"
-      ? [{
-          label: "User Management",
-          key: "/users",
-          icon: <UserOutlined />,
-        }]
-      : []),
-    ...(role ? [{
-      label: "Project Management",
-      key: "/projects",
-      icon: <FolderOpenOutlined />,
-    }] : []),
-    ...(role ? [{
-      label: "Task Management",
-      key: "/tasks",
-      icon: <CheckCircleOutlined />,
-    }] : []),
-    {
-      label: "Logout",
-      key: "logout",
-      icon: <LogoutOutlined />,
-    },
   ];
+
+  if (["Admin", "Supervisor"].includes(role)) {
+    menuItems.push({
+      label: "User Management",
+      key: "/users",
+      icon: <UserOutlined />,
+    });
+  }
+
+  //Task Management for all roles
+  if (["Admin", "Supervisor", "Engineer"].includes(role)) {
+    menuItems.push({
+    label: "Task Management",
+    key: "/tasks",
+    icon: <CheckCircleOutlined />,
+    });
+  }
+
+
+
+  menuItems.push({
+    label: "Logout",
+    key: "logout",
+    icon: <LogoutOutlined />,
+  });
 
   const onMenuClick = ({ key }) => {
     if (key === "logout") {

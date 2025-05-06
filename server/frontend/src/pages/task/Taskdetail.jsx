@@ -1,150 +1,92 @@
+// src/pages/task/Taskdetail.jsx
 import React, { useState } from "react";
-import { Flex, Layout } from 'antd';
-import axios from "axios";
-import InstructionsTab from "./task-tabs/instruction-tab.jsx"
-import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons"
-
-// import ComponentsTab from "./task-tabs/components-tab"
-import NotesTab from "./task-tabs/notes-tab"
-import UserPhotosTab from "./task-tabs/user-photos-tab"
-import { Button, Typography, Select, Tabs, Badge } from 'antd';
+import { useParams, useNavigate } from "react-router-dom";
+import { Layout, Tabs, Badge, Button, List, Typography } from 'antd';
+import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import InstructionsTab from "./TaskTabs/InstructionsTab.jsx";
+import NotesTab from "./TaskTabs/NotesTab.jsx";
+import UserPhotosTab from "./TaskTabs/UserPhotosTab.jsx";
+import { useTaskDetail } from "../../hooks/useMockData"; // 👈 Import live hook
 import "./Taskdetail.css";
-const { Header, Footer, Sider, Content } = Layout
+
+const { Header, Footer, Sider, Content } = Layout;
+const { Title } = Typography;
+
 const Taskdetail = () => {
-  const { Option } = Select;
-  const [activeTab, setActiveTab] = useState("instructions")
+  const { locomotiveId, wmsId, taskId } = useParams();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("instructions");
+
+  const { taskDetail, loading } = useTaskDetail(locomotiveId, wmsId, taskId);
 
   const handleTabChange = (key) => {
-    setActiveTab(key)
-  }
+    setActiveTab(key);
+  };
 
-  const headerStyle = {
-    // textAlign: 'center',
-    // color: '#fff',
-    // height: 64,
-    // paddingInline: 48,
-    // lineHeight: '64px',
-    backgroundColor: '#bf8c8c',
+  const handleBack = () => {
+    navigate(-1);
   };
-  const contentStyle = {
-    textAlign: 'center',
-    minHeight: 120,
-    lineHeight: '120px',
-    color: '#fff',
-    backgroundColor: '#2e2d2d',
-  };
-  const siderStyle = {
-    // textAlign: 'center',
-    lineHeight: '120px',
-    color: '#fff',
-    backgroundColor: '#807c7c',
-    width: "10%",
-    color: '#fff',
 
+  if (loading) return <div>Loading Task Detail...</div>;
 
-  };
-  const footerStyle = {
-    textAlign: 'center',
-    color: '#fff',
-    backgroundColor: '#4096ff',
-  };
-  const layoutStyle = {
-    borderRadius: 8,
-    overflow: 'hidden',
-    width: 'calc(100% - 8px)',
-    maxWidth: 'calc(100% - 8px)',
-    height: '100%',
-  };
   return (
     <div className="taskdetail-container">
-      <Layout style={layoutStyle}>
-        <Header style={headerStyle} className="">
+      <Layout style={{ borderRadius: 8, overflow: 'hidden', width: 'calc(100% - 8px)', height: '100%' }}>
+        <Header style={{ backgroundColor: '#bf8c8c' }}>
           <div className="task-header">
-
             <div className="task-title">
-              1.1 Sign on to permit of isolation and lock on
+              Task: {taskDetail?.title || taskId}
             </div>
-
             <div className="task-role">
-              <span>Role:</span>
-              Permit Officer
+              <span>Role:</span> Permit Officer
             </div>
-            <div className="">Completed by Ross Richardson on 18-Feb-19 17:03</div>
-
           </div>
-
         </Header>
+
         <Layout>
-          <Sider style={siderStyle}>
+          <Sider style={{ backgroundColor: '#807c7c', width: "10%" }}>
             <Tabs
               className="left-tabs"
-              style={{ color: 'blue' }}
               activeKey={activeTab}
               onChange={handleTabChange}
               tabPosition="left"
               type="card"
               items={[
-                {
-                  key: "instructions",
-                  label: "Instructions",
-                  children: null,
-                },
-                {
-                  key: "components",
-                  label: "Components",
-                  children: null,
-                },
-                {
-                  key: "notes",
-                  label: (
-                    <span>
-                      Notes <Badge count={0} showZero />
-                    </span>
-                  ),
-                  children: null,
-                },
-                {
-                  key: "userPhotos",
-                  label: (
-                    <span>
-                      User Photos <Badge count={0} showZero className="ml-1" />
-                    </span>
-                  ),
-                  children: null,
-                },
+                { key: "instructions", label: "Instructions" },
+                { key: "components", label: "Components" },
+                { key: "notes", label: <span>Notes <Badge count={0} showZero /></span> },
+                { key: "userPhotos", label: <span>User Photos <Badge count={0} showZero /></span> },
               ]}
             />
           </Sider>
-          <Content style={contentStyle}>
-            <div className="flex">
-              <div className="flex-1 mr-4">
-                {activeTab === "instructions" && <InstructionsTab />}
-                {/* {activeTab === "components" && <ComponentsTab />}*/}
-                {activeTab === "notes" && <NotesTab />}
-                {activeTab === "userPhotos" && <UserPhotosTab />}
-              </div>
-            </div>
+
+          <Content style={{ padding: 24, backgroundColor: '#2e2d2d', color: '#fff' }}>
+            {activeTab === "instructions" && <InstructionsTab />}
+            {activeTab === "components" && (
+              <>
+                <Title level={4} style={{ color: "#fff" }}>Subtasks</Title>
+                <List
+                  dataSource={taskDetail?.subtasks || []}
+                  renderItem={(subtask) => (
+                    <List.Item>
+                      {subtask.title} — 
+                      <Badge color={subtask.status === "Completed" ? "green" : subtask.status === "In Progress" ? "blue" : "orange"} text={subtask.status} />
+                    </List.Item>
+                  )}
+                />
+              </>
+            )}
+            {activeTab === "notes" && <NotesTab />}
+            {activeTab === "userPhotos" && <UserPhotosTab />}
           </Content>
         </Layout>
-        <Footer className="task-footer">
-          <Button type="primary" className="w-[120px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowLeftOutlined />}>
-            Previous
-          </Button>
 
-          <Button type="primary" className="w-[150px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowLeftOutlined />}>
-            Prev Permit Officer
-          </Button>
-
-          <Button type="primary" className="w-[150px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowRightOutlined />}>
-            Next Permit Officer
-          </Button>
-
-          <Button type="primary" className="w-[120px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowRightOutlined />}>
-            Next
-          </Button>
-        </Footer>    </Layout>
-    </div >
-
+        <Footer style={{ textAlign: 'center', backgroundColor: '#4096ff', color: '#fff' }}>
+          <Button type="primary" onClick={handleBack} icon={<ArrowLeftOutlined />}>Back</Button>
+        </Footer>
+      </Layout>
+    </div>
   );
 };
+
 export default Taskdetail;

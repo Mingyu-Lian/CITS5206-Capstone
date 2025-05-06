@@ -1,19 +1,20 @@
-# Use the official Node.js image as the base image
+# Use the official Node.js image
 FROM node:16
 
-# Set the working directory inside the container
-WORKDIR /usr/src/app
+# Set working directory inside the container
+WORKDIR /app
 
-# Copy package.json and install dependencies
+# Copy dependency declarations first for better layer caching
 COPY package*.json ./
-RUN npm install
 
-# Copy the rest of the app
+# Install ALL dependencies (including nodemon)
+RUN npm install --legacy-peer-deps
+
+# Copy the rest of the source code
 COPY . .
 
-# Expose the port your Express app will run on
+# Expose backend port
 EXPOSE 5001
 
-# Command to run the app
-CMD ["npm", "start"]
-
+# Use nodemon for development
+CMD ["npm", "run", "dev"]
