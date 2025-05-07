@@ -1,5 +1,4 @@
 // src/pages/dashboard/EngineerDashboard.jsx
-import DashboardLayout from "../../components/DashboardLayout";
 import { Card, List, Tag, Button, Typography, Spin, Input, Row, Col, Select, Progress, message } from "antd";
 import { SyncOutlined, ToolOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
@@ -120,7 +119,6 @@ const EngineerDashboard = () => {
   const progressPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   return (
-    <DashboardLayout>
       <div style={{ padding: 24 }}>
         <Title level={2}>Engineer Dashboard - {engineerName}</Title>
 
@@ -215,7 +213,6 @@ const EngineerDashboard = () => {
           />
         </Card>
       </div>
-    </DashboardLayout>
   );
 };
 

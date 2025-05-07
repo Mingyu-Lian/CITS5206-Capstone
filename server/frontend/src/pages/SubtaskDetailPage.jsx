@@ -24,7 +24,6 @@ import {
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
-import PageLayout from "../components/PageLayout";
 import { createLogEntry, saveAndMaybeSyncLog } from "../utils/offlineSyncHelper";
 import localforage from "localforage";
 
@@ -173,7 +172,6 @@ const SubtaskDetailPage = () => {
   };
 
   return (
-    <PageLayout>
       <div className="p-8 bg-gray-100 min-h-screen">
         <div className="flex items-center justify-between mb-6">
           <Title level={2}>Subtasks for Task: {taskId}</Title>
@@ -257,7 +255,6 @@ const SubtaskDetailPage = () => {
           })}
         </Row>
       </div>
-    </PageLayout>
   );
 };
 

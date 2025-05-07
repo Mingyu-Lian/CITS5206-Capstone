@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { Table, Button, Typography, Modal, Form, Input, Select, message } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
-import PageLayout from "../components/PageLayout";
 import { UploadOutlined } from "@ant-design/icons";
 import { Upload } from "antd";
 import localforage from "localforage";
@@ -88,7 +87,6 @@ const WMSListPage = () => {
   if (loading) return <div>Loading WMS Documents...</div>;
 
   return (
-    <PageLayout>
       <div className="p-6 bg-white min-h-screen">
         <div className="flex justify-between items-center mb-4">
           <Title level={3}>WMS Documents for Locomotive {locomotiveId}</Title>
@@ -164,7 +162,6 @@ const WMSListPage = () => {
           </Form>
         </Modal>
       </div>
-    </PageLayout>
   );
 };
 
