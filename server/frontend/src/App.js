@@ -14,6 +14,8 @@ import WMSListPage from "./pages/WMSListPage";
 import TaskListPage from "./pages/TaskListPage";
 import SubtaskDetailPage from "./pages/SubtaskDetailPage";
 import TaskDetail from './pages/Task/Taskdetail';
+import TaskJson from './pages/TaskJson/TaskJson';
+import CommissionJsonJson from './pages/CommissionJson/commissiontest'
 
 function App() {
     return (
@@ -32,6 +34,8 @@ function App() {
                 <Route path="/taskdetail/:subtaskId" element={<TaskDetail />} />
                 <Route path="/taskdetail" element={<TaskDetail />} />
                 <Route path="/commissiondetail" element={<CommissionDetail />} />
+                <Route path="/taskjson" element={<TaskJson/>} />
+                <Route path="/commissionjson" element={<CommissionJsonJson/>} />
                 {/* Default redirect */}
                 <Route path="/" element={<Navigate to="/login" />} />
 
