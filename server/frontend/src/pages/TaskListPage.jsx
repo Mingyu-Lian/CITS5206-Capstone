@@ -1,29 +1,47 @@
 // src/pages/TaskListPage.jsx
-import { useState } from "react";
-import { Table, Button, Tag, Typography } from "antd";
+import { useState, useEffect } from "react";
+import { Table, Button, Tag, Typography, Checkbox, Tooltip, Space, message } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
 import PageLayout from "../components/PageLayout";
-import { useTasks } from "../hooks/useMockData"; // ✅ Hook
+import { useTasks } from "../hooks/useMockData";
+import users from "../mock/mockUsers";
+import { fetchTaskSignOffs, toggleTaskSignOff, supervisorSignOffTask } from "../mock/mockApi";
 
 const { Title } = Typography;
 
 const TaskListPage = () => {
   const { locomotiveId, wmsId } = useParams();
   const navigate = useNavigate();
-  const [filters, setFilters] = useState({});
   const { tasks, loading } = useTasks(locomotiveId, wmsId);
 
-  const fields = [
-    { label: "Title", key: "title", type: "text" },
-    { label: "Status", key: "status", type: "select", options: ["Pending", "In Progress", "Completed", "Signed Off"] },
-  ];
+  const [taskList, setTaskList] = useState([]);
+  const [signOffs, setSignOffs] = useState({});
+  const [filters, setFilters] = useState({});
+
+  const currentUser = localStorage.getItem("name");
+  const currentRole = localStorage.getItem("role");
+  const currentDiscipline = localStorage.getItem("discipline");
+
+  useEffect(() => {
+    if (!loading && tasks.length) {
+      setTaskList(tasks);
+    }
+  }, [loading, tasks]);
+
+  useEffect(() => {
+    const loadSignOffs = async () => {
+      const stored = await fetchTaskSignOffs();
+      setSignOffs(stored);
+    };
+    loadSignOffs();
+  }, []);
 
   const applyFilters = (query) => setFilters(query);
   const clearFilters = () => setFilters({});
 
-  const filtered = tasks.filter((item) => {
-    return (!filters.rules || filters.rules.every(r => {
+  const filtered = taskList.filter((item) => {
+    return (!filters.rules || filters.rules.every((r) => {
       const val = item[r.field]?.toString().toLowerCase();
       const q = r.value.toString().toLowerCase();
       switch (r.operator) {
@@ -35,6 +53,21 @@ const TaskListPage = () => {
     }));
   });
 
+  const handleEngineerToggle = async (taskId, engineer) => {
+    const updated = await toggleTaskSignOff(taskId, engineer);
+    setSignOffs((prev) => ({ ...prev, [`${taskId}-${engineer}`]: updated }));
+    message.success(`${engineer} ${updated ? "signed off" : "un-signed"} task`);
+  };
+
+  const handleSupervisorToggle = async (record) => {
+    await supervisorSignOffTask(locomotiveId, wmsId, record.taskId);
+    message.success(`Task "${record.title}" marked as Completed by Supervisor`);
+    const updated = taskList.map(task =>
+      task.taskId === record.taskId ? { ...task, status: "Completed" } : task
+    );
+    setTaskList(updated);
+  };
+
   const columns = [
     { title: "Task", dataIndex: "title", key: "title" },
     {
@@ -42,17 +75,80 @@ const TaskListPage = () => {
       dataIndex: "status",
       key: "status",
       render: (status) => (
-        <Tag color={status === "Completed" ? "blue" : status === "Signed Off" ? "green" : "orange"}>
+        <Tag color={
+          status === "Completed" ? "green" :
+          status === "In Progress" ? "orange" :
+          status === "Pending" ? "red" : "blue"
+        }>
           {status}
         </Tag>
       ),
     },
     {
+      title: "Engineer Sign-Offs",
+      key: "engineers",
+      render: (_, record) => {
+        const taskKey = `${locomotiveId}-${wmsId}-${record.taskId}`;
+        const assignedTasks = JSON.parse(localStorage.getItem("assignedTasks") || "{}");
+
+        const assignedEngineerName = assignedTasks[taskKey];
+        const assignedEngineer = users.find(
+          u => u.name === assignedEngineerName && u.role === "Engineer"
+        );
+
+        if (!assignedEngineer) {
+          return <i style={{ color: "gray" }}>No engineer assigned</i>;
+        }
+
+        const key = `${record.taskId}-${assignedEngineer.name}`;
+        const canCheck =
+          (currentUser === assignedEngineer.name && assignedEngineer.discipline === record.discipline) ||
+          currentRole === "Admin";
+
+        return (
+          <Checkbox
+            checked={signOffs[key]}
+            disabled={!canCheck}
+            onChange={() => handleEngineerToggle(record.taskId, assignedEngineer.name)}
+          >
+            {assignedEngineer.name}
+          </Checkbox>
+        );
+      }
+    },
+    {
+      title: "Supervisor Sign-Off",
+      key: "supervisor",
+      render: (_, record) => {
+        const signed = record.status === "Completed";
+        const canCheck =
+          currentRole === "Admin" ||
+          (currentRole === "Supervisor" &&
+            currentDiscipline === record.discipline &&
+            !signed);
+
+        return (
+          <Tooltip title={canCheck ? "You can complete this task" : "Not permitted"}>
+            <Checkbox
+              checked={signed}
+              disabled={!canCheck}
+              onChange={() => handleSupervisorToggle(record)}
+            >
+              Mark Completed
+            </Checkbox>
+          </Tooltip>
+        );
+      }
+    },
+    {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <Button type="link" onClick={() => navigate(`/tasks/${locomotiveId}/wms/${wmsId}/task/${record.taskId}`)}>
-          View Subtasks
+        <Button
+          type="link"
+          onClick={() => navigate(`/taskdetail/${locomotiveId}/${wmsId}/${record.taskId}`)}
+        >
+          View / Update Task
         </Button>
       ),
     },
@@ -64,7 +160,14 @@ const TaskListPage = () => {
     <PageLayout>
       <div className="p-6 bg-white min-h-screen">
         <Title level={3}>Tasks for WMS: {wmsId}</Title>
-        <QueryBuilder fields={fields} onApply={applyFilters} onClear={clearFilters} />
+        <QueryBuilder
+          fields={[
+            { label: "Title", key: "title", type: "text" },
+            { label: "Status", key: "status", type: "select", options: ["Pending", "In Progress", "Completed", "Signed Off"] },
+          ]}
+          onApply={applyFilters}
+          onClear={clearFilters}
+        />
         <Table rowKey="taskId" columns={columns} dataSource={filtered} bordered />
       </div>
     </PageLayout>

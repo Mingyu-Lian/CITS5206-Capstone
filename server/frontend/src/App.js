@@ -12,7 +12,7 @@ import CommissionDetail from './pages/commission/CommissionDetail';
 import LocomotiveListPage from "./pages/LocomotiveListPage";
 import WMSListPage from "./pages/WMSListPage";
 import TaskListPage from "./pages/TaskListPage";
-import SubtaskDetailPage from "./pages/SubtaskDetailPage";
+//import SubtaskDetailPage from "./pages/SubtaskDetailPage";
 import TaskDetail from './pages/task/Taskdetail';
 import BaselineListPage from "./pages/BaselineListPage";
 
@@ -29,7 +29,7 @@ function App() {
                 <Route path="/tasks" element={<LocomotiveListPage />} />
                 <Route path="/tasks/:locomotiveId/wms" element={<WMSListPage />} />
                 <Route path="/tasks/:locomotiveId/wms/:wmsId" element={<TaskListPage />} />
-                <Route path="/tasks/:locomotiveId/wms/:wmsId/task/:taskId" element={<SubtaskDetailPage />} />
+                {/* <Route path="/tasks/:locomotiveId/wms/:wmsId/task/:taskId" element={<SubtaskDetailPage />} /> */}
                 <Route path="/taskdetail/:subtaskId" element={<TaskDetail />} />
                 <Route path="/taskdetail" element={<TaskDetail />} />
                 <Route path="/commissiondetail" element={<CommissionDetail />} />

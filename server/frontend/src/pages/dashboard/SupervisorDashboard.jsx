@@ -1,23 +1,12 @@
 import DashboardLayout from "../../components/DashboardLayout";
 import {
-  Card,
-  List,
-  Tag,
-  Typography,
-  Select,
-  Input,
-  Row,
-  Col,
-  Spin,
-  Button,
-  Modal,
-  Form,
+  Card, List, Tag, Typography, Select, Input, Row, Col, Spin,
+  Button, Modal, Form, message
 } from "antd";
 import { useState, useEffect } from "react";
 import { useLocomotives } from "../../hooks/useMockData";
 import users from "../../mock/mockUsers";
-
-const engineers = users.filter((user) => user.role === "Engineer");
+import useAssignedEngineers from "../../hooks/useAssignedEngineers";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -31,26 +20,18 @@ const statusColors = {
 
 const SupervisorDashboard = () => {
   const { locomotives, loading } = useLocomotives();
+  const [allTasks, setAllTasks] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [selectedLocomotive, setSelectedLocomotive] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [assignModalVisible, setAssignModalVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-  const [assignedTasks, setAssignedTasks] = useState({});
-  const [allTasks, setAllTasks] = useState([]);
-  const [selectedEngineer, setSelectedEngineer] = useState(null);
   const [form] = Form.useForm();
 
-  // Load valid assignments from localStorage
-  useEffect(() => {
-    const raw = JSON.parse(localStorage.getItem("assignedTasks") || "{}");
-    const cleaned = Object.fromEntries(
-      Object.entries(raw).filter(
-        ([, v]) => v.name && v.discipline
-      )
-    );
-    setAssignedTasks(cleaned);
-  }, []);
+  const engineers = users.filter((u) => u.role === "Engineer");
+
+  const { assigned, addEngineer, removeEngineer } = useAssignedEngineers(selectedTask?.id);
 
   useEffect(() => {
     if (!loading) {
@@ -63,6 +44,7 @@ const SupervisorDashboard = () => {
               title: `${task.title} (${loco.name})`,
               status: task.status,
               locomotive: loco.name,
+              discipline: task.discipline,
             });
           });
         });
@@ -71,71 +53,41 @@ const SupervisorDashboard = () => {
     }
   }, [loading, locomotives]);
 
-  if (loading) {
-    return (
-      <Spin
-        tip="Loading Supervision Tasks..."
-        size="large"
-        style={{ marginTop: "20vh" }}
-      />
-    );
-  }
-
-  const filteredTasks = allTasks.filter((task) => {
-    const statusMatch =
-      selectedStatus === "All" || task.status === selectedStatus;
-    const locoMatch =
-      selectedLocomotive === "All" || task.locomotive === selectedLocomotive;
-    const searchMatch = task.title
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    return statusMatch && locoMatch && searchMatch;
-  });
+  useEffect(() => {
+    const filtered = allTasks.filter((task) => {
+      return (
+        (selectedStatus === "All" || task.status === selectedStatus) &&
+        (selectedLocomotive === "All" || task.locomotive === selectedLocomotive) &&
+        task.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+    setFilteredTasks(filtered);
+  }, [allTasks, selectedStatus, selectedLocomotive, searchTerm]);
 
   const openAssignModal = (task) => {
     setSelectedTask(task);
-    setSelectedEngineer(null);
     form.resetFields();
     setAssignModalVisible(true);
   };
 
-  const handleAssign = (values) => {
-    const updatedAssignments = JSON.parse(
-      localStorage.getItem("assignedTasks") || "{}"
-    );
-    updatedAssignments[selectedTask.id] = {
+  const handleAssign = async (values) => {
+    await addEngineer({
       name: values.engineer,
       discipline: values.discipline,
-    };
-    localStorage.setItem("assignedTasks", JSON.stringify(updatedAssignments));
-    setAssignedTasks(updatedAssignments);
-
-    const updatedTasks = allTasks.map((task) => {
-      if (task.id === selectedTask.id) {
-        return { ...task, status: "In Progress" };
-      }
-      return task;
     });
-    setAllTasks(updatedTasks);
-
-    setAssignModalVisible(false);
+    message.success(`${values.engineer} assigned.`);
     form.resetFields();
   };
+
+  if (loading) return <Spin tip="Loading..." style={{ marginTop: "20vh" }} />;
 
   return (
     <DashboardLayout>
       <div style={{ padding: 24 }}>
         <Title level={2}>Supervisor Dashboard</Title>
-
-        {/* Filters */}
         <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-          <Col xs={24} md={8}>
-            <Select
-              value={selectedStatus}
-              onChange={(val) => setSelectedStatus(val)}
-              style={{ width: "100%" }}
-              placeholder="Filter by Status"
-            >
+          <Col span={8}>
+            <Select value={selectedStatus} onChange={setSelectedStatus} style={{ width: "100%" }}>
               <Option value="All">All Statuses</Option>
               <Option value="Pending">Pending</Option>
               <Option value="In Progress">In Progress</Option>
@@ -143,91 +95,43 @@ const SupervisorDashboard = () => {
               <Option value="Signed Off">Signed Off</Option>
             </Select>
           </Col>
-
-          <Col xs={24} md={8}>
-            <Select
-              value={selectedLocomotive}
-              onChange={(val) => setSelectedLocomotive(val)}
-              style={{ width: "100%" }}
-              placeholder="Filter by Locomotive"
-            >
+          <Col span={8}>
+            <Select value={selectedLocomotive} onChange={setSelectedLocomotive} style={{ width: "100%" }}>
               <Option value="All">All Locomotives</Option>
               {locomotives.map((loco) => (
-                <Option key={loco.locomotiveId} value={loco.name}>
-                  {loco.name}
-                </Option>
+                <Option key={loco.locomotiveId} value={loco.name}>{loco.name}</Option>
               ))}
             </Select>
           </Col>
-
-          <Col xs={24} md={8}>
+          <Col span={8}>
             <Input.Search
+              placeholder="Search Task Title"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search Task Title"
               allowClear
             />
           </Col>
         </Row>
 
-        <Row style={{ marginBottom: 24 }}>
-          <Button
-            type="default"
-            onClick={() => {
-              setSelectedStatus("All");
-              setSelectedLocomotive("All");
-              setSearchTerm("");
-            }}
-          >
-            Reset Filters
-          </Button>
-        </Row>
-
-        {/* Task List */}
         <Card title="Tasks to Supervise">
           <List
             dataSource={filteredTasks}
             renderItem={(task) => (
               <List.Item
-                actions={
-                  task.status === "Pending"
-                    ? [
-                        <Button
-                          type="link"
-                          onClick={() => openAssignModal(task)}
-                        >
-                          Assign Engineer
-                        </Button>,
-                      ]
-                    : []
-                }
+                actions={[
+                  <Button type="link" onClick={() => openAssignModal(task)}>Assign Engineer</Button>
+                ]}
               >
                 <List.Item.Meta
-                  title={
-                    <>
-                      {task.title}
-                      {assignedTasks[task.id] &&
-                        assignedTasks[task.id].name &&
-                        assignedTasks[task.id].discipline && (
-                          <Tag color="green" style={{ marginLeft: 8 }}>
-                            Assigned to {assignedTasks[task.id].name} (
-                            {assignedTasks[task.id].discipline})
-                          </Tag>
-                        )}
-                    </>
-                  }
-                  description={
-                    <Tag color={statusColors[task.status] || "default"}>
-                      {task.status}
-                    </Tag>
-                  }
+                  title={task.title}
+                  description={<Tag color={statusColors[task.status]}>{task.status}</Tag>}
                 />
               </List.Item>
             )}
           />
         </Card>
 
-        {/* Assign Engineer Modal */}
+        {/* Modal for Assigning Engineers */}
         <Modal
           title={`Assign Engineer for "${selectedTask?.title}"`}
           open={assignModalVisible}
@@ -235,54 +139,45 @@ const SupervisorDashboard = () => {
           footer={null}
         >
           <Form form={form} layout="vertical" onFinish={handleAssign}>
-            <Form.Item
-              name="engineer"
-              label="Select Engineer"
-              rules={[{ required: true, message: "Please select an engineer" }]}
-            >
+            <Form.Item name="engineer" label="Engineer" rules={[{ required: true }]}>
               <Select
                 placeholder="Select Engineer"
-                onChange={(value) => {
-                  const eng = engineers.find((e) => e.name === value);
-                  setSelectedEngineer(eng);
+                onChange={(val) => {
+                  const eng = engineers.find((e) => e.name === val);
                   form.setFieldsValue({ discipline: eng?.discipline });
                 }}
               >
-                {engineers.map((engineer) => (
-                  <Option key={engineer.id} value={engineer.name}>
-                    {engineer.name}
-                  </Option>
+                {engineers.map((eng) => (
+                  <Option key={eng.id} value={eng.name}>{eng.name}</Option>
                 ))}
               </Select>
             </Form.Item>
-
-            <Form.Item
-              name="discipline"
-              label="Engineer Discipline"
-              rules={[
-                {
-                  required: true,
-                  message: "Please confirm engineer's discipline",
-                },
-              ]}
-            >
+            <Form.Item name="discipline" label="Discipline" rules={[{ required: true }]}>
               <Select placeholder="Select Discipline">
-                <Option value="Electrical">Electrical</Option>
                 <Option value="Mechanical">Mechanical</Option>
+                <Option value="Electrical">Electrical</Option>
                 <Option value="Software">Software</Option>
-                <Option value="Mechanical Electrical">
-                  Mechanical Electrical
-                </Option>
                 <Option value="Quality">Quality</Option>
               </Select>
             </Form.Item>
-
             <Form.Item>
-              <Button type="primary" htmlType="submit" block>
-                Assign
-              </Button>
+              <Button type="primary" htmlType="submit" block>Assign</Button>
             </Form.Item>
           </Form>
+
+          {/* Assigned Engineer Tags */}
+          <div style={{ marginTop: 16 }}>
+            {assigned.map((eng, idx) => (
+              <Tag
+                key={idx}
+                color="green"
+                closable
+                onClose={() => removeEngineer(eng.name)}
+              >
+                {eng.name} ({eng.discipline})
+              </Tag>
+            ))}
+          </div>
         </Modal>
       </div>
     </DashboardLayout>
