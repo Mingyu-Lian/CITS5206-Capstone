@@ -35,27 +35,12 @@ const connectDB = async () => {
         Log.deleteMany({})
         ]);
         console.log("Existing data cleared.");
+33
 
-        // Create a superuser if it doesn't already exist
-        const existingSuperUser = await User.findOne({ Username: "admin" });
-        console.log(existingSuperUser);
-        if (!existingSuperUser) {
-            try{
-            const hashedPassword = await bcrypt.hash("123456", 10); // Replace "superpassword" with a secure password
-            const superUser = new User({
-                _id: new mongoose.Types.ObjectId(),
-                Username: "admin",
-                personName: "admin",
-                email: "admin@gmail.com",
-                passwordHash: hashedPassword,
-                role: "admin",
-            });
-            await superUser.save();
-            console.log("admin user created successfully!");
-        } catch (error) {
-            console.error("Error creating admin user:", error);
-        }
-        }
+
+
+
+.0
          // Path to your JSON file containing sample data.
          // Make sure sampleData.json is in the same folder as this script or adjust the path accordingly.
         const dataPath = path.join(__dirname, "../sample.json");
@@ -69,7 +54,7 @@ const connectDB = async () => {
             Task.insertMany(jsonData.tasks),
             Discipline.insertMany(jsonData.disciplines),
             Log.insertMany(jsonData.logs)
-          ]);
+        ]);
       
           console.log("Sample data seeded successfully!");
 

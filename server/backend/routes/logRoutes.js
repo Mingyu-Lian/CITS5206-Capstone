@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { getAllLogs, createLog, updateLog, deleteLog } = require("../controllers/logController");
+const { authenticate, authorize } = require("../middleware/middleware");
 
 /**
  * @swagger
@@ -13,38 +14,37 @@ const { getAllLogs, createLog, updateLog, deleteLog } = require("../controllers/
  * @swagger
  * /api/logs:
  *   get:
- *     summary: List logs with optional filtering by user and pagination
+ *     summary: List logs with optional filtering by user, loco, and pagination. Access - user itself
  *     tags: [Logs]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: userid
  *         schema:
  *           type: string
- *         description: Filter logs by user id
+ *         description: (Admin only) Filter logs by specific user id
+ *       - in: query
+ *         name: locoID
+ *         schema:
+ *           type: string
+ *         description: Filter logs by locomotive id
  *       - in: query
  *         name: page
  *         schema:
  *           type: integer
- *         description: Page number for pagination
+ *         description: Page number for pagination (default is 1)
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
- *         description: Number of logs per page
+ *         description: Number of logs per page (default is 20)
+ *     description: 
+ *       Admin users can view all logs and filter by userId and locoID. 
+ *       Regular users can only view their own logs, optionally filtered by locoID.
  *     responses:
  *       200:
  *         description: Logs list with pagination info
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 logs:
- *                   type: array
- *                 totalPages:
- *                   type: integer
- *                 currentPage:
- *                   type: integer
  *       500:
  *         description: Server error
  */
@@ -53,32 +53,30 @@ const { getAllLogs, createLog, updateLog, deleteLog } = require("../controllers/
  * @swagger
  * /api/logs:
  *   post:
- *     summary: Create a new log entry
+ *     summary: Create a new log entry. Access - user itself
  *     tags: [Logs]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             description: Full log fields required for creation
  *             properties:
  *               userId:
  *                 type: string
- *                 example: 643d1f2e5f1b2c0012345678
  *               action:
  *                 type: string
- *                 example: "Created asset"
  *               locoID:
  *                 type: string
- *                 example: 643d1f2e5f1b2c0012345678
  *               details:
  *                 type: string
- *                 example: "Detailed log message"
  *               actionTime:
  *                 type: string
  *                 format: date-time
- *                 example: "2025-04-12T10:00:00Z"
+ *               ip:
+ *                 type: string
  *     responses:
  *       201:
  *         description: Log created successfully
@@ -90,17 +88,18 @@ const { getAllLogs, createLog, updateLog, deleteLog } = require("../controllers/
  * @swagger
  * /api/logs/{id}:
  *   put:
- *     summary: Update a log entry
+ *     summary: Update a log entry. Access - Admin only
  *     tags: [Logs]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Log id
  *         schema:
  *           type: string
+ *         description: Log ID
  *     requestBody:
- *       description: Log update data
  *       required: true
  *       content:
  *         application/json:
@@ -109,10 +108,11 @@ const { getAllLogs, createLog, updateLog, deleteLog } = require("../controllers/
  *             properties:
  *               action:
  *                 type: string
- *                 example: "Updated log action"
+ *               details:
+ *                 type: string
  *     responses:
  *       200:
- *         description: Log record updated successfully
+ *         description: Log updated successfully
  *       500:
  *         description: Server error
  */
@@ -121,26 +121,29 @@ const { getAllLogs, createLog, updateLog, deleteLog } = require("../controllers/
  * @swagger
  * /api/logs/{id}:
  *   delete:
- *     summary: Delete a log entry
+ *     summary: Delete a log entry. Access - Admin only
  *     tags: [Logs]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Log id
  *         schema:
  *           type: string
+ *         description: Log ID
  *     responses:
  *       200:
- *         description: Log record deleted successfully
+ *         description: Log deleted successfully
  *       500:
  *         description: Server error
  */
 
-// Route definitions
-router.get("/", getAllLogs);
-router.post("/", createLog);
-router.put("/:id", updateLog);
-router.delete("/:id", deleteLog);
+// Route defined
+router.get("/", authenticate, getAllLogs);
+router.post("/", authenticate, createLog);
+router.put("/:id", authenticate, authorize(["admin"]), updateLog);
+router.delete("/:id", authenticate, authorize(["admin"]), deleteLog);
 
 module.exports = router;
+

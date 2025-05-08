@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { authenticate, authorize } = require("../middleware/middleware");
 const {
   getAllWMS,
   getWMSById,
@@ -7,7 +8,6 @@ const {
   updateWMS,
   deleteWMS,
 } = require("../controllers/wmsController");
-
 /**
  * @swagger
  * tags:
@@ -63,6 +63,36 @@ const {
 
 /**
  * @swagger
+ * /api/wms/{id}:
+ *   put:
+ *     summary: Update a WMS file
+ *     tags: [WMS]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: WMS id
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       description: Full WMS update data
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Updated WMS Name
+ *     responses:
+ *       200:
+ *         description: WMS updated successfully
+ *       500:
+ *         description: Server error
+ */
+/**
+ * @swagger
  * /api/wms:
  *   post:
  *     summary: Create a new WMS file
@@ -90,46 +120,12 @@ const {
  *               description:
  *                 type: string
  *                 example: Description of the WMS file
- *               // Additional fields as required...
  *     responses:
  *       201:
  *         description: WMS created successfully
  *       500:
  *         description: Server error
  */
-
-/**
- * @swagger
- * /api/wms/{id}:
- *   put:
- *     summary: Update a WMS file
- *     tags: [WMS]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: WMS id
- *         schema:
- *           type: string
- *     requestBody:
- *       description: Full WMS update data
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 example: Updated WMS Name
- *               // Additional fields for update...
- *     responses:
- *       200:
- *         description: WMS updated successfully
- *       500:
- *         description: Server error
- */
-
 /**
  * @swagger
  * /api/wms/{id}:
@@ -153,7 +149,7 @@ const {
 // Route definitions
 router.get("/", getAllWMS);
 router.get("/:id", getWMSById);
-router.post("/", createWMS);
+router.post("/", authenticate, authorize(["admin", "supervisor"]),createWMS);
 router.put("/:id", updateWMS);
 router.delete("/:id", deleteWMS);
 

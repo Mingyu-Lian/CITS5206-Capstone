@@ -45,19 +45,11 @@ const updateAsset = async (req, res) => {
 };
 
 // Delete asset
-const deleteAsset = async (req, res) => {
-  try {
-    await Asset.findByIdAndDelete(req.params.id);
-    res.json({ message: "Asset deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error });
-  }
-};
+ 
 
 module.exports = {
   getAllAssets,
   getAssetById,
   createAsset,
   updateAsset,
-  deleteAsset,
 };

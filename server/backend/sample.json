@@ -1,216 +1,374 @@
 {
-    "locoTypes": [
-      {
-        "_id": "60d9f1171faebf1e1234567b",
-        "name": "Electric",
-        "description": "Electric locomotive type"
-      },
-      {
-        "_id": "60d9f1171faebf1e1234567c",
-        "name": "Diesel",
-        "description": "Diesel locomotive type"
-      }
-    ],
-    "baselines": [
-      {
-        "software_id": "60d9f1181faebf1e1234567d",
-        "softwareName": "ControlSoft",
-        "softwareVersion": ["1.0", "1.1"],
-        "description": "Initial release of ControlSoft"
-      },
-      {
-        "software_id": "60d9f1181faebf1e1234567e",
-        "softwareName": "TrackMaster",
-        "softwareVersion": ["2.0", "2.1", "2.2"],
-        "description": "Baseline for track management"
-      }
-    ],
-    "assets": [
-      {
-        "_id": "60d9f1191faebf1e1234567f",
-        "code": "A1001",
-        "name": "Engine",
-        "assetType": "Mechanical",
-        "locoID": 123,
-        "description": "Main engine asset",
-        "locoType": "60d9f1171faebf1e1234567b",
-        "status": "Active",
-        "parentAsset": null
-      },
-      {
-        "_id": "60d9f1191faebf1e12345680",
-        "code": "A1002",
-        "name": "Cabin",
-        "assetType": "Cabin",
-        "locoID": 123,
-        "description": "Driver cabin",
-        "locoType": "60d9f1171faebf1e1234567b",
-        "status": "Active",
-        "parentAsset": "60d9f1191faebf1e1234567f"
-      },
-      {
-        "_id": "60d9f1191faebf1e12345681",
-        "code": "A1003",
-        "name": "Brake System",
-        "assetType": "Safety",
-        "locoID": 124,
-        "description": "Brake system for safety",
-        "locoType": "60d9f1171faebf1e1234567c",
-        "status": "Inactive",
-        "parentAsset": null
-      }
-    ],
-    "projects": [
-      {
-        "_id": "60d9f11a1faebf1e12345682",
-        "name": "Project Alpha",
-        "description": "A new project alpha",
-        "startDate": "2025-05-01T00:00:00.000Z",
-        "endDate": "2025-12-31T00:00:00.000Z",
-        "createdBy": "60d9f1141faebf1e12345678",
-        "createdAt": "2025-04-01T00:00:00.000Z",
-        "updatedAt": "2025-04-01T00:00:00.000Z"
-      },
-      {
-        "_id": "60d9f11a1faebf1e12345683",
-        "name": "Project Beta",
-        "description": "Project beta description",
-        "startDate": "2025-06-01T00:00:00.000Z",
-        "endDate": "2025-11-30T00:00:00.000Z",
-        "createdBy": "60d9f1151faebf1e12345679",
-        "createdAt": "2025-04-10T00:00:00.000Z",
-        "updatedAt": "2025-04-10T00:00:00.000Z"
-      }
-    ],
-    "wms": [
-      {
-        "_id": "60d9f11b1faebf1e12345684",
-        "document_id": "DOC001",
-        "name": "WMS File 1",
-        "projectId": "60d9f11a1faebf1e12345682",
-        "version": "1.0",
-        "description": "Initial release of WMS File 1",
-        "importantNote": "Handle with care",
-        "importantNoteAcceptedby": ["60d9f1151faebf1e12345679"],
-        "workType": "Maintenance",
-        "locoId": "60d9f1171faebf1e1234567b",
-        "fileType": "pdf",
-        "filePath": "/files/wms1.pdf",
-        "createdBy": "60d9f1141faebf1e12345678",
-        "createdAt": "2025-04-01T00:00:00.000Z",
-        "updatedAt": "2025-04-01T00:00:00.000Z",
-        "authorisedBy": "Manager",
-        "verifiedBy": "Engineer",
-        "approvedBy": "Supervisor",
-        "assignedSupervisor": ["60d9f1151faebf1e12345679"],
-        "assignedEngineer": ["60d9f1141faebf1e12345678"],
-        "isActive": true,
-        "comments": "All good"
-      },
-      {
-        "_id": "60d9f11b1faebf1e12345685",
-        "document_id": "DOC002",
-        "name": "WMS File 2",
-        "projectId": "60d9f11a1faebf1e12345683",
-        "version": "2.0",
-        "description": "Second WMS file for Project Beta",
-        "importantNote": "Urgent updates needed",
-        "importantNoteAcceptedby": ["60d9f1161faebf1e1234567a"],
-        "workType": "Upgrade",
-        "locoId": "60d9f1171faebf1e1234567c",
-        "fileType": "docx",
-        "filePath": "/files/wms2.docx",
-        "createdBy": "60d9f1151faebf1e12345679",
-        "createdAt": "2025-04-05T00:00:00.000Z",
-        "updatedAt": "2025-04-05T00:00:00.000Z",
-        "authorisedBy": "Senior Manager",
-        "verifiedBy": "Senior Engineer",
-        "approvedBy": "Supervisor",
-        "assignedSupervisor": ["60d9f1151faebf1e12345679"],
-        "assignedEngineer": ["60d9f1161faebf1e1234567a"],
-        "isActive": false,
-        "comments": "Requires revision"
-      }
-    ],
-    "tasks": [
-      {
-        "_id": "60d9f11c1faebf1e12345686",
-        "name": "Inspect Engine",
-        "highlight": ["Safety", "Urgent"],
-        "assignedSupervisor": "60d9f1151faebf1e12345679",
-        "assignedEngineer": "60d9f1141faebf1e12345678",
-        "disciplineRequire": "60d9f11d1faebf1e1234568a",
-        "parentsTask": null,
-        "parentsWMS": "60d9f11b1faebf1e12345684",
-        "status": "Pending",
-        "startDate": "2025-06-01T00:00:00.000Z",
-        "endDate": "2025-06-02T00:00:00.000Z",
-        "comments": "Needs immediate attention",
-        "updatedAt": "2025-06-01T00:00:00.000Z",
-        "components": ["Engine Block", "Pistons"],
-        "attachments": ["/files/inspect1.jpg"],
-        "location": "Loco 123",
-        "takeNote": "Bring tools",
-        "visualSupport": ["/files/visual1.png"],
-        "signoff": "Signed",
-        "Baseline": []
-      },
-      {
-        "_id": "60d9f11c1faebf1e12345687",
-        "name": "Replace Brake System",
-        "highlight": ["Safety", "Routine"],
-        "assignedSupervisor": "60d9f1151faebf1e12345679",
-        "assignedEngineer": "60d9f1161faebf1e1234567a",
-        "disciplineRequire": "60d9f11d1faebf1e1234568a",
-        "parentsTask": null,
-        "parentsWMS": "60d9f11b1faebf1e12345685",
-        "status": "In Progress",
-        "startDate": "2025-07-01T00:00:00.000Z",
-        "endDate": "2025-07-05T00:00:00.000Z",
-        "comments": "Standard procedure",
-        "updatedAt": "2025-07-01T00:00:00.000Z",
-        "components": ["Brake Pads", "Cables"],
-        "attachments": ["/files/inspect2.jpg"],
-        "location": "Loco 124",
-        "takeNote": "Verify safety standards",
-        "visualSupport": ["/files/visual2.png"],
-        "signoff": "Pending",
-        "Baseline": []
-      }
-    ],
-    "disciplines": [
-      {
-        "_id": "60d9f11d1faebf1e1234568a",
-        "name": "Mechanical",
-        "description": "Mechanical discipline for inspections and repairs"
-      },
-      {
-        "_id": "60d9f11d1faebf1e1234568b",
-        "name": "Electrical",
-        "description": "Electrical systems inspections"
-      }
-    ],
-    "logs": [
-      {
-        "_id": "60d9f11e1faebf1e1234568c",
-        "userId": "60d9f1141faebf1e12345678",
-        "action": "Logged in",
-        "locoID": "60d9f1171faebf1e1234567b",
-        "details": "User admin logged in",
-        "actionTime": "2025-04-01T08:00:00.000Z",
-        "recordTime": "2025-04-01T08:00:00.000Z",
-        "ip": "127.0.0.1"
-      },
-      {
-        "_id": "60d9f11e1faebf1e1234568d",
-        "userId": "60d9f1151faebf1e12345679",
-        "action": "Created asset",
-        "locoID": "60d9f1171faebf1e1234567b",
-        "details": "Asset A1001 created",
-        "actionTime": "2025-04-02T09:00:00.000Z",
-        "recordTime": "2025-04-02T09:00:00.000Z",
-        "ip": "127.0.0.1"
-      }
-    ]
-  }
-  
+  "users": [
+    {
+      "_id": "650a5d331faebf1e1234567a",
+      "username": "jdoe",
+      "personName": "John Doe",
+      "email": "jdoe@example.com",
+      "passwordHash": "hashedpassword1",
+      "role": "admin",
+      "discipline": ["650a5d331faebf1e1234567c"],
+      "isActive": true,
+      "createdAt": "2025-04-01T10:00:00.000Z",
+      "updatedAt": "2025-04-01T10:00:00.000Z"
+    },
+    {
+      "_id": "650a5d331faebf1e1234567b",
+      "username": "asmith",
+      "personName": "Alice Smith",
+      "email": "asmith@example.com",
+      "passwordHash": "hashedpassword2",
+      "role": "engineer",
+      "discipline": ["650a5d331faebf1e1234567d"],
+      "isActive": false,
+      "createdAt": "2025-04-02T11:00:00.000Z",
+      "updatedAt": "2025-04-02T11:00:00.000Z"
+    }
+  ],
+  "disciplines": [
+    {
+      "_id": "650a5d331faebf1e1234567c",
+      "name": "Mechanical",
+      "description": "Mechanical engineering discipline"
+    },
+    {
+      "_id": "650a5d331faebf1e1234567d",
+      "name": "Electrical",
+      "description": "Electrical engineering discipline"
+    }
+  ],
+  "locoTypes": [
+    {
+      "_id": "60d9f1171faebf1e1234567b",
+      "name": "Electric",
+      "description": "Electric locomotive type",
+      "isActive": true
+    },
+    {
+      "_id": "60d9f1171faebf1e1234567c",
+      "name": "Diesel",
+      "description": "Diesel locomotive type",
+      "isActive": true
+    }
+  ],
+  "baselines": [
+    {
+      "_id": "60d9f1181faebf1e1234567d",
+      "softwareName": "ControlSoft",
+      "description": "Initial release of ControlSoft",
+      "isActive": true,
+      "versions": [
+        {
+          "versionId": "v1",
+          "version": "1.0",
+          "createdBy": "650a5d331faebf1e1234567a",
+          "createdAt": "2025-04-02T00:00:00.000Z",
+          "note": "Initial release",
+          "isActive": true,
+          "usageHistory": [],
+          "updateHistory": []
+        }
+      ]
+    },
+    {
+      "_id": "60d9f1181faebf1e1234567e",
+      "softwareName": "TrackMaster",
+      "description": "Baseline for track management",
+      "isActive": false,
+      "versions": [
+        {
+          "versionId": "v1",
+          "version": "2.0",
+          "createdBy": "650a5d331faebf1e1234567b",
+          "createdAt": "2025-04-03T00:00:00.000Z",
+          "note": "Major update",
+          "isActive": true,
+          "usageHistory": [],
+          "updateHistory": []
+        }
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "_id": "60d9f1191faebf1e1234567f",
+      "code": "A1001",
+      "name": "Engine",
+      "description": "Main engine asset",
+      "assetType": "Mechanical",
+      "locoID": 1001,
+      "locoType": "60d9f1171faebf1e1234567b",
+      "status": "Active",
+      "parentAsset": null,
+      "isActive": true
+    },
+    {
+      "_id": "60d9f1191faebf1e12345680",
+      "code": "A1002",
+      "name": "Cabin",
+      "description": "Driver cabin",
+      "assetType": "Cabin",
+      "locoID": 1001,
+      "locoType": "60d9f1171faebf1e1234567b",
+      "status": "Inactive",
+      "parentAsset": "60d9f1191faebf1e1234567f",
+      "isActive": false
+    }
+  ],
+  "projects": [
+    {
+      "_id": "60d9f11a1faebf1e12345682",
+      "name": "Project Alpha",
+      "description": "Alpha project",
+      "startDate": "2025-05-01T00:00:00.000Z",
+      "endDate": "2025-12-31T00:00:00.000Z",
+      "createdBy": "650a5d331faebf1e1234567a",
+      "createdAt": "2025-04-01T09:30:00.000Z",
+      "updateHistory": [
+        {
+          "userId": "650a5d331faebf1e1234567b",
+          "updatedAt": "2025-04-05T12:00:00.000Z"
+        }
+      ],
+      "isActive": true
+    },
+    {
+      "_id": "60d9f11a1faebf1e12345683",
+      "name": "Project Beta",
+      "description": "Beta project",
+      "startDate": "2025-06-01T00:00:00.000Z",
+      "endDate": "2025-11-30T00:00:00.000Z",
+      "createdBy": "650a5d331faebf1e1234567b",
+      "createdAt": "2025-04-02T14:00:00.000Z",
+      "updateHistory": [
+        {
+          "userId": "650a5d331faebf1e1234567a",
+          "updatedAt": "2025-04-06T12:00:00.000Z"
+        }
+      ],
+      "isActive": false
+    }
+  ],
+  "wms": [
+    {
+      "_id": "60d9f11d1faebf1e1234568a",
+      "document_id": "WMS001",
+      "name": "Work Method Statement 1",
+      "projectId": "60d9f11a1faebf1e12345682",
+      "version": "1.0",
+      "description": "WMS for Project Alpha",
+      "importantNote": "Safety first",
+      "importantNoteAcceptedby": ["John Doe"],
+      "workType": "Inspection",
+      "locoId": "60d9f1171faebf1e1234567b",
+      "fileType": "PDF",
+      "filePath": "/files/wms1.pdf",
+      "createdBy": "650a5d331faebf1e1234567a",
+      "createdAt": "2025-04-01T09:00:00.000Z",
+      "updatedAt": "2025-04-02T09:00:00.000Z",
+      "authorisedBy": "Supervisor A",
+      "verifiedBy": "Engineer B",
+      "approvedBy": "Manager C",
+      "assignedSupervisor": ["650a5d331faebf1e1234567b"],
+      "assignedEngineer": ["650a5d331faebf1e1234567a"],
+      "isActive": true,
+      "comments": "Initial draft",
+      "historyVersionId": "v1"
+    },
+    {
+      "_id": "60d9f11d1faebf1e1234568b",
+      "document_id": "WMS002",
+      "name": "Work Method Statement 2",
+      "projectId": "60d9f11a1faebf1e12345683",
+      "version": "2.0",
+      "description": "WMS for Project Beta",
+      "importantNote": "Check measurements",
+      "importantNoteAcceptedby": ["Alice Smith"],
+      "workType": "Maintenance",
+      "locoId": "60d9f1171faebf1e1234567c",
+      "fileType": "DOCX",
+      "filePath": "/files/wms2.docx",
+      "createdBy": "650a5d331faebf1e1234567b",
+      "createdAt": "2025-04-02T10:00:00.000Z",
+      "updatedAt": "2025-04-03T10:00:00.000Z",
+      "authorisedBy": "Supervisor X",
+      "verifiedBy": "Engineer Y",
+      "approvedBy": "Manager Z",
+      "assignedSupervisor": ["650a5d331faebf1e1234567a"],
+      "assignedEngineer": ["650a5d331faebf1e1234567b"],
+      "isActive": false,
+      "comments": "Final version",
+      "historyVersionId": "v2"
+    }
+  ],
+  "workTables": [
+    {
+      "_id": "60d9f11d1faebf1e1234568c",
+      "tableId": "WT001",
+      "title": "Work Table 1",
+      "referenceName": "Table Alpha",
+      "assignedSupervisor": "650a5d331faebf1e1234567b",
+      "assignedEngineer": "650a5d331faebf1e1234567a",
+      "disciplineRequire": "650a5d331faebf1e1234567c",
+      "parentsWMS": "60d9f11d1faebf1e1234568a",
+      "historyVersionTableId": "v1",
+      "createdBy": "650a5d331faebf1e1234567a",
+      "createdAt": "2025-04-01T11:00:00.000Z",
+      "updateHistory": [
+        {
+          "userId": "650a5d331faebf1e1234567b",
+          "updatedAt": "2025-04-02T11:00:00.000Z"
+        }
+      ],
+      "isActive": true,
+      "columns": [
+        {
+          "id": 1,
+          "headerText": "Header1",
+          "columnData": "Data1",
+          "widthWeight": 1,
+          "columnType": 0,
+          "isOptional": false,
+          "isHidden": false,
+          "resetValueOnLocalChange": false,
+          "forceResetValueOnGlobalChange": false,
+          "resetValueOnGlobalChange": false,
+          "postChangeResetAction": false
+        }
+      ],
+      "rows": [
+        {
+          "id": 1,
+          "headerRowText": "Row1",
+          "cells": [
+            {
+              "columnId": 1,
+              "labelText": "Cell1",
+              "verticalMerge": 0,
+              "metadata": "Meta1",
+              "legacyLabelText": "Legacy1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_id": "60d9f11d1faebf1e1234568d",
+      "tableId": "WT002",
+      "title": "Work Table 2",
+      "referenceName": "Table Beta",
+      "assignedSupervisor": "650a5d331faebf1e1234567a",
+      "assignedEngineer": "650a5d331faebf1e1234567b",
+      "disciplineRequire": "650a5d331faebf1e1234567d",
+      "parentsWMS": "60d9f11d1faebf1e1234568b",
+      "historyVersionTableId": "v2",
+      "createdBy": "650a5d331faebf1e1234567b",
+      "createdAt": "2025-04-10T11:00:00.000Z",
+      "updateHistory": [
+        {
+          "userId": "650a5d331faebf1e1234567a",
+          "updatedAt": "2025-04-11T11:00:00.000Z"
+        }
+      ],
+      "isActive": false,
+      "columns": [
+        {
+          "id": 2,
+          "headerText": "Header2",
+          "columnData": "Data2",
+          "widthWeight": 2,
+          "columnType": 4,
+          "isOptional": true,
+          "isHidden": true,
+          "resetValueOnLocalChange": true,
+          "forceResetValueOnGlobalChange": false,
+          "resetValueOnGlobalChange": true,
+          "postChangeResetAction": true
+        }
+      ],
+      "rows": [
+        {
+          "id": 2,
+          "headerRowText": "Row2",
+          "cells": [
+            {
+              "columnId": 2,
+              "labelText": "Cell2",
+              "verticalMerge": 1,
+              "metadata": "Meta2",
+              "legacyLabelText": "Legacy2"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "_id": "60d9f11d1faebf1e1234568e",
+      "name": "Inspect Engine",
+      "highlight": ["Urgent"],
+      "assignedSupervisor": "650a5d331faebf1e1234567b",
+      "assignedEngineer": "650a5d331faebf1e1234567a",
+      "disciplineRequire": "650a5d331faebf1e1234567c",
+      "parentsTask": null,
+      "parentsWMS": "60d9f11d1faebf1e1234568a",
+      "status": "In Progress",
+      "startDate": "2025-04-15T08:00:00.000Z",
+      "endDate": "2025-04-16T17:00:00.000Z",
+      "comments": "Check engine performance",
+      "updatedAt": "2025-04-15T09:00:00.000Z",
+      "components": ["Engine", "Cooling System"],
+      "attachments": ["engine.jpg"],
+      "location": "Workshop A",
+      "takeNote": "Ensure safety protocols",
+      "visualSupport": ["photo1.jpg"],
+      "signoff": "Supervisor",
+      "Baseline": []
+    },
+    {
+      "_id": "60d9f11d1faebf1e1234568f",
+      "name": "Test Brakes",
+      "highlight": ["Critical"],
+      "assignedSupervisor": "650a5d331faebf1e1234567a",
+      "assignedEngineer": "650a5d331faebf1e1234567b",
+      "disciplineRequire": "650a5d331faebf1e1234567d",
+      "parentsTask": null,
+      "parentsWMS": "60d9f11d1faebf1e1234568b",
+      "status": "Pending",
+      "startDate": "2025-04-18T08:00:00.000Z",
+      "endDate": "2025-04-19T17:00:00.000Z",
+      "comments": "Test brake pads and hydraulics",
+      "updatedAt": "2025-04-17T09:00:00.000Z",
+      "components": ["Brake System"],
+      "attachments": ["brakes.pdf"],
+      "location": "Workshop B",
+      "takeNote": "Check hydraulic pressure",
+      "visualSupport": ["brake.jpg"],
+      "signoff": "Engineer",
+      "Baseline": []
+    }
+  ],
+  "logs": [
+    {
+      "_id": "60d9f1171faebf1e12345671",
+      "userId": "650a5d331faebf1e1234567a",
+      "action": "Created WMS",
+      "locoID": "60d9f1171faebf1e1234567b",
+      "details": "Created WMS for engine inspection",
+      "actionTime": "2025-04-01T09:00:00.000Z",
+      "recordTime": "2025-04-01T09:05:00.000Z",
+      "ip": "192.168.1.1"
+    },
+    {
+      "_id": "60d9f1171faebf1e12345672",
+      "userId": "650a5d331faebf1e1234567b",
+      "action": "Updated Task",
+      "locoID": "60d9f1171faebf1e1234567c",
+      "details": "Updated brake testing task",
+      "actionTime": "2025-04-16T14:00:00.000Z",
+      "recordTime": "2025-04-16T14:05:00.000Z",
+      "ip": "192.168.1.2"
+    }
+  ]
+}

@@ -3,9 +3,9 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Layout, Tabs, Badge, Button, List, Typography } from 'antd';
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
-import InstructionsTab from "./task-tabs/instruction-tab.jsx";
-import NotesTab from "./task-tabs/notes-tab.jsx";
-import UserPhotosTab from "./task-tabs/user-photos-tab.jsx";
+import InstructionsTab from "./TaskTabs/InstructionsTab.jsx";
+import NotesTab from "./TaskTabs/NotesTab.jsx";
+import UserPhotosTab from "./TaskTabs/UserPhotosTab.jsx";
 import { useTaskDetail } from "../../hooks/useMockData"; // 👈 Import live hook
 import "./Taskdetail.css";
 

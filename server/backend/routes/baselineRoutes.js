@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
+const { authenticate, authorize } = require("../middleware/middleware");
 const {
   getAllBaselines,
   createBaseline,
   getBaselineById,
   updateBaseline,
-  deleteBaseline,
+  addVersion,
+  updateVersion,
 } = require("../controllers/baselineController");
 
 /**
@@ -14,27 +16,15 @@ const {
  *   name: Baselines
  *   description: Operations related to software baselines
  */
-
 /**
  * @swagger
  * /api/baselines:
  *   get:
- *     summary: List all baselines with pagination
+ *     summary: Get all baselines. (short info) Access - All users
  *     tags: [Baselines]
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *         description: Current page number
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *         description: Number of items per page
  *     responses:
  *       200:
- *         description: Returns baselines, totalPages, and currentPage
+ *         description: Successfully retrieved all baselines
  *         content:
  *           application/json:
  *             schema:
@@ -44,65 +34,54 @@ const {
  *                   type: array
  *                   items:
  *                     type: object
- *                 totalPages:
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "60d9f1181faebf1e1234567d"
+ *                       softwareName:
+ *                         type: string
+ *                         example: "ControlSoft"
+ *                       description:
+ *                         type: string
+ *                         example: "Initial release of ControlSoft"
+ *                       isActive:
+ *                         type: boolean
+ *                         example: true
+ *                       versions:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             versionId:
+ *                               type: string
+ *                               example: "v1"
+ *                             version:
+ *                               type: string
+ *                               example: "1.0"
+ *                             createdBy:
+ *                               type: string
+ *                               example: "644f1a2b3c4d5e6f7g8h9i0j"
+ *                             createdAt:
+ *                               type: string
+ *                               format: date-time
+ *                               example: "2025-04-01T00:00:00.000Z"
+ *                             note:
+ *                               type: string
+ *                               example: "Initial release"
+ *                             isActive:
+ *                               type: boolean
+ *                               example: true
+ *                 total:
  *                   type: integer
- *                 currentPage:
- *                   type: integer
+ *                   example: 5
  *       500:
  *         description: Server error
  */
-
-/**
- * @swagger
- * /api/baselines:
- *   post:
- *     summary: Create a new baseline
- *     tags: [Baselines]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - softwareName
- *               - softwareVersion
- *             properties:
- *               softwareName:
- *                 type: string
- *                 example: "My Software"
- *               softwareVersion:
- *                 type: array
- *                 items:
- *                   type: string
- *                 example: ["1.0", "1.1"]
- *               description:
- *                 type: string
- *                 example: "Initial baseline"
- *     responses:
- *       201:
- *         description: Baseline created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Baseline created successfully
- *                 _id:
- *                   type: string
- *                 softwareName:
- *                   type: string
- *       500:
- *         description: Server error
- */
-
 /**
  * @swagger
  * /api/baselines/{id}:
  *   get:
- *     summary: Retrieve a specific baseline by id
+ *     summary: Retrieve a specific baseline by id. (all info) Access - All users
  *     tags: [Baselines]
  *     parameters:
  *       - in: path
@@ -119,22 +98,82 @@ const {
  *       500:
  *         description: Server error
  */
-
 /**
  * @swagger
- * /api/baselines/{id}:
- *   put:
- *     summary: Update a baseline
+ * /api/baselines:
+ *   post:
+ *     summary: Create a new baseline. Access - Admin and Supervisor
  *     tags: [Baselines]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - softwareName
+ *               - description
+ *               - isActive
+ *             properties:
+ *               softwareName:
+ *                 type: string
+ *                 example: "ControlSoft"
+ *               description:
+ *                 type: string
+ *                 example: "Initial release of ControlSoft"
+ *               isActive:
+ *                 type: boolean
+ *                 example: true
+ *               versions:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     versionId:
+ *                       type: string
+ *                       example: "v1"
+ *                     version:
+ *                       type: string
+ *                       example: "1.0"
+ *                     note:
+ *                       type: string
+ *                       example: "Initial release"
+ *                     createdBy:
+ *                       type: string
+ *                       example: "644f1a2b3c4d5e6f7g8h9i0j"
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-04-01T00:00:00.000Z"
+ *                     isActive:
+ *                       type: boolean
+ *                       example: true
+ *     responses:
+ *       201:
+ *         description: Baseline created successfully
+ *       400:
+ *         description: Invalid input
+ *       500:
+ *         description: Server error
+ */
+/**
+ * @swagger
+ * /api/baselines/{baselineId}:
+ *   patch:
+ *     summary: Update/logic delete a baseline (Software). Access - Admin and Supervisor
+ *     tags: [Baselines]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: baselineId
  *         required: true
- *         description: Baseline id
  *         schema:
  *           type: string
+ *         description: Baseline ID
  *     requestBody:
- *       description: Baseline update data
  *       required: true
  *       content:
  *         application/json:
@@ -143,47 +182,191 @@ const {
  *             properties:
  *               softwareName:
  *                 type: string
- *                 example: "Updated Software"
- *               softwareVersion:
- *                 type: array
- *                 items:
- *                   type: string
- *                 example: ["1.0", "1.2"]
+ *                 example: Updated Software Name
  *               description:
  *                 type: string
- *                 example: "Updated description"
+ *                 example: Updated description
+ *               isActive:
+ *                 type: boolean
+ *                 example: true
  *     responses:
  *       200:
  *         description: Baseline updated successfully
- *       500:
- *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Baseline updated
+ *                 baseline:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 60d9f1181faebf1e1234567d
+ *                     softwareName:
+ *                       type: string
+ *                       example: Updated Software Name
+ *                     description:
+ *                       type: string
+ *                       example: Updated description
+ *                     isActive:
+ *                       type: boolean
+ *                       example: true
  */
-
 /**
  * @swagger
- * /api/baselines/{id}:
- *   delete:
- *     summary: Delete a baseline
+ * /api/baselines/{baselineId}/versions:
+ *   post:
+ *     summary: Add a new version to a specific baseline. Access - Admin and Supervisor
  *     tags: [Baselines]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: baselineId
  *         required: true
- *         description: Baseline id
  *         schema:
  *           type: string
+ *         description: Baseline ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               version:
+ *                 type: string
+ *                 example: 1.01
+ *               note:
+ *                 type: string
+ *                 example: Initial release
+ *     responses:
+ *       201:
+ *         description: Version added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Version added
+ *                 version:
+ *                   type: object
+ *                   properties:
+ *                     versionId:
+ *                       type: string
+ *                       example: v1
+ *                     version:
+ *                       type: string
+ *                       example: 1.01
+ *                     note:
+ *                       type: string
+ *                       example: Initial release
+ *                     createdBy:
+ *                       type: string
+ *                       example: 644f1a2b3c4d5e6f7g8h9i0j
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: 2025-04-01T00:00:00.000Z
+ *                     isActive:
+ *                       type: boolean
+ *                       example: true
+ */
+/**
+ * @swagger
+ * /api/baselines/{baselineId}/versions/{versionId}:
+ *   patch:
+ *     summary: Update/logic delete a version of a specific baseline. Access - Admin and Supervisor
+ *     tags: [Baselines]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: baselineId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Baseline ID
+ *       - in: path
+ *         name: versionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Version ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               version:
+ *                 type: string
+ *                 example: 1.02
+ *               note:
+ *                 type: string
+ *                 example: Updated release notes
+ *               isActive:
+ *                 type: boolean
+ *                 example: true
+ *               usageAdd:
+ *                 type: object
+ *                 properties:
+ *                   locoId:
+ *                     type: string
+ *                     example: 60d9f1171faebf1e1234567b
  *     responses:
  *       200:
- *         description: Baseline deleted successfully
- *       500:
- *         description: Server error
+ *         description: Version updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Version updated
+ *                 version:
+ *                   type: object
+ *                   properties:
+ *                     versionId:
+ *                       type: string
+ *                       example: v1
+ *                     version:
+ *                       type: string
+ *                       example: 1.02
+ *                     note:
+ *                       type: string
+ *                       example: Updated release notes
+ *                     isActive:
+ *                       type: boolean
+ *                       example: true
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: 2025-04-02T00:00:00.000Z
+ *                     usedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: 2025-04-02T12:00:00.000Z
+ *                     usedBy:
+ *                       type: string
+ *                       example: 644f1a2b3c4d5e6f7g8h9i0j
+ *                     locoId:
+ *                       type: string
+ *                       example: 60d9f1171faebf1e1234567b
  */
-
 // Route definitions
 router.get("/", getAllBaselines);
-router.post("/", createBaseline);
+router.post("/", authenticate, authorize(["admin", "supervisor"]),createBaseline);
 router.get("/:id", getBaselineById);
-router.put("/:id", updateBaseline);
-router.delete("/:id", deleteBaseline);
-
+router.patch("/:id", authenticate, authorize(["admin", "supervisor"]),updateBaseline);
+router.post("/:baselineId/versions", authenticate, authorize(["admin", "supervisor"]),addVersion);
+router.patch("/:baselineId/versions/:versionId", authenticate, authorize(["admin", "supervisor"]),updateVersion);
 module.exports = router;

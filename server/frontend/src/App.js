@@ -8,11 +8,12 @@ import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import Dashboard from "./pages/Dashboard";
 import UserManagement from "./pages/UserManagement";
+import CommissionDetail from './pages/commission/CommissionDetail';
 import LocomotiveListPage from "./pages/LocomotiveListPage";
 import WMSListPage from "./pages/WMSListPage";
 import TaskListPage from "./pages/TaskListPage";
 import SubtaskDetailPage from "./pages/SubtaskDetailPage";
-import TaskDeatil from './pages/task/Taskdetail';
+import TaskDetail from './pages/Task/Taskdetail';
 
 function App() {
     return (
@@ -28,7 +29,9 @@ function App() {
                 <Route path="/tasks/:locomotiveId/wms" element={<WMSListPage />} />
                 <Route path="/tasks/:locomotiveId/wms/:wmsId" element={<TaskListPage />} />
                 <Route path="/tasks/:locomotiveId/wms/:wmsId/task/:taskId" element={<SubtaskDetailPage />} />
-                <Route path="/taskdetail/:subtaskId" element={<TaskDeatil />} />
+                <Route path="/taskdetail/:subtaskId" element={<TaskDetail />} />
+                <Route path="/taskdetail" element={<TaskDetail />} />
+                <Route path="/commissiondetail" element={<CommissionDetail />} />
                 {/* Default redirect */}
                 <Route path="/" element={<Navigate to="/login" />} />
 
