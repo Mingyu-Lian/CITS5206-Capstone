@@ -5,7 +5,7 @@ const users = [
     {
       id: "user-001",
       name: "Alice Johnson",
-      username: "alice", // ✅ Added username
+      username: "alice", 
       email: "alice.admin@example.com",
       role: "Admin",
       password: "Admin@123",
