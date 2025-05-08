@@ -1,4 +1,11 @@
 // src/mock/mockData.js
+// Add this to the top-level of mockData.js
+export const baselines = [
+  { id: "baseline-001", version: "v1.0", description: "Initial setup" },
+  { id: "baseline-002", version: "v2.0", description: "Minor updates" },
+  { id: "baseline-003", version: "v3.0", description: "Major revision" },
+];
+
 
 const locomotives = [
   {
