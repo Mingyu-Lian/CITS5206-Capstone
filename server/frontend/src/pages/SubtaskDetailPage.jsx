@@ -1,5 +1,6 @@
+
 // src/pages/SubtaskDetailPage.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   Checkbox,
@@ -7,7 +8,6 @@ import {
   Upload,
   Button,
   Typography,
-  Divider,
   Tooltip,
   Form,
   Row,
@@ -17,10 +17,15 @@ import {
   Space,
   Select
 } from "antd";
-import { UploadOutlined, FileSearchOutlined, CheckCircleTwoTone } from "@ant-design/icons";
+import {
+  UploadOutlined,
+  FileSearchOutlined,
+  CheckCircleTwoTone
+} from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
-import PageLayout from "../components/PageLayout";
+import { createLogEntry, saveAndMaybeSyncLog } from "../utils/offlineSyncHelper";
+import localforage from "localforage";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -32,16 +37,12 @@ const SubtaskDetailPage = () => {
   const [formData, setFormData] = useState({});
   const [completed, setCompleted] = useState({});
   const [assignedEngineers, setAssignedEngineers] = useState({});
+  const [data, setData] = useState([]);
 
   const role = localStorage.getItem("role");
   const userDiscipline = localStorage.getItem("discipline");
 
   const engineers = ["Engineer A", "Engineer B", "Engineer C"];
-
-  const data = [
-    { id: "sub1", instruction: "Verify voltage levels.", result: "", signedOff: false, discipline: "Electrical" },
-    { id: "sub2", instruction: "Capture photo of connected cable.", result: "", signedOff: false, discipline: "Mechanical" },
-  ];
 
   const fields = [
     { label: "Subtask ID", key: "id", type: "text" },
@@ -52,9 +53,66 @@ const SubtaskDetailPage = () => {
   const applyFilters = (query) => setFilters(query);
   const clearFilters = () => setFilters({});
 
-  const handleSave = (subId) => {
+  // Load subtask data either from online source or local cache
+  const loadSubtasksData = async () => {
+    const offlineKey = `offlineSubtaskList-${taskId}`;
+    if (navigator.onLine) {
+      const onlineData = [
+        { id: "sub1", instruction: "Verify voltage levels.", result: "", signedOff: false, discipline: "Electrical" },
+        { id: "sub2", instruction: "Capture photo of connected cable.", result: "", signedOff: false, discipline: "Mechanical" },
+      ];
+      setData(onlineData);
+      await localforage.setItem(offlineKey, onlineData);
+    } else {
+      const cachedData = await localforage.getItem(offlineKey);
+      if (cachedData) {
+        setData(cachedData);
+      }
+    }
+  };
+
+  useEffect(() => {
+    loadSubtasksData();
+  }, [taskId]);
+
+  // Update specific subtask field in offline cache
+  const updateOfflineSubtask = async (subId, field, value) => {
+    const offlineKey = `offlineSubtaskList-${taskId}`;
+    const cached = await localforage.getItem(offlineKey);
+    if (cached) {
+      const updated = cached.map(sub =>
+        sub.id === subId ? { ...sub, [field]: value } : sub
+      );
+      await localforage.setItem(offlineKey, updated);
+    }
+  };
+
+  // Save subtask changes with offline support and log creation
+  const handleSave = async (subId) => {
     setCompleted((prev) => ({ ...prev, [subId]: true }));
-    message.success(`Subtask ${subId} saved successfully.`);
+    const currentData = formData[subId] || {};
+
+    const saveLog = createLogEntry("click_save_subtask", {
+      subtaskId: subId,
+      taskId,
+    });
+    await saveAndMaybeSyncLog(saveLog);
+
+    if (currentData.result?.trim()) {
+      const noteLog = createLogEntry("write_note", {
+        subtaskId: subId,
+        taskId,
+        content: currentData.result,
+      });
+      await saveAndMaybeSyncLog(noteLog);
+      await updateOfflineSubtask(subId, "result", currentData.result);
+    }
+
+    if (!navigator.onLine) {
+      message.info("You are offline. Your changes have been saved locally.");
+    } else {
+      message.success(`Subtask ${subId} saved.`);
+    }
   };
 
   const handleInputChange = (subId, field, value) => {
@@ -67,8 +125,19 @@ const SubtaskDetailPage = () => {
     }));
   };
 
+  const handleSignOffChange = async (subId, checked) => {
+    handleInputChange(subId, "signedOff", checked);
+    const log = createLogEntry("toggle_signoff", {
+      subtaskId: subId,
+      taskId,
+      checked,
+    });
+    await saveAndMaybeSyncLog(log);
+    await updateOfflineSubtask(subId, "signedOff", checked);
+  };
+
   const handleViewRedirect = (subId) => {
-    navigate(`/taskdetail/${subId}`);
+    navigate(`/task-tabs/instruction-tab?subtaskId=${subId}`);
   };
 
   const handleAssignEngineer = (subId, engineer) => {
@@ -93,6 +162,7 @@ const SubtaskDetailPage = () => {
   const done = Object.keys(completed).length;
   const percent = total === 0 ? 0 : Math.round((done / total) * 100);
 
+  // Permission logic for sign-off based on user discipline
   const isSignOffDisabled = (subDiscipline) => {
     if (role === "Admin") return false;
     if (!subDiscipline) return true;
@@ -102,7 +172,6 @@ const SubtaskDetailPage = () => {
   };
 
   return (
-    <PageLayout>
       <div className="p-8 bg-gray-100 min-h-screen">
         <div className="flex items-center justify-between mb-6">
           <Title level={2}>Subtasks for Task: {taskId}</Title>
@@ -157,20 +226,23 @@ const SubtaskDetailPage = () => {
                         disabled={disabled}
                       />
                     </Form.Item>
+
                     <Form.Item label="Attachment">
                       <Upload disabled={disabled}>
                         <Button icon={<UploadOutlined />} disabled={disabled}>Upload Image/Video</Button>
                       </Upload>
                     </Form.Item>
+
                     <Form.Item>
                       <Checkbox
                         checked={currentData.signedOff || false}
-                        onChange={(e) => handleInputChange(sub.id, "signedOff", e.target.checked)}
+                        onChange={(e) => handleSignOffChange(sub.id, e.target.checked)}
                         disabled={disabled}
                       >
                         Mark as Signed Off
                       </Checkbox>
                     </Form.Item>
+
                     <Form.Item>
                       <Button type="primary" onClick={() => handleSave(sub.id)} disabled={disabled}>
                         Save Subtask
@@ -183,7 +255,6 @@ const SubtaskDetailPage = () => {
           })}
         </Row>
       </div>
-    </PageLayout>
   );
 };
 

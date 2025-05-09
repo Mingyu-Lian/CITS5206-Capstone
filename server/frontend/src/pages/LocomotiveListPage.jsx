@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Card, Button, Typography, Row, Col, Modal, Form, Input, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
-import PageLayout from "../components/PageLayout";
 import { useLocomotives } from "../hooks/useMockData"; // ✅ Hook
 
 const { Title } = Typography;
@@ -54,7 +53,6 @@ const LocomotiveListPage = () => {
   if (loading) return <div>Loading Locomotives...</div>;
 
   return (
-    <PageLayout>
       <div className="p-6 bg-gray-50 min-h-screen">
         <div className="flex justify-between items-center mb-4">
           <Title level={2}>Locomotive Overview</Title>
@@ -101,7 +99,6 @@ const LocomotiveListPage = () => {
           </Form>
         </Modal>
       </div>
-    </PageLayout>
   );
 };
 

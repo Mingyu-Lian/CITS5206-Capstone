@@ -1,13 +1,11 @@
 // src/pages/WMSListPage.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Table, Button, Typography, Modal, Form, Input, Select, message } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
-import PageLayout from "../components/PageLayout";
-import { useWMS } from "../hooks/useMockData"; // ✅ Hook for live WMS
-import { UploadOutlined } from "@ant-design/icons"; // ✅ for UploadOutlined icon
-import { Upload } from "antd"; // ✅ for Upload component
-
+import { UploadOutlined } from "@ant-design/icons";
+import { Upload } from "antd";
+import localforage from "localforage";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -16,11 +14,11 @@ const WMSListPage = () => {
   const { locomotiveId } = useParams();
   const navigate = useNavigate();
   const [filters, setFilters] = useState({});
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
-  const { wmsList, loading, createWMS } = useWMS(locomotiveId);
-
-  const role = localStorage.getItem("role"); // ✅ Important: fetch role from localStorage
+  const role = localStorage.getItem("role");
 
   const fields = [
     { label: "Title", key: "title", type: "text" },
@@ -29,7 +27,7 @@ const WMSListPage = () => {
   const applyFilters = (query) => setFilters(query);
   const clearFilters = () => setFilters({});
 
-  const filtered = wmsList.filter((item) => {
+  const filtered = data.filter((item) => {
     return (!filters.rules || filters.rules.every(r => {
       const val = item[r.field]?.toString().toLowerCase();
       const q = r.value.toString().toLowerCase();
@@ -44,26 +42,56 @@ const WMSListPage = () => {
 
   const handleCreateWMS = async (values) => {
     const newWMS = {
-      wmsId: `WMS-${Math.floor(1000 + Math.random() * 9000)}`, // generate random ID
+      wmsId: `WMS-${Math.floor(1000 + Math.random() * 9000)}`,
       title: values.title,
       type: values.type,
-      tasks: [], // new WMS starts empty
+      file: values.file?.file?.name || null,
+      tasks: [],
     };
-    await createWMS(newWMS);
+    const updatedList = [...data, newWMS];
+    setData(updatedList);
+    const offlineKey = `offlineWMSList-${locomotiveId}`;
+    await localforage.setItem(offlineKey, updatedList);
     message.success("WMS Document uploaded successfully!");
     setIsModalVisible(false);
     form.resetFields();
   };
 
+  const loadWMSData = async () => {
+    const offlineKey = `offlineWMSList-${locomotiveId}`;
+
+    if (navigator.onLine) {
+      const onlineData = [
+        { wmsId: "wms1", title: "WMS - Electrical", version: "1.2", status: "In Progress", type: "Installation" },
+        { wmsId: "wms2", title: "WMS - Hydraulic", version: "1.0", status: "Pending", type: "Commissioning" },
+      ];
+
+      setData(onlineData);
+      await localforage.setItem(offlineKey, onlineData);
+    } else {
+      const cachedData = await localforage.getItem(offlineKey);
+      if (cachedData) {
+        setData(cachedData);
+        message.info("Currently viewing cached WMS documents.");
+      } else {
+        message.warning("No cached WMS data found for this locomotive.");
+      }
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadWMSData();
+  }, [locomotiveId]);
+
   if (loading) return <div>Loading WMS Documents...</div>;
 
   return (
-    <PageLayout>
       <div className="p-6 bg-white min-h-screen">
         <div className="flex justify-between items-center mb-4">
           <Title level={3}>WMS Documents for Locomotive {locomotiveId}</Title>
 
-          {role === "Admin" && ( // ✅ Only Admin can see Upload WMS
+          {role === "Admin" && (
             <Button type="primary" onClick={() => setIsModalVisible(true)}>+ Upload WMS</Button>
           )}
         </div>
@@ -90,65 +118,50 @@ const WMSListPage = () => {
           pagination={{ pageSize: 5 }}
         />
 
-        {/* Upload WMS Modal */}
         <Modal
-  title="Upload New WMS Document"
-  open={isModalVisible}
-  onCancel={() => setIsModalVisible(false)}
-  footer={null}
->
-  <Form form={form} layout="vertical" onFinish={(values) => {
-    const newWMS = {
-      wmsId: `WMS-${Math.floor(1000 + Math.random() * 9000)}`,
-      title: values.title,
-      type: values.type,
-      file: values.file?.file?.name || null, // ✅ saving uploaded file name
-      tasks: [],
-    };
-    createWMS(newWMS);
-    message.success("WMS Document uploaded successfully!");
-    setIsModalVisible(false);
-    form.resetFields();
-  }}>
-    <Form.Item
-      name="title"
-      label="WMS Title"
-      rules={[{ required: true, message: "Please enter WMS Title" }]}
-    >
-      <Input />
-    </Form.Item>
+          title="Upload New WMS Document"
+          open={isModalVisible}
+          onCancel={() => setIsModalVisible(false)}
+          footer={null}
+        >
+          <Form form={form} layout="vertical" onFinish={handleCreateWMS}>
+            <Form.Item
+              name="title"
+              label="WMS Title"
+              rules={[{ required: true, message: "Please enter WMS Title" }]}
+            >
+              <Input />
+            </Form.Item>
 
-    <Form.Item
-      name="type"
-      label="Type"
-      rules={[{ required: true, message: "Please select WMS Type" }]}
-    >
-      <Select placeholder="Select Type">
-        <Option value="Installation">Installation</Option>
-        <Option value="Commissioning">Commissioning</Option>
-      </Select>
-    </Form.Item>
+            <Form.Item
+              name="type"
+              label="Type"
+              rules={[{ required: true, message: "Please select WMS Type" }]}
+            >
+              <Select placeholder="Select Type">
+                <Option value="Installation">Installation</Option>
+                <Option value="Commissioning">Commissioning</Option>
+              </Select>
+            </Form.Item>
 
-    <Form.Item
-      name="file"
-      label="Attach WMS File"
-      valuePropName="file"
-    >
-      <Upload beforeUpload={() => false}>
-        <Button icon={<UploadOutlined />}>Click to Upload</Button>
-      </Upload>
-    </Form.Item>
+            <Form.Item
+              name="file"
+              label="Attach WMS File"
+              valuePropName="file"
+            >
+              <Upload beforeUpload={() => false}>
+                <Button icon={<UploadOutlined />}>Click to Upload</Button>
+              </Upload>
+            </Form.Item>
 
-    <Form.Item>
-      <Button type="primary" htmlType="submit" block>
-        Upload WMS
-      </Button>
-    </Form.Item>
-  </Form>
-</Modal>
-
+            <Form.Item>
+              <Button type="primary" htmlType="submit" block>
+                Upload WMS
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
       </div>
-    </PageLayout>
   );
 };
 
