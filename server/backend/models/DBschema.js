@@ -78,31 +78,7 @@ const projectSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true }
 });
 
-// WMSs Schema
-const wmsSchema = new mongoose.Schema({
-    document_id: { type: String, required: true },
-    name: { type: String, required: true },
-    projectId: { type: String, required: true },
-    version: { type: String, required: true },
-    description: { type: String },
-    importantNote: { type: String },
-    importantNoteAcceptedby: { type: [String] },
-    workType: { type: String },
-    locoId: { type: mongoose.Schema.Types.ObjectId, ref: "LocoType" },
-    fileType: { type: String },
-    filePath: { type: String },
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
-    authorisedBy: { type: String },
-    verifiedBy: { type: String },
-    approvedBy: { type: String },
-    assignedSupervisor: { type: [mongoose.Schema.Types.ObjectId], ref: "User" },
-    assignedEngineer: { type: [mongoose.Schema.Types.ObjectId], ref: "User" },
-    isActive: { type: Boolean, default: true },
-    comments: { type: String },
-    historyVersionId:{ type: String }
-});
+
 // Work Tables Schema
 const workTableSchema = new mongoose.Schema({
     tableId: { type: String, required: true }, // Unique table ID
@@ -111,7 +87,6 @@ const workTableSchema = new mongoose.Schema({
     assignedSupervisor: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Assigned supervisor
     assignedEngineer: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Assigned engineer
     disciplineRequire: { type: mongoose.Schema.Types.ObjectId, ref: "Discipline" }, // Discipline required
-    parentsWMS: { type: mongoose.Schema.Types.ObjectId, ref: "WMS" }, // Parent WMS reference
     historyVersionTableId: { type: String }, // Previous version ID
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // User who created the table
     createdAt: { type: Date, default: Date.now }, // Creation timestamp
@@ -164,7 +139,7 @@ const taskSchema = new mongoose.Schema({
     assignedEngineer: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     disciplineRequire: { type: mongoose.Schema.Types.ObjectId, ref: "Discipline" },
     parentsTask: { type: mongoose.Schema.Types.ObjectId, ref: "Task" },
-    parentsWMS: { type: mongoose.Schema.Types.ObjectId, ref: "WMS" },
+
     status: { type: String, required: true },
     startDate: { type: Date },
     endDate: { type: Date },
@@ -205,7 +180,6 @@ module.exports = {
     Baseline: mongoose.model("Baseline", baselineSchema),
     Asset: mongoose.model("Asset", assetSchema),
     Project: mongoose.model("Project", projectSchema),
-    WMS: mongoose.model("WMS", wmsSchema),
     Task: mongoose.model("Task", taskSchema),
     Discipline: mongoose.model("Discipline", disciplineSchema),
     Log: mongoose.model("Log", logSchema),
