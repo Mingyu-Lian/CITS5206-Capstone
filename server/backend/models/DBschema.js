@@ -80,56 +80,56 @@ const projectSchema = new mongoose.Schema({
 
 
 // Work Tables Schema
-const workTableSchema = new mongoose.Schema({
-    tableId: { type: String, required: true }, // Unique table ID
-    title: { type: String, required: true }, // Title of the table
-    referenceName: { type: String }, // Reference name (e.g., "Table 1")
-    assignedSupervisor: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Assigned supervisor
-    assignedEngineer: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Assigned engineer
-    disciplineRequire: { type: mongoose.Schema.Types.ObjectId, ref: "Discipline" }, // Discipline required
-    historyVersionTableId: { type: String }, // Previous version ID
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // User who created the table
-    createdAt: { type: Date, default: Date.now }, // Creation timestamp
-    updateHistory: [
+// WorkTableCommissioning Schema
+const workTableCommissioningSchema = new mongoose.Schema({
+  meta: {
+    type: {
+      type: String,
+      default: "commissioning"
+    },
+    locoId: { type: String },
+    projectId: { type: String },
+    assignedSupervisor: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    assignedEngineer: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    createdAt: { type: Date, default: Date.now },
+    createBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    updateHistory: [{
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      updatedAt: { type: Date, default: Date.now }
+    }],
+    Version: { type: String },
+    historyVersionTableId: { type: mongoose.Schema.Types.ObjectId, ref: "WorkTableCommissioning" },
+    isActive: { type: Boolean, default: true }
+  },
+  Content: {
+    documentId: { type: String, required: true },
+    projectId: { type: String, required: true },
+    documentType: { type: String, required: true },
+    documentNumber: { type: String, required: true },
+    documentTitle: { type: String, required: true },
+    documentStatus: { type: String, required: true },
+    revision: { type: String, required: true },
+    issueDate: { type: Date, required: true },
+    createdBy: { type: String, required: true },
+    approvedBy: { type: String, required: true },
+    sections: [
       {
-        userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // User who updated
-        updatedAt: { type: Date, default: Date.now }, // Update timestamp
-      },
-    ],
-    isActive: { type: Boolean, default: true }, // Active status
-  
-    columns: [
-      {
-        id: { type: Number, required: true }, // Column ID
-        headerText: { type: String, required: true }, // Column title
-        columnData: { type: String }, // Optional data
-        widthWeight: { type: Number }, // UI layout weight
-        columnType: { type: Number }, // Column type (e.g., 0 = Text, 4 = User Input)
-        isOptional: { type: Boolean, default: false },
-        isHidden: { type: Boolean, default: false },
-        resetValueOnLocalChange: { type: Boolean, default: false },
-        forceResetValueOnGlobalChange: { type: Boolean, default: false },
-        resetValueOnGlobalChange: { type: Boolean, default: false },
-        postChangeResetAction: { type: Boolean, default: false },
-      },
-    ],
-  
-    rows: [
-      {
-        id: { type: Number, required: true }, // Row ID
-        headerRowText: { type: String }, // Instructional header
-        cells: [
+        sectionId: { type: String, required: true },
+        sectionTitle: { type: String, required: true },
+        content: { type: String, required: true },
+        attachments: [
           {
-            columnId: { type: Number, required: true }, // Column this cell belongs to
-            labelText: { type: String }, // Cell content
-            verticalMerge: { type: Number }, // For UI merging
-            metadata: { type: String },
-            legacyLabelText: { type: String },
-          },
-        ],
-      },
-    ],
-  });
+            fileId: { type: String, required: true },
+            fileName: { type: String, required: true },
+            fileType: { type: String, required: true },
+            fileUrl: { type: String, required: true }
+          }
+        ]
+      }
+    ]
+  }
+});
+
 
 // Tasks Schema
 const taskSchema = new mongoose.Schema({
@@ -183,5 +183,5 @@ module.exports = {
     Task: mongoose.model("Task", taskSchema),
     Discipline: mongoose.model("Discipline", disciplineSchema),
     Log: mongoose.model("Log", logSchema),
-    WorkTable: mongoose.model("WorkTable", workTableSchema)
+    WorkTable: mongoose.model("WorkTable", workTableCommissioningSchema)
 };
