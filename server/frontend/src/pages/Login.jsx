@@ -17,6 +17,7 @@ const mockLogin = async (username, password) => {
       if (user) {
         resolve({
           data: {
+            id: user.id, // ✅ Add this field to for caching offline log
             token: "mocked-jwt-token",
             role: user.role,
             discipline: user.discipline,
@@ -54,6 +55,7 @@ const Login = () => {
       localStorage.setItem("discipline", data.discipline || "");
       localStorage.setItem("name", data.name || "");
       localStorage.setItem("email", data.email || "");
+      localStorage.setItem("userId", data.id); // ✅ Add this line to cache user id for offline log
       message.success("Login successful!");
 
       switch (data.role) {

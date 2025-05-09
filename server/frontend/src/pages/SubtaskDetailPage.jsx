@@ -1,4 +1,3 @@
-
 // src/pages/SubtaskDetailPage.jsx
 import { useState, useEffect } from "react";
 import {
@@ -41,6 +40,9 @@ const SubtaskDetailPage = () => {
 
   const role = localStorage.getItem("role");
   const userDiscipline = localStorage.getItem("discipline");
+  const userId = localStorage.getItem("userId") || "unknown";
+
+  const getOfflineKey = () => `offlineSubtaskList-${taskId}-${userId}`;
 
   const engineers = ["Engineer A", "Engineer B", "Engineer C"];
 
@@ -53,21 +55,30 @@ const SubtaskDetailPage = () => {
   const applyFilters = (query) => setFilters(query);
   const clearFilters = () => setFilters({});
 
-  // Load subtask data either from online source or local cache
   const loadSubtasksData = async () => {
-    const offlineKey = `offlineSubtaskList-${taskId}`;
-    if (navigator.onLine) {
+    const offlineKey = getOfflineKey();
+    const cachedData = await localforage.getItem(offlineKey);
+
+    if (cachedData) {
+      setData(cachedData);
+
+      const restoredForm = {};
+      cachedData.forEach(sub => {
+        restoredForm[sub.id] = {
+          result: sub.result || "",
+          signedOff: sub.signedOff || false
+        };
+      });
+      setFormData(restoredForm);
+
+      message.info("Restored cached subtask input.");
+    } else {
       const onlineData = [
         { id: "sub1", instruction: "Verify voltage levels.", result: "", signedOff: false, discipline: "Electrical" },
         { id: "sub2", instruction: "Capture photo of connected cable.", result: "", signedOff: false, discipline: "Mechanical" },
       ];
       setData(onlineData);
       await localforage.setItem(offlineKey, onlineData);
-    } else {
-      const cachedData = await localforage.getItem(offlineKey);
-      if (cachedData) {
-        setData(cachedData);
-      }
     }
   };
 
@@ -75,9 +86,8 @@ const SubtaskDetailPage = () => {
     loadSubtasksData();
   }, [taskId]);
 
-  // Update specific subtask field in offline cache
   const updateOfflineSubtask = async (subId, field, value) => {
-    const offlineKey = `offlineSubtaskList-${taskId}`;
+    const offlineKey = getOfflineKey();
     const cached = await localforage.getItem(offlineKey);
     if (cached) {
       const updated = cached.map(sub =>
@@ -87,7 +97,6 @@ const SubtaskDetailPage = () => {
     }
   };
 
-  // Save subtask changes with offline support and log creation
   const handleSave = async (subId) => {
     setCompleted((prev) => ({ ...prev, [subId]: true }));
     const currentData = formData[subId] || {};
@@ -162,7 +171,6 @@ const SubtaskDetailPage = () => {
   const done = Object.keys(completed).length;
   const percent = total === 0 ? 0 : Math.round((done / total) * 100);
 
-  // Permission logic for sign-off based on user discipline
   const isSignOffDisabled = (subDiscipline) => {
     if (role === "Admin") return false;
     if (!subDiscipline) return true;
