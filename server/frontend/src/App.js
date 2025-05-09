@@ -14,7 +14,9 @@ import LocomotiveListPage from "./pages/LocomotiveListPage";
 import WMSListPage from "./pages/WMSListPage";
 import TaskListPage from "./pages/TaskListPage";
 import SubtaskDetailPage from "./pages/SubtaskDetailPage";
-import TaskDetail from './pages/task/Taskdetail';
+import TaskDetail from './pages/Task/Taskdetail';
+import TaskJson from './pages/TaskJson/TaskJson';
+import CommissionJsonJson from './pages/CommissionJson/commissiontest';
 import DashboardLayout from "./components/DashboardLayout";
 
 function App() {
@@ -36,6 +38,10 @@ function App() {
         <Route path="/tasks/:locomotiveId/wms/:wmsId/task/:taskId" element={<DashboardLayout><SubtaskDetailPage /></DashboardLayout>} />
         <Route path="/taskdetail/:subtaskId" element={<DashboardLayout><TaskDetail /></DashboardLayout>} />
         <Route path="/taskdetail" element={<DashboardLayout><TaskDetail /></DashboardLayout>} />
+
+        {/* These routes likely don't need DashboardLayout */}
+        <Route path="/taskjson" element={<TaskJson />} />
+        <Route path="/commissionjson" element={<CommissionJsonJson />} />
 
         {/* Redirect root to login */}
         <Route path="/" element={<Navigate to="/login" />} />
