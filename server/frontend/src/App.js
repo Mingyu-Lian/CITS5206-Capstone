@@ -14,7 +14,7 @@ import LocomotiveListPage from "./pages/LocomotiveListPage";
 import WMSListPage from "./pages/WMSListPage";
 import TaskListPage from "./pages/TaskListPage";
 import SubtaskDetailPage from "./pages/SubtaskDetailPage";
-import TaskDetail from './pages/Task/Taskdetail';
+import TaskDetail from './pages/task/Taskdetail';
 import TaskJson from './pages/TaskJson/TaskJson';
 import CommissionJsonJson from './pages/CommissionJson/commissiontest';
 import DashboardLayout from "./components/DashboardLayout";
