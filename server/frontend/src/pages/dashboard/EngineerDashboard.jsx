@@ -8,7 +8,8 @@ import { syncLogs } from "../../utils/offlineSyncHelper";
 
 const { Title } = Typography;
 const { Option } = Select;
-const LOG_KEY = "offlineLogs";
+const userId = localStorage.getItem("userId") || "unknown";
+const LOG_KEY = `offlineLogs-${userId}`;
 
 const EngineerDashboard = () => {
   const { locomotives, loading } = useLocomotives();
@@ -38,6 +39,20 @@ const EngineerDashboard = () => {
     });
     setAssignedTasks(assigned);
   };
+
+  // Load user's cached task list (from localForage)
+  const loadUserCachedTaskList = async () => {
+    try {
+      const userId = localStorage.getItem("userId") || "unknown";
+      const cachedTasks = await localforage.getItem(`offlineTaskList-${userId}`);
+      if (cachedTasks && Array.isArray(cachedTasks)) {
+        setAssignedTasks(cachedTasks);
+        console.log("Loaded cached task list from localForage");
+      }
+    } catch (error) {
+      console.error("Failed to load cached task list:", error);
+    }
+  };  
 
   // Load offline subtasks (from audit logs stored in localForage)
   const fetchPendingSubtasks = async () => {
@@ -81,6 +96,7 @@ const EngineerDashboard = () => {
       fetchAssignedTasks();
     }
     fetchPendingSubtasks();
+    loadUserCachedTaskList(); // ✅ for offline identify
 
     const handleStorageChange = (event) => {
       if (event.key === "assignedTasks") {
