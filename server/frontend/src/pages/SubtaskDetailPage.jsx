@@ -30,7 +30,7 @@ const { Title, Text } = Typography;
 const { Option } = Select;
 
 const SubtaskDetailPage = () => {
-  const { taskId } = useParams();
+  const { taskId, locomotiveId } = useParams();
   const navigate = useNavigate();
   const [filters, setFilters] = useState({});
   const [formData, setFormData] = useState({});
@@ -41,8 +41,6 @@ const SubtaskDetailPage = () => {
   const role = localStorage.getItem("role");
   const userDiscipline = localStorage.getItem("discipline");
   const userId = localStorage.getItem("userId") || "unknown";
-
-  const getOfflineKey = () => `offlineSubtaskList-${taskId}-${userId}`;
 
   const engineers = ["Engineer A", "Engineer B", "Engineer C"];
 
@@ -55,39 +53,39 @@ const SubtaskDetailPage = () => {
   const applyFilters = (query) => setFilters(query);
   const clearFilters = () => setFilters({});
 
-  const loadSubtasksData = async () => {
-    const offlineKey = getOfflineKey();
-    const cachedData = await localforage.getItem(offlineKey);
-
-    if (cachedData) {
-      setData(cachedData);
-
-      const restoredForm = {};
-      cachedData.forEach(sub => {
-        restoredForm[sub.id] = {
-          result: sub.result || "",
-          signedOff: sub.signedOff || false
-        };
-      });
-      setFormData(restoredForm);
-
-      message.info("Restored cached subtask input.");
-    } else {
-      const onlineData = [
-        { id: "sub1", instruction: "Verify voltage levels.", result: "", signedOff: false, discipline: "Electrical" },
-        { id: "sub2", instruction: "Capture photo of connected cable.", result: "", signedOff: false, discipline: "Mechanical" },
-      ];
-      setData(onlineData);
-      await localforage.setItem(offlineKey, onlineData);
-    }
-  };
-
   useEffect(() => {
+    const loadSubtasksData = async () => {
+      const offlineKey = `offlineSubtaskList-${taskId}-${userId}`;
+      const cachedData = await localforage.getItem(offlineKey);
+
+      if (cachedData) {
+        setData(cachedData);
+
+        const restoredForm = {};
+        cachedData.forEach(sub => {
+          restoredForm[sub.id] = {
+            result: sub.result || "",
+            signedOff: sub.signedOff || false
+          };
+        });
+        setFormData(restoredForm);
+
+        message.info("Restored cached subtask input.");
+      } else {
+        const onlineData = [
+          { id: "sub1", instruction: "Verify voltage levels.", result: "", signedOff: false, discipline: "Electrical" },
+          { id: "sub2", instruction: "Capture photo of connected cable.", result: "", signedOff: false, discipline: "Mechanical" },
+        ];
+        setData(onlineData);
+        await localforage.setItem(offlineKey, onlineData);
+      }
+    };
+
     loadSubtasksData();
-  }, [taskId]);
+  }, [taskId, userId]);
 
   const updateOfflineSubtask = async (subId, field, value) => {
-    const offlineKey = getOfflineKey();
+    const offlineKey = `offlineSubtaskList-${taskId}-${userId}`;
     const cached = await localforage.getItem(offlineKey);
     if (cached) {
       const updated = cached.map(sub =>
@@ -104,6 +102,7 @@ const SubtaskDetailPage = () => {
     const saveLog = createLogEntry("click_save_subtask", {
       subtaskId: subId,
       taskId,
+      locoID: locomotiveId,
     });
     await saveAndMaybeSyncLog(saveLog);
 
@@ -111,6 +110,7 @@ const SubtaskDetailPage = () => {
       const noteLog = createLogEntry("write_note", {
         subtaskId: subId,
         taskId,
+        locoID: locomotiveId,
         content: currentData.result,
       });
       await saveAndMaybeSyncLog(noteLog);
@@ -139,6 +139,7 @@ const SubtaskDetailPage = () => {
     const log = createLogEntry("toggle_signoff", {
       subtaskId: subId,
       taskId,
+      locoID: locomotiveId,
       checked,
     });
     await saveAndMaybeSyncLog(log);
@@ -180,89 +181,89 @@ const SubtaskDetailPage = () => {
   };
 
   return (
-      <div className="p-8 bg-gray-100 min-h-screen">
-        <div className="flex items-center justify-between mb-6">
-          <Title level={2}>Subtasks for Task: {taskId}</Title>
-          <Progress type="circle" percent={percent} width={60} strokeColor="#52c41a" />
-        </div>
-
-        <QueryBuilder fields={fields} onApply={applyFilters} onClear={clearFilters} />
-
-        <Row gutter={[24, 24]}>
-          {filtered.map((sub) => {
-            const currentData = formData[sub.id] || {};
-            const disabled = isSignOffDisabled(sub.discipline);
-            return (
-              <Col xs={24} sm={24} md={12} key={sub.id}>
-                <Card
-                  title={<Text strong>{`Subtask ID: ${sub.id}`}</Text>}
-                  extra={
-                    <Space>
-                      {completed[sub.id] && <CheckCircleTwoTone twoToneColor="#52c41a" />}
-                      <Tooltip title="Go to Task Details">
-                        <Button icon={<FileSearchOutlined />} onClick={() => handleViewRedirect(sub.id)} />
-                      </Tooltip>
-                    </Space>
-                  }
-                  className="shadow-md rounded-xl border border-gray-200 hover:shadow-lg transition-all"
-                >
-                  <Form layout="vertical">
-                    <Form.Item label={<Text strong>Instruction</Text>}>
-                      <Text>{sub.instruction}</Text>
-                    </Form.Item>
-
-                    {role === "Supervisor" && (
-                      <Form.Item label="Assign Engineer">
-                        <Select
-                          placeholder="Assign Engineer"
-                          value={assignedEngineers[sub.id]}
-                          onChange={(value) => handleAssignEngineer(sub.id, value)}
-                        >
-                          {engineers.map((eng) => (
-                            <Option key={eng} value={eng}>{eng}</Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
-                    )}
-
-                    <Form.Item label="Result / Notes">
-                      <Input.TextArea
-                        rows={3}
-                        placeholder="Enter result or notes"
-                        value={currentData.result || ""}
-                        onChange={(e) => handleInputChange(sub.id, "result", e.target.value)}
-                        disabled={disabled}
-                      />
-                    </Form.Item>
-
-                    <Form.Item label="Attachment">
-                      <Upload disabled={disabled}>
-                        <Button icon={<UploadOutlined />} disabled={disabled}>Upload Image/Video</Button>
-                      </Upload>
-                    </Form.Item>
-
-                    <Form.Item>
-                      <Checkbox
-                        checked={currentData.signedOff || false}
-                        onChange={(e) => handleSignOffChange(sub.id, e.target.checked)}
-                        disabled={disabled}
-                      >
-                        Mark as Signed Off
-                      </Checkbox>
-                    </Form.Item>
-
-                    <Form.Item>
-                      <Button type="primary" onClick={() => handleSave(sub.id)} disabled={disabled}>
-                        Save Subtask
-                      </Button>
-                    </Form.Item>
-                  </Form>
-                </Card>
-              </Col>
-            );
-          })}
-        </Row>
+    <div className="p-8 bg-gray-100 min-h-screen">
+      <div className="flex items-center justify-between mb-6">
+        <Title level={2}>Subtasks for Task: {taskId}</Title>
+        <Progress type="circle" percent={percent} width={60} strokeColor="#52c41a" />
       </div>
+
+      <QueryBuilder fields={fields} onApply={applyFilters} onClear={clearFilters} />
+
+      <Row gutter={[24, 24]}>
+        {filtered.map((sub) => {
+          const currentData = formData[sub.id] || {};
+          const disabled = isSignOffDisabled(sub.discipline);
+          return (
+            <Col xs={24} sm={24} md={12} key={sub.id}>
+              <Card
+                title={<Text strong>{`Subtask ID: ${sub.id}`}</Text>}
+                extra={
+                  <Space>
+                    {completed[sub.id] && <CheckCircleTwoTone twoToneColor="#52c41a" />}
+                    <Tooltip title="Go to Task Details">
+                      <Button icon={<FileSearchOutlined />} onClick={() => handleViewRedirect(sub.id)} />
+                    </Tooltip>
+                  </Space>
+                }
+                className="shadow-md rounded-xl border border-gray-200 hover:shadow-lg transition-all"
+              >
+                <Form layout="vertical">
+                  <Form.Item label={<Text strong>Instruction</Text>}>
+                    <Text>{sub.instruction}</Text>
+                  </Form.Item>
+
+                  {role === "Supervisor" && (
+                    <Form.Item label="Assign Engineer">
+                      <Select
+                        placeholder="Assign Engineer"
+                        value={assignedEngineers[sub.id]}
+                        onChange={(value) => handleAssignEngineer(sub.id, value)}
+                      >
+                        {engineers.map((eng) => (
+                          <Option key={eng} value={eng}>{eng}</Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  )}
+
+                  <Form.Item label="Result / Notes">
+                    <Input.TextArea
+                      rows={3}
+                      placeholder="Enter result or notes"
+                      value={currentData.result || ""}
+                      onChange={(e) => handleInputChange(sub.id, "result", e.target.value)}
+                      disabled={disabled}
+                    />
+                  </Form.Item>
+
+                  <Form.Item label="Attachment">
+                    <Upload disabled={disabled}>
+                      <Button icon={<UploadOutlined />} disabled={disabled}>Upload Image/Video</Button>
+                    </Upload>
+                  </Form.Item>
+
+                  <Form.Item>
+                    <Checkbox
+                      checked={currentData.signedOff || false}
+                      onChange={(e) => handleSignOffChange(sub.id, e.target.checked)}
+                      disabled={disabled}
+                    >
+                      Mark as Signed Off
+                    </Checkbox>
+                  </Form.Item>
+
+                  <Form.Item>
+                    <Button type="primary" onClick={() => handleSave(sub.id)} disabled={disabled}>
+                      Save Subtask
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </Card>
+            </Col>
+          );
+        })}
+      </Row>
+    </div>
   );
 };
 
