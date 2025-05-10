@@ -12,9 +12,9 @@ const baselineRoutes = require("./routes/baselineRoutes");
 const assetRoutes = require("./routes/assetRoutes");
 const disciplineRoutes = require("./routes/disciplineRoutes");
 const projectRoutes = require("./routes/projectRoutes");
-const wmsRoutes = require("./routes/wmsRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const logRoutes = require("./routes/logRoutes");
+const workTableRoutes = require("./routes/workTableRoutes");
 
 dotenv.config(); // Load environment variables
 
@@ -69,9 +69,9 @@ app.use("/api/baselines", baselineRoutes);
 app.use("/api/assets", assetRoutes);
 app.use("/api/disciplines", disciplineRoutes);
 app.use("/api/projects", projectRoutes);
-app.use("/api/wms", wmsRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/logs", logRoutes);
+app.use("/api/worktables", workTableRoutes);
 
 
 // Start the server
