@@ -1,66 +1,103 @@
+// controllers/taskController.js
 const { Task, Log } = require("../models/DBschema");
 
-// List tasks by WMS id or task id query parameter
+// GET /api/tasks
 const getAllTasks = async (req, res) => {
-  const filter = {};
-  if (req.query.WMSid) filter.parentsWMS = req.query.WMSid;
-  if (req.query.taskID) filter._id = req.query.taskID;
   try {
+    const filter = { "meta.isActive": true };
+    if (req.query.WMSid) filter["meta.projectId"] = req.query.WMSid;
+    if (req.query.taskID) filter._id = req.query.taskID;
+
+    const userRole = req.user.role;
+    const userId = req.user._id;
+
+    if (userRole !== "admin") {
+      filter.$or = [
+        { "meta.assignedSupervisor": userId },
+        { "meta.assignedEngineer": userId }
+      ];
+    }
+
     const tasks = await Task.find(filter);
     res.json(tasks);
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch tasks", error: err });
   }
 };
 
-// Get task detail (with additional details like subtasks)
+// GET /api/tasks/:id
 const getTaskById = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
-    if (!task) return res.status(404).json({ message: "Not found" });
+    if (!task || task.meta.isActive === false) {
+      return res.status(404).json({ message: "Task not found or inactive" });
+    }
+
+    const userRole = req.user.role;
+    const userId = req.user._id.toString();
+    const isSupervisor = task.meta.assignedSupervisor?.map(id => id.toString()).includes(userId);
+    const isEngineer = task.meta.assignedEngineer?.map(id => id.toString()).includes(userId);
+
+    if (userRole !== "admin" && !(isSupervisor || isEngineer)) {
+      return res.status(403).json({ message: "Forbidden: Not assigned to this task" });
+    }
+
     res.json(task);
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch task", error: err });
   }
 };
 
-// Create a new task
+// POST /api/tasks
 const createTask = async (req, res) => {
   try {
+    const userRole = req.user.role;
+    if (userRole !== "admin") {
+      return res.status(403).json({ message: "Forbidden: Only admin can create tasks" });
+    }
+
     const task = await Task.create(req.body);
-    res.status(201).json({ message: "Task created successfully", _id: task._id });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.status(201).json({ message: "Task created", _id: task._id });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to create task", error: err });
   }
 };
 
-// Update task
-const updateTask = async (req, res) => {
+// PATCH /api/tasks/:id
+const patchTask = async (req, res) => {
   try {
-    await Task.findByIdAndUpdate(req.params.id, req.body);
+    const task = await Task.findById(req.params.id);
+    if (!task || task.meta.isActive === false) {
+      return res.status(404).json({ message: "Task not found or inactive" });
+    }
+
+    const userRole = req.user.role;
+    const userId = req.user._id.toString();
+    const isSupervisor = task.meta.assignedSupervisor?.map(id => id.toString()).includes(userId);
+    const isEngineer = task.meta.assignedEngineer?.map(id => id.toString()).includes(userId);
+
+    if (userRole !== "admin" && !(isSupervisor || isEngineer)) {
+      return res.status(403).json({ message: "Forbidden: You are not assigned to this task" });
+    }
+
+    const updated = await Task.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    );
 
     await Log.create({
-      userId: req.user._id, // User performing the action (from authenticate middleware)
-      action: "Task Updated",
-      locoID: updatedTask.locoID || null, // If the task is associated with a locomotive type
-      details: `Task with ID ${req.params.id} was updated.`,
+      userId: req.user._id,
+      action: "Task Patched",
+      locoID: null,
+      details: `Task ${req.params.id} updated.`,
       actionTime: new Date(),
-      ip: req.ip|| null,// IP address  
+      ip: req.ip || null
     });
 
-    res.json({ message: "Task updated successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error });
-  }
-};
-
-// Delete task (and return deleted task if needed)
-const deleteTask = async (req, res) => {
-  try {
-    const deletedTask = await Task.findByIdAndDelete(req.params.id);
-    res.json({ message: "Task deleted successfully", deletedTask });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.json({ message: "Task updated", updated });
+  } catch (err) {
+    res.status(500).json({ message: "Patch failed", error: err });
   }
 };
 
@@ -68,7 +105,7 @@ module.exports = {
   getAllTasks,
   getTaskById,
   createTask,
-  updateTask,
-  deleteTask,
+  patchTask
 };
+
 

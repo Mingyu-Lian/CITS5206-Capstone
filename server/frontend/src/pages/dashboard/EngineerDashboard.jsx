@@ -1,25 +1,25 @@
 // src/pages/dashboard/EngineerDashboard.jsx
-import DashboardLayout from "../../components/DashboardLayout";
 import { Card, List, Tag, Button, Typography, Spin, Input, Row, Col, Select, Progress, message } from "antd";
-import { useState, useEffect } from "react";
 import { SyncOutlined, ToolOutlined } from "@ant-design/icons";
+import { useState, useEffect } from "react";
 import { useLocomotives } from "../../hooks/useMockData";
+import localforage from "localforage";
+import { syncLogs } from "../../utils/offlineSyncHelper";
 
 const { Title } = Typography;
 const { Option } = Select;
+const userId = localStorage.getItem("userId") || "unknown";
+const LOG_KEY = `offlineLogs-${userId}`;
 
 const EngineerDashboard = () => {
   const { locomotives, loading } = useLocomotives();
   const [assignedTasks, setAssignedTasks] = useState([]);
+  const [pendingSubtasks, setPendingSubtasks] = useState([]);
   const [statusFilter, setStatusFilter] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const engineerName = "Engineer A";
 
-  const handleSync = () => {
-    message.success("Tasks synced successfully!");
-    fetchAssignedTasks();
-  };
-
+  // Load tasks assigned to the current engineer
   const fetchAssignedTasks = () => {
     const assigned = [];
     const assignedEngineers = JSON.parse(localStorage.getItem("assignedTasks") || "{}");
@@ -40,55 +40,123 @@ const EngineerDashboard = () => {
     setAssignedTasks(assigned);
   };
 
-  const markAsCompleted = (taskId) => {
-    const updatedTasks = assignedTasks.map(task => {
-      if (task.id === taskId) {
-        return { ...task, status: "Completed" };
+  // Load user's cached task list (from localForage)
+  const loadUserCachedTaskList = async () => {
+    try {
+      const userId = localStorage.getItem("userId") || "unknown";
+      const cachedTasks = await localforage.getItem(`offlineTaskList-${userId}`);
+      if (cachedTasks && Array.isArray(cachedTasks)) {
+        setAssignedTasks(cachedTasks);
+        console.log("Loaded cached task list from localForage");
       }
-      return task;
-    });
+    } catch (error) {
+      console.error("Failed to load cached task list:", error);
+    }
+  };  
+
+  // Load offline subtasks (from audit logs stored in localForage)
+  const fetchPendingSubtasks = async () => {
+    const allLogs = (await localforage.getItem(LOG_KEY)) || [];
+    const pendingLogs = allLogs.filter((log) => log.status === "pending");
+
+    const uniqueSubtaskIds = [...new Set(
+      pendingLogs.map((log) => {
+        try {
+          const detail = JSON.parse(log.details);
+          return detail.subtaskId;
+        } catch {
+          return null;
+        }
+      }).filter(id => id)
+    )];
+
+    setPendingSubtasks(uniqueSubtaskIds);
+  };
+
+  // Sync logs and refresh data
+  const handleSync = async () => {
+    await syncLogs();
+    message.success("Logs synced successfully.");
+    fetchPendingSubtasks();
+    fetchAssignedTasks();
+  };
+
+  // Mark task as completed (UI only)
+  const markAsCompleted = (taskId) => {
+    const updatedTasks = assignedTasks.map(task =>
+      task.id === taskId ? { ...task, status: "Completed" } : task
+    );
     setAssignedTasks(updatedTasks);
     message.success("Task marked as completed!");
   };
 
+  // Load data and bind event listeners
   useEffect(() => {
     if (!loading) {
       fetchAssignedTasks();
     }
-  
-    // ✅ Add event listener to detect assignment change
+    fetchPendingSubtasks();
+    loadUserCachedTaskList(); // ✅ for offline identify
+
     const handleStorageChange = (event) => {
       if (event.key === "assignedTasks") {
-        fetchAssignedTasks(); // Reload tasks automatically
+        fetchAssignedTasks();
       }
     };
-  
-    window.addEventListener("storage", handleStorageChange);
-  
-    return () => {
-      window.removeEventListener("storage", handleStorageChange); // Clean up
-    };
-  }, [loading]);
-  
 
+    const handleOnline = () => {
+      if (pendingSubtasks.length > 0) {
+        message.info("You have unsynced subtasks. Please click Sync to upload.");
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("online", handleOnline);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("online", handleOnline);
+    };
+  }, [loading, pendingSubtasks]);
+
+  // Loading indicator
   if (loading) return <Spin tip="Loading Engineer Tasks..." size="large" style={{ marginTop: "20vh" }} />;
 
-  // Apply filters
+  // Filter tasks
   const filteredTasks = assignedTasks.filter((task) => {
     const statusMatch = statusFilter === "All" || task.status === statusFilter;
     const searchMatch = task.title.toLowerCase().includes(searchTerm.toLowerCase());
     return statusMatch && searchMatch;
   });
 
-  // Calculate Progress
+  // Calculate task completion progress
   const totalTasks = assignedTasks.length;
   const completedTasks = assignedTasks.filter(task => task.status === "Completed").length;
   const progressPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   return (
-    <DashboardLayout>
       <div style={{ padding: 24 }}>
         <Title level={2}>Engineer Dashboard - {engineerName}</Title>
+
+        {/* Offline Subtasks Card */}
+        <Card
+          title={<><ToolOutlined /> Pending Subtasks (Offline)</>}
+          extra={<Button type="primary" icon={<SyncOutlined />} onClick={handleSync}>Sync</Button>}
+          style={{ marginBottom: 24 }}
+        >
+          {pendingSubtasks.length === 0 ? (
+            <p>No pending subtasks. All changes are synced.</p>
+          ) : (
+            <List
+              dataSource={pendingSubtasks}
+              renderItem={(item) => (
+                <List.Item>
+                  <List.Item.Meta title={`Subtask ID: ${item}`} />
+                </List.Item>
+              )}
+            />
+          )}
+        </Card>
 
         {/* Filter Controls */}
         <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
@@ -136,7 +204,7 @@ const EngineerDashboard = () => {
           </Col>
         </Row>
 
-        {/* Task List */}
+        {/* Assigned Tasks List */}
         <Card title={<><ToolOutlined /> Your Assigned Tasks</>}>
           <List
             dataSource={filteredTasks}
@@ -160,9 +228,7 @@ const EngineerDashboard = () => {
             )}
           />
         </Card>
-
       </div>
-    </DashboardLayout>
   );
 };
 

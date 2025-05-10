@@ -2,9 +2,10 @@
 import { useState, useEffect } from "react";
 import { Table, Button, Modal, Form, Input, Select, message, Popconfirm } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import PageLayout from "../components/PageLayout";
 import { fetchUsers, addUser, deleteUser, updateUser } from "../mock/mockApi";
+import { Typography } from "antd";
 
+const { Title } = Typography;
 const { Option } = Select;
 
 const UserManagement = () => {
@@ -149,10 +150,9 @@ const UserManagement = () => {
   ];
 
   return (
-    <PageLayout>
       <div className="p-6 bg-white min-h-screen">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">User Management</h2>
+          <Title level={2}>User Management</Title>
           {role === "Admin" && (
             <Button type="primary" icon={<PlusOutlined />} onClick={openAddUserModal}>
               Add User
@@ -248,7 +248,6 @@ const UserManagement = () => {
           </Form>
         </Modal>
       </div>
-    </PageLayout>
   );
 };
 

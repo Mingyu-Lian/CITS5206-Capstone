@@ -19,7 +19,7 @@ const {
  * @swagger
  * /api/loco-types:
  *   get:
- *     summary: List all **active** locomotive types
+ *     summary: List all active locomotive types (short info). Access - All users
  *     tags: [LocoTypes]
  *     responses:
  *       200:
@@ -54,7 +54,7 @@ const {
  * @swagger
  * /api/loco-types:
  *   post:
- *     summary: Create a new locomotive type
+ *     summary: Create a new locomotive type. Access - Admin and Supervisor
  *     tags: [LocoTypes]
  *     security:
  *       - bearerAuth: []
@@ -99,7 +99,7 @@ const {
  * @swagger
  * /api/loco-types/{id}:
  *   get:
- *     summary: Get a specific locomotive type by ID (even inactive)
+ *     summary: Get a specific locomotive type by ID (even inactive). Access - All users
  *     tags: [LocoTypes]
  *     parameters:
  *       - in: path
@@ -138,7 +138,7 @@ const {
  * @swagger
  * /api/loco-types/{id}:
  *   put:
- *     summary: Update or deactivate a locomotive type
+ *     summary: Update/logic delete a locomotive type. Access - Admin and Supervisor
  *     tags: [LocoTypes]
  *     security:
  *       - bearerAuth: []

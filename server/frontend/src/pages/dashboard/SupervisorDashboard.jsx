@@ -1,5 +1,4 @@
 // src/pages/dashboard/SupervisorDashboard.jsx
-import DashboardLayout from "../../components/DashboardLayout";
 import { Card, List, Tag, Typography, Select, Input, Row, Col, Spin, Button, Modal, Form } from "antd";
 import { useState, useEffect } from "react";
 import { useLocomotives } from "../../hooks/useMockData";
@@ -84,7 +83,6 @@ const SupervisorDashboard = () => {
   
 
   return (
-    <DashboardLayout>
       <div style={{ padding: 24 }}>
         <Title level={2}>Supervisor Dashboard</Title>
 
@@ -208,7 +206,6 @@ const SupervisorDashboard = () => {
 
 
       </div>
-    </DashboardLayout>
   );
 };
 

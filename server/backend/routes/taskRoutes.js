@@ -1,72 +1,90 @@
+// routes/taskRoutes.js
 const express = require("express");
 const router = express.Router();
-
 const {
   getAllTasks,
   getTaskById,
   createTask,
-  updateTask,
-  deleteTask,
+  patchTask
 } = require("../controllers/taskController");
-const { authenticate, authorize } = require("../middleware/middleware");
+const { authenticate } = require("../middleware/middleware");
+
+router.get("/", authenticate, getAllTasks);
+router.get("/:id", authenticate, getTaskById);
+router.post("/", authenticate, createTask);
+router.patch("/:id", authenticate, patchTask);
+
+module.exports = router;
+
+
 /**
  * @swagger
  * tags:
  *   name: Tasks
- *   description: Operations related to tasks
+ *   description: Task operations for installation WMS
  */
 
 /**
  * @swagger
  * /api/tasks:
  *   get:
- *     summary: List tasks by WMS id or task id (using query parameters)
+ *     summary: Get all active tasks. Access - assigned users (engineer and supervisor) and all admin
  *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: WMSid
  *         schema:
  *           type: string
- *         description: Filter tasks by parent WMS id
+ *         description: Project ID (meta.projectId) to filter
  *       - in: query
  *         name: taskID
  *         schema:
  *           type: string
- *         description: Filter by specific task id
+ *         description: Specific Task ID to filter
  *     responses:
  *       200:
- *         description: An array of tasks
+ *         description: A list of tasks
+ *       403:
+ *         description: Forbidden (if user is not assigned)
  *       500:
  *         description: Server error
  */
+router.get("/", authenticate, getAllTasks);
 
 /**
  * @swagger
  * /api/tasks/{id}:
  *   get:
- *     summary: Retrieve details of a task
+ *     summary: Get task by ID. Access - assigned users (engineer and supervisor) and all admin
  *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Task id
  *         schema:
  *           type: string
+ *         description: Task ID
  *     responses:
  *       200:
- *         description: A task object with details
+ *         description: Task detail
+ *       403:
+ *         description: Forbidden if user not assigned
  *       404:
- *         description: Task not found
+ *         description: Task not found or inactive
  *       500:
  *         description: Server error
  */
+router.get("/:id", authenticate, getTaskById);
 
 /**
  * @swagger
  * /api/tasks:
  *   post:
- *     summary: Create a new task
+ *     summary: Create new task. Access - admin only
  *     tags: [Tasks]
  *     security:
  *       - bearerAuth: []
@@ -76,79 +94,46 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *         application/json:
  *           schema:
  *             type: object
- *             description: Full task fields for creation
- *             properties:
- *               name:
- *                 type: string
- *                 example: New Task
- *               status:
- *                 type: string
- *                 example: "Pending"
+ *             description: Task data to be created
  *     responses:
  *       201:
- *         description: Task created successfully
+ *         description: Task created
+ *       403:
+ *         description: Forbidden (only admin allowed)
  *       500:
  *         description: Server error
  */
+router.post("/", authenticate, createTask);
+
 /**
  * @swagger
  * /api/tasks/{id}:
- *   put:
- *     summary: Update an existing task
+ *   patch:
+ *     summary: Update/logic delete task partially. Access - assigned users (engineer and supervisor) and all admin
  *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Task id
  *         schema:
  *           type: string
+ *         description: Task ID to patch
  *     requestBody:
- *       description: Task update data
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 example: Updated Task
- *               status:
- *                 type: string
- *                 example: "Completed"
+ *             description: Fields to update
  *     responses:
  *       200:
- *         description: Task updated successfully
+ *         description: Task updated
+ *       403:
+ *         description: Forbidden (not assigned or not admin)
+ *       404:
+ *         description: Task not found or inactive
  *       500:
- *         description: Server error
+ *         description: Patch failed
  */
-
-/**
- * @swagger
- * /api/tasks/{id}:
- *   delete:
- *     summary: Delete a task
- *     tags: [Tasks]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: Task id
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Task deleted successfully
- *       500:
- *         description: Server error
- */
-
-// Route definitions
-router.get("/", getAllTasks);
-router.get("/:id", getTaskById);
-router.post("/", authenticate, authorize(["admin", "supervisor"]), createTask); // Admin/Supervisor only
-router.put("/:id", updateTask);
-router.delete("/:id", authenticate, authorize(["admin", "supervisor"]), deleteTask); // Admin/Supervisor only
-
-module.exports = router;

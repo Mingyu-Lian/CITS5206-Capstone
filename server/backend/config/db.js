@@ -8,7 +8,6 @@ const {
     Baseline,
     Asset,
     Project,
-    WMS,
     Task,
     Discipline,
     Log
@@ -35,12 +34,7 @@ const connectDB = async () => {
             Log.collection.drop()
         ]);
         console.log("Existing data cleared.");
-33
 
-
-
-
-.0
          // Path to your JSON file containing sample data.
          // Make sure sampleData.json is in the same folder as this script or adjust the path accordingly.
         const dataPath = path.join(__dirname, "../sample.json");
@@ -51,7 +45,6 @@ const connectDB = async () => {
             Baseline.insertMany(jsonData.baselines),
             Asset.insertMany(jsonData.assets),
             Project.insertMany(jsonData.projects),
-            WMS.insertMany(jsonData.wms),
             Task.insertMany(jsonData.tasks),
             Discipline.insertMany(jsonData.disciplines),
             Log.insertMany(jsonData.logs)

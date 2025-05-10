@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 import axios from 'axios';
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+
 import Home from "./pages/Home";
 import AppLayout from "./pages/AppLayout";
 import Login from "./pages/Login";
@@ -14,29 +15,39 @@ import WMSListPage from "./pages/WMSListPage";
 import TaskListPage from "./pages/TaskListPage";
 import SubtaskDetailPage from "./pages/SubtaskDetailPage";
 import TaskDetail from './pages/task/Taskdetail';
+import TaskJson from './pages/TaskJson/TaskJson';
+import CommissionJsonJson from './pages/CommissionJson/commissiontest';
+import DashboardLayout from "./components/DashboardLayout";
 
 function App() {
-    return (
-        <Router>
-            <Routes>
-                <Route path="/home" element={<Home />} />
-                <Route path="/layout" element={<AppLayout />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/users" element={<UserManagement />} />
-                <Route path="/tasks" element={<LocomotiveListPage />} />
-                <Route path="/tasks/:locomotiveId/wms" element={<WMSListPage />} />
-                <Route path="/tasks/:locomotiveId/wms/:wmsId" element={<TaskListPage />} />
-                <Route path="/tasks/:locomotiveId/wms/:wmsId/task/:taskId" element={<SubtaskDetailPage />} />
-                <Route path="/taskdetail/:subtaskId" element={<TaskDetail />} />
-                <Route path="/taskdetail" element={<TaskDetail />} />
-                <Route path="/commissiondetail" element={<CommissionDetail />} />
-                {/* Default redirect */}
-                <Route path="/" element={<Navigate to="/login" />} />
+  return (
+    <Router>
+      <Routes>
+        <Route path="/home" element={<Home />} />
+        <Route path="/layout" element={<AppLayout />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
-            </Routes>
-        </Router>
-    );
+        {/* Wrapped with DashboardLayout to include NetStatus and unified UI */}
+        <Route path="/dashboard" element={<DashboardLayout><Dashboard /></DashboardLayout>} />
+        <Route path="/users" element={<DashboardLayout><UserManagement /></DashboardLayout>} />
+        <Route path="/commissiondetail" element={<DashboardLayout><CommissionDetail /></DashboardLayout>} />
+        <Route path="/tasks" element={<DashboardLayout><LocomotiveListPage /></DashboardLayout>} />
+        <Route path="/tasks/:locomotiveId/wms" element={<DashboardLayout><WMSListPage /></DashboardLayout>} />
+        <Route path="/tasks/:locomotiveId/wms/:wmsId" element={<DashboardLayout><TaskListPage /></DashboardLayout>} />
+        <Route path="/tasks/:locomotiveId/wms/:wmsId/task/:taskId" element={<DashboardLayout><SubtaskDetailPage /></DashboardLayout>} />
+        <Route path="/taskdetail/:subtaskId" element={<DashboardLayout><TaskDetail /></DashboardLayout>} />
+        <Route path="/taskdetail" element={<DashboardLayout><TaskDetail /></DashboardLayout>} />
+
+        {/* These routes likely don't need DashboardLayout */}
+        <Route path="/taskjson" element={<TaskJson />} />
+        <Route path="/commissionjson" element={<CommissionJsonJson />} />
+
+        {/* Redirect root to login */}
+        <Route path="/" element={<Navigate to="/login" />} />
+      </Routes>
+    </Router>
+  );
 }
+
 export default App;

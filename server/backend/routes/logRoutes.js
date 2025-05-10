@@ -14,7 +14,7 @@ const { authenticate, authorize } = require("../middleware/middleware");
  * @swagger
  * /api/logs:
  *   get:
- *     summary: List logs with optional filtering by user, loco, and pagination
+ *     summary: List logs with optional filtering by user, loco, and pagination. Access - user itself
  *     tags: [Logs]
  *     security:
  *       - bearerAuth: []
@@ -53,7 +53,7 @@ const { authenticate, authorize } = require("../middleware/middleware");
  * @swagger
  * /api/logs:
  *   post:
- *     summary: Create a new log entry
+ *     summary: Create a new log entry. Access - user itself
  *     tags: [Logs]
  *     security:
  *       - bearerAuth: []
@@ -88,7 +88,7 @@ const { authenticate, authorize } = require("../middleware/middleware");
  * @swagger
  * /api/logs/{id}:
  *   put:
- *     summary: Update a log entry
+ *     summary: Update a log entry. Access - Admin only
  *     tags: [Logs]
  *     security:
  *       - bearerAuth: []
@@ -121,7 +121,7 @@ const { authenticate, authorize } = require("../middleware/middleware");
  * @swagger
  * /api/logs/{id}:
  *   delete:
- *     summary: Delete a log entry （Access: Admin only)
+ *     summary: Delete a log entry. Access - Admin only
  *     tags: [Logs]
  *     security:
  *       - bearerAuth: []
@@ -139,7 +139,7 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *         description: Server error
  */
 
-// 路由定义
+// Route defined
 router.get("/", authenticate, getAllLogs);
 router.post("/", authenticate, createLog);
 router.put("/:id", authenticate, authorize(["admin"]), updateLog);

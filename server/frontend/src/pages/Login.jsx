@@ -17,6 +17,7 @@ const mockLogin = async (username, password) => {
       if (user) {
         resolve({
           data: {
+            id: user.id, // ✅ Add this field to for caching offline log
             token: "mocked-jwt-token",
             role: user.role,
             discipline: user.discipline,
@@ -52,22 +53,31 @@ const Login = () => {
     setLoading(true);
 
     try {
-      //const { data } = await mockLogin(values.username, values.password);
-      const { data } = await axios.post("http://localhost:5001/api/auth/login", {
-        username: values.username,
-        password: values.password,
-        selectedDiscipline: isAdmin ? null : values.discipline,
-      });
-      console.log("Response data:", data); 
+     // //const { data } = await mockLogin(values.username, values.password);
+      //const { data } = await axios.post("http://localhost:5001/api/auth/login", {
+      //  username: values.username,
+      //  password: values.password,
+     //   selectedDiscipline: isAdmin ? null : values.discipline,
+     // });
+     // console.log("Response data:", data); 
 
         // 1) Destructure correctly
-      const { token, user } = data;
-      const { id, username, role, selectedDiscipline,email } = user;
-      localStorage.setItem("token", token);
-      localStorage.setItem("role", role || "");
-      localStorage.setItem("discipline", selectedDiscipline || "");
-      localStorage.setItem("name",username || "");
-      localStorage.setItem("email",email || "");
+      //const { token, user } = data;
+     // const { id, username, role, selectedDiscipline,email } = user;
+      //localStorage.setItem("token", token);
+      //localStorage.setItem("role", role || "");
+      //localStorage.setItem("discipline", selectedDiscipline || "");
+      //localStorage.setItem("name",username || "");
+      //localStorage.setItem("email",email || "");
+
+      const { data } = await mockLogin(values.username, values.password);
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.role);
+      localStorage.setItem("discipline", data.discipline || "");
+      localStorage.setItem("name", data.name || "");
+      localStorage.setItem("email", data.email || "");
+      localStorage.setItem("userId", data.id); // ✅ Add this line to cache user id for offline log
+
       message.success("Login successful!");
 
       switch (data.role) {
