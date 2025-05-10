@@ -10,7 +10,7 @@ const {
 
 const { authenticate } = require("../middleware/middleware");
 
-// 所有接口都需认证
+// all route requires authentication
 router.post("/", authenticate, createWorkTable);
 router.get("/", authenticate, getWorkTables);
 router.get("/list", authenticate, listWorkTables);
@@ -24,74 +24,6 @@ module.exports = router;
  * tags:
  *   name: WorkTables
  *   description: WorkTable Management API - When commissioning 
- */
-
-/**
- * @swagger
- * components:
- *   schemas:
- *     UpdateHistory:
- *       type: object
- *       properties:
- *         userId:
- *           type: string
- *           example: "663c5a14b1fcdf001fef1aaa"
- *         updatedAt:
- *           type: string
- *           format: date-time
- *           example: "2024-05-10T10:15:30Z"
-
- *     WorkTableMeta:
- *       type: object
- *       properties:
- *         projectId:
- *           type: string
- *           example: "Project-XYZ"
- *         assignedSupervisor:
- *           type: array
- *           items:
- *             type: string
- *           example: ["663c5a14b1fcdf001fef1aaa"]
- *         assignedEngineer:
- *           type: array
- *           items:
- *             type: string
- *           example: ["663c5a14b1fcdf001fef1bbb"]
- *         Version:
- *           type: string
- *           example: "v1.0"
- *         isActive:
- *           type: boolean
- *           example: true
- *         createBy:
- *           type: string
- *         createdAt:
- *           type: string
- *           format: date-time
- *         updateHistory:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/UpdateHistory'
-
- *     WorkTableContent:
- *       type: object
- *       properties:
- *         documentTitle:
- *           type: string
- *           example: "Design Review Checklist"
- *         documentNumber:
- *           type: string
- *           example: "DRC-001"
-
- *     WorkTable:
- *       type: object
- *       properties:
- *         _id:
- *           type: string
- *         meta:
- *           $ref: '#/components/schemas/WorkTableMeta'
- *         Content:
- *           $ref: '#/components/schemas/WorkTableContent'
  */
 
 /**
@@ -198,7 +130,7 @@ module.exports = router;
  * @swagger
  * /api/worktables/{id}:
  *   patch:
- *     summary: Update a WorkTable (including assigning users or logical delete). - Admin, Supervisor, Engineer (only assigned)
+ *     summary: Update a WorkTable (including assigning users or logic delete). - Admin, Supervisor, Engineer (only assigned)
  *     tags: [WorkTables]
  *     security:
  *       - bearerAuth: []
