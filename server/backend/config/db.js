@@ -23,14 +23,15 @@ const connectDB = async () => {
         console.log("MongoDB Connected!");
           // Optionally clear existing data before seeding (remove if not needed)
         await Promise.all([
-        User.deleteMany({}),
-        LocoType.deleteMany({}),
-        Baseline.deleteMany({}),
-        Asset.deleteMany({}),
-        Project.deleteMany({}),
-        Task.deleteMany({}),
-        Discipline.deleteMany({}),
-        Log.deleteMany({})
+            User.collection.drop(),
+            LocoType.collection.drop(),
+            Baseline.collection.drop(),
+            Asset.collection.drop(),
+            Project.collection.drop(),
+            WMS.collection.drop(),
+            Task.collection.drop(),
+            Discipline.collection.drop(),
+            Log.collection.drop()
         ]);
         console.log("Existing data cleared.");
 
@@ -39,6 +40,7 @@ const connectDB = async () => {
         const dataPath = path.join(__dirname, "../sample.json");
         const jsonData = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
         await Promise.all([
+            User.insertMany(jsonData.users),
             LocoType.insertMany(jsonData.locoTypes),
             Baseline.insertMany(jsonData.baselines),
             Asset.insertMany(jsonData.assets),

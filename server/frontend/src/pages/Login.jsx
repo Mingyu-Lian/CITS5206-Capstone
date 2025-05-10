@@ -4,7 +4,7 @@ import { Form, Input, Button, Select, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { isStrongPassword } from "../utils/validators";
 import users from "../mock/mockUsers"; // ✅ Import real users list
-
+import axios from "axios";
 const { Option } = Select;
 
 // ✅ New real login function
@@ -39,16 +39,37 @@ const Login = () => {
   const [form] = Form.useForm(); // Form instance
 
   const onFinish = async (values) => {
-    if (!isStrongPassword(values.password)) {
-      return message.error("Weak password (must have uppercase, lowercase, number, and 8+ characters).");
-    }
+    
+    //if (!isStrongPassword(values.password)) {
+    //    return message.error("Weak password (must have uppercase, lowercase, number, and 8+ characters).");
+
+   //}
 
     if (!values.discipline && !isAdmin) {
       return message.error("Please select a discipline.");
-    }
+    } 
+    //
 
     setLoading(true);
+
     try {
+     // //const { data } = await mockLogin(values.username, values.password);
+      //const { data } = await axios.post("http://localhost:5001/api/auth/login", {
+      //  username: values.username,
+      //  password: values.password,
+     //   selectedDiscipline: isAdmin ? null : values.discipline,
+     // });
+     // console.log("Response data:", data); 
+
+        // 1) Destructure correctly
+      //const { token, user } = data;
+     // const { id, username, role, selectedDiscipline,email } = user;
+      //localStorage.setItem("token", token);
+      //localStorage.setItem("role", role || "");
+      //localStorage.setItem("discipline", selectedDiscipline || "");
+      //localStorage.setItem("name",username || "");
+      //localStorage.setItem("email",email || "");
+
       const { data } = await mockLogin(values.username, values.password);
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
@@ -56,16 +77,17 @@ const Login = () => {
       localStorage.setItem("name", data.name || "");
       localStorage.setItem("email", data.email || "");
       localStorage.setItem("userId", data.id); // ✅ Add this line to cache user id for offline log
+
       message.success("Login successful!");
 
       switch (data.role) {
-        case "Admin":
+        case "admin":
           navigate("/dashboard?role=admin");
           break;
-        case "Supervisor":
+        case "supervisor":
           navigate("/dashboard?role=supervisor");
           break;
-        case "Engineer":
+        case "engineer":
           navigate("/dashboard?role=engineer");
           break;
         default:
