@@ -10,7 +10,7 @@ const {
 
 const { authenticate } = require("../middleware/middleware");
 
-// 所有接口都需认证
+// all route requires authentication
 router.post("/", authenticate, createWorkTable);
 router.get("/", authenticate, getWorkTables);
 router.get("/list", authenticate, listWorkTables);
@@ -130,7 +130,7 @@ module.exports = router;
  * @swagger
  * /api/worktables/{id}:
  *   patch:
- *     summary: Update a WorkTable (including assigning users or logical delete). - Admin, Supervisor, Engineer (only assigned)
+ *     summary: Update a WorkTable (including assigning users or logic delete). - Admin, Supervisor, Engineer (only assigned)
  *     tags: [WorkTables]
  *     security:
  *       - bearerAuth: []
