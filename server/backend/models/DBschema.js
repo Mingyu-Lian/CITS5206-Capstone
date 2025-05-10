@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 // User Schema
 const userSchema = new mongoose.Schema({
-    username: { type: String, required: true, unique: false }, // Username
+    username: { type: String, required: true}, // Username
     personName: { type: String, required: true }, // Full name
-    email: { type: String, required: true, unique: true }, // Login Email
+    email: { type: String, required: true}, // Login Email
     passwordHash: { type: String, required: true }, // Encrypted password
     role: { type: String, required: true }, // Role: admin, supervisor, engineer, etc.
     discipline: [{ type: mongoose.Schema.Types.ObjectId, ref: "Discipline" }], // Reference to the discipline}

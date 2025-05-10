@@ -1,23 +1,29 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { User,Discipline } = require("../models/DBschema");
+const e = require("express");
 
 // Login logic
 const login = async (req, res) => {
     const { username, password,selectedDiscipline} = req.body;
   
     try {
-      const user = await User.findOne({ username: username }).populate("disciplines");
+      const user = await User.findOne({ username: username }).populate("discipline");;
       if (!user) return res.status(400).json({ message: "User not found" });
         // Check if the password matches
       const isMatch = await bcrypt.compare(password, user.passwordHash);
       if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
        // Check if the selected discipline exists in the user's disciplines
-      const disciplineDoc = user.discipline.find(d => d.name === selectedDiscipline);
-      if (!disciplineDoc) {
-        return res.status(400).json({ message: "Selected discipline is not associated with the user" });
+       let disciplineDoc = null;
+
+    // If a discipline is provided, validate it
+      if (selectedDiscipline) {
+        disciplineDoc = user.discipline.find((d) => d.name === selectedDiscipline);
+        if (!disciplineDoc) {
+          return res.status(400).json({ message: "Selected discipline is not associated with the user" });
       }
+    }
       
       const token = jwt.sign(
         { id: user._id, role: user.role,discipline: selectedDiscipline},
@@ -31,7 +37,8 @@ const login = async (req, res) => {
           id: user._id,
           username: user.username,
           role: user.role,
-          selectedDiscipline:disciplineDoc.name,
+          email: user.email,
+          selectedDiscipline: disciplineDoc ? disciplineDoc.name : null,
         },
       });
     } catch (error) {

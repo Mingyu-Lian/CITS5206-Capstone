@@ -9,16 +9,16 @@ const Dashboard = () => {
   const role = localStorage.getItem("role");
   const { locomotives, loading } = useLocomotives();
 
-  if (loading && role === "Admin") {
+  if (loading && role === "admin") {
     return <Spin style={{ display: 'flex', justifyContent: 'center', marginTop: '20%' }} size="large" tip="Loading Dashboard..." />;
   }
 
   switch (role) {
-    case "Admin":
+    case "admin":
       return <AdminDashboard locomotiveCount={locomotives.length} />;
-    case "Supervisor":
+    case "supervisor":
       return <SupervisorDashboard />;
-    case "Engineer":
+    case "engineer":
       return <EngineerDashboard />;
     default:
       return <div>Unauthorized. Please log in.</div>;

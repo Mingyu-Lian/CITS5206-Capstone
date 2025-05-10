@@ -1,26 +1,24 @@
 {
   "users": [
     {
-      "_id": "650a5d331faebf1e1234567a",
       "username": "jdoe",
       "personName": "John Doe",
       "email": "jdoe@example.com",
       "passwordHash": "hashedpassword1",
       "role": "admin",
-      "discipline": ["650a5d331faebf1e1234567c"],
+      "discipline": [],
       "isActive": true,
       "createdAt": "2025-04-01T10:00:00.000Z",
       "updatedAt": "2025-04-01T10:00:00.000Z"
     },
     {
-      "_id": "650a5d331faebf1e1234567b",
       "username": "asmith",
       "personName": "Alice Smith",
       "email": "asmith@example.com",
       "passwordHash": "hashedpassword2",
       "role": "engineer",
       "discipline": ["650a5d331faebf1e1234567d"],
-      "isActive": false,
+      "isActive": true,
       "createdAt": "2025-04-02T11:00:00.000Z",
       "updatedAt": "2025-04-02T11:00:00.000Z"
     }

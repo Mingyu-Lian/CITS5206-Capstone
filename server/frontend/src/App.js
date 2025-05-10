@@ -8,12 +8,12 @@ import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import Dashboard from "./pages/Dashboard";
 import UserManagement from "./pages/UserManagement";
-import CommissionDetail from './pages/Commission/CommissionDetail';
+import CommissionDetail from './pages/commission/CommissionDetail';
 import LocomotiveListPage from "./pages/LocomotiveListPage";
 import WMSListPage from "./pages/WMSListPage";
 import TaskListPage from "./pages/TaskListPage";
 import SubtaskDetailPage from "./pages/SubtaskDetailPage";
-import TaskDetail from './pages/Task/Taskdetail';
+import TaskDetail from './pages/task/Taskdetail';
 
 function App() {
     return (

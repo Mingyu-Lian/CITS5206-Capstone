@@ -10,9 +10,9 @@ const { authenticate, authorize } = require("../middleware/middleware");
  */
 /**
  * @swagger
- * /api/auth/register:
+ * /api/auth/login:
  *   post:
- *     summary: Register a new user 
+ *     summary: User login
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -22,11 +22,69 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *             type: object
  *             required:
  *               - username
- *              - personName
+ *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: admin
+ *               password:
+ *                 type: string
+ *                 example: 123456
+ *               selectedDiscipline:
+ *                 type: string
+ *                 example: Mechanical
+ *                 description: Optional discipline to select during login
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   example: jwt-token
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: 644f1a2b3c4d5e6f7g8h9i0j
+ *                     username:
+ *                       type: string
+ *                       example: admin
+ *                     role:
+ *                       type: string
+ *                       example: Admin
+ *                     selectedDiscipline:
+ *                       type: string
+ *                       example: Mechanical
+ *                       nullable: true
+ *       400:
+ *         description: Invalid credentials or user not found
+ *       500:
+ *         description: Server error
+ */
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - personName
  *               - email
  *               - password
  *               - role
- *             - discipline
+ *               - discipline
  *             properties:
  *               username:
  *                 type: string
@@ -53,40 +111,6 @@ const { authenticate, authorize } = require("../middleware/middleware");
  *         description: User registered successfully
  *       400:
  *         description: Registration error or invalid input
- *       500:
- *         description: Server error
- */
-/**
- * @swagger
- * /api/auth/login:
- *   post:
- *     summary: User login
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - username
- *               - password
- *               - selectedDiscipline
- *             properties:
- *               username:
- *                 type: string
- *                 example: admin
- *               password:
- *                 type: string
- *                 example: 123456
- *             selectedDiscipline: 
- *               type: string
- *             example: Mechanical
- *     responses:
- *       200:
- *         description: Login successful
- *       400:
- *         description: Invalid credentials or user not found
  *       500:
  *         description: Server error
  */
