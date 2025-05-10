@@ -133,26 +133,67 @@ const workTableCommissioningSchema = new mongoose.Schema({
 
 // Tasks Schema
 const taskSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    highlight: { type: [String] },
-    assignedSupervisor: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    assignedEngineer: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    disciplineRequire: { type: mongoose.Schema.Types.ObjectId, ref: "Discipline" },
-    parentsTask: { type: mongoose.Schema.Types.ObjectId, ref: "Task" },
+  meta: {
+    type: { type: String, default: "installation" },
+    locoId: String,
+    projectId: String,
+    assignedSupervisor: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    assignedEngineer: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    createdAt: { type: Date, default: Date.now },
+    createBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    updateHistory: [
+      {
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        updatedAt: { type: Date, default: Date.now }
+      }
+    ],
+    Version: String,
+    historyVersionTaskId: { type: mongoose.Schema.Types.ObjectId, ref: "Task" },
+    isActive: { type: Boolean, default: true }
+  },
+  Content: {
+    Tasks: [
+      {
+        ItemNumber: String,
+        Title: String,
+        TaskOverview: String,
+        Authors: [String],
+        VerifiedBy: String,
+        ApprovedBy: String,
+        AuthorizedBy: String,
+        ReviewHistory: [
+          {
+            ReviewedBy: String,
+            ReviewType: String,
+            ReviewDate: String,
+            Comments: String
+          }
+        ],
+        Steps: [
+          {
+            ItemNumber: String,
+            Title: String,
+            Instructions: String,
+            SubSteps: [String],
+            KeyPoints: [String],
+            Components: String,
+            Location: String,
+            Alerts: String,
+            SupportingImages: [String],
+            Discipline: {
+              ID: String,
+              Title: String
+            },
+            Comments: [String]
+          }
+        ]
+      }
+    ],
+    ImportantNotes: String
+  }
+}, { timestamps: true });
 
-    status: { type: String, required: true },
-    startDate: { type: Date },
-    endDate: { type: Date },
-    comments: { type: String },
-    updatedAt: { type: Date, default: Date.now },
-    components: { type: [String] },
-    attachments: { type: [String] },
-    location: { type: String },
-    takeNote: { type: String },
-    visualSupport: { type: [String] },
-    signoff: { type: String },
-    Baseline: { type: [Object] }
-});
+
 
 // Disciplines Schema
 const disciplineSchema = new mongoose.Schema({
