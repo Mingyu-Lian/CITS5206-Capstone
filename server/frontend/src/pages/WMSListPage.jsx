@@ -88,7 +88,8 @@ const WMSListPage = () => {
     <PageLayout>
       <div className="p-6 bg-white min-h-screen">
         <div className="flex justify-between items-center mb-4">
-          <Title level={3}>WMS Documents for Locomotive {locomotiveId}</Title>
+          <Title level={3}>Work Method Statements – Locomotive {locomotiveId}</Title>
+
 
           {role === "Admin" && (
             <Button type="primary" onClick={() => setIsModalVisible(true)}>

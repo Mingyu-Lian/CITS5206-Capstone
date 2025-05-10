@@ -132,22 +132,27 @@ const LocomotiveListPage = () => {
                   <Button onClick={() => navigate(`/tasks/${loco.locomotiveId}/wms`)}>
                     View WMS
                   </Button>,
-                  <Button type="link" onClick={() => handleEditClick(loco)}>
-                    Edit
-                  </Button>,
-                  <Popconfirm
-                  title="Delete this locomotive?"
-                  onConfirm={() => handleDelete(loco.locomotiveId)}
-                  okText="Yes"
-                  cancelText="No"
-                  okButtonProps={{ loading: deletingId === loco.locomotiveId }}
-                >
-                  <Button type="link" danger disabled={deletingId === loco.locomotiveId}>
-                    {deletingId === loco.locomotiveId ? "Deleting..." : "Delete"}
-                  </Button>
-                </Popconfirm>
-                
+                  ...(role === "Admin"
+                    ? [
+                      <Button type="link" onClick={() => handleEditClick(loco)}>
+                        Edit
+                      </Button>,
+                      <Popconfirm
+                        title="Delete this locomotive?"
+                        onConfirm={() => handleDelete(loco.locomotiveId)}
+                        okText="Yes"
+                        cancelText="No"
+                        okButtonProps={{ loading: deletingId === loco.locomotiveId }}
+                      >
+                        <Button type="link" danger disabled={deletingId === loco.locomotiveId}>
+                          {deletingId === loco.locomotiveId ? "Deleting..." : "Delete"}
+                        </Button>
+                      </Popconfirm>,
+                    ]
+                    : [])
                 ]}
+
+
                 className="rounded-lg shadow-md hover:shadow-lg transition-all"
               >
                 <p><strong>ID:</strong> {loco.locomotiveId}</p>

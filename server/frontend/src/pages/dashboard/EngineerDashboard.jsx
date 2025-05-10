@@ -8,8 +8,7 @@ import { SyncOutlined, ToolOutlined } from "@ant-design/icons";
 import { useLocomotives } from "../../hooks/useMockData";
 import {
   fetchTaskSignOffs,
-  toggleTaskSignOff,
-  fetchAssignedEngineers
+  toggleTaskSignOff
 } from "../../mock/mockApi";
 
 const { Title } = Typography;
@@ -26,47 +25,43 @@ const EngineerDashboard = () => {
   const role = localStorage.getItem("role");
   const discipline = localStorage.getItem("discipline");
 
-  useEffect(() => {
-    let isMounted = true;
+  const loadAssignments = async () => {
+    const rawSignOffs = await fetchTaskSignOffs();
+    setSignOffs(rawSignOffs);
 
-    const loadAssignments = async () => {
-      const rawSignOffs = await fetchTaskSignOffs();
-      if (!isMounted) return;
-      setSignOffs(rawSignOffs);
+    const tasks = [];
+    const assignedMap = JSON.parse(localStorage.getItem("assignedTasks") || "{}");
 
-      const tasks = [];
+    for (const loco of locomotives) {
+      for (const wms of loco.wmsList) {
+        for (const task of wms.tasks) {
+          const taskId = `${loco.locomotiveId}-${wms.wmsId}-${task.taskId}`;
+          const assignedList = Array.isArray(assignedMap[taskId]) ? assignedMap[taskId] : [];
+          const match = assignedList.find((e) => e.name === engineerName);
 
-      for (const loco of locomotives) {
-        for (const wms of loco.wmsList) {
-          for (const task of wms.tasks) {
-            const taskId = `${loco.locomotiveId}-${wms.wmsId}-${task.taskId}`;
-            const assigned = await fetchAssignedEngineers(taskId);
-            const isAssigned = assigned.some((eng) => eng.name === engineerName);
-            if (isAssigned) {
-              tasks.push({
-                id: taskId,
-                taskId: task.taskId,
-                title: `${task.title} (${loco.name})`,
-                status: task.status,
-                discipline: task.discipline
-              });
-            }
+          if (match) {
+            tasks.push({
+              id: taskId,
+              taskId: task.taskId,
+              title: `${task.title} (${loco.name})`,
+              status: task.status,
+              assignedDiscipline: match.discipline
+            });
           }
         }
       }
-
-      if (isMounted) setAssignedTasks(tasks);
-    };
-
-    if (!loading) {
-      loadAssignments();
-      const interval = setInterval(loadAssignments, 3000);
-      return () => {
-        isMounted = false;
-        clearInterval(interval);
-      };
     }
-  }, [loading, locomotives, engineerName]);
+
+    setAssignedTasks(tasks);
+  };
+
+  useEffect(() => {
+    if (!loading) {
+      loadAssignments(); // Initial
+      const interval = setInterval(loadAssignments, 5000); // Auto refresh
+      return () => clearInterval(interval);
+    }
+  }, [loading, locomotives]);
 
   const handleSignOffToggle = async (taskId) => {
     const updated = await toggleTaskSignOff(taskId, engineerName);
@@ -81,14 +76,21 @@ const EngineerDashboard = () => {
   });
 
   const total = assignedTasks.length;
-  const completed = assignedTasks.filter((task) => task.status === "Completed").length;
+  const completed = assignedTasks.filter((task) => {
+    const key = `${task.id}-${engineerName}`;
+    return signOffs[key];
+  }).length;
+
   const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+  if (loading) return <Spin tip="Loading Engineer Dashboard..." size="large" style={{ marginTop: "20vh" }} />;
 
   return (
     <DashboardLayout>
       <div style={{ padding: 24 }}>
-        <Title level={2}>Engineer Dashboard - {engineerName}</Title>
+        <Title level={2}>Engineer Dashboard – {engineerName}</Title>
 
+        {/* Filters */}
         <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
           <Col span={8}>
             <Select value={statusFilter} onChange={setStatusFilter} style={{ width: "100%" }}>
@@ -107,46 +109,62 @@ const EngineerDashboard = () => {
             />
           </Col>
           <Col span={8}>
-            <Button icon={<SyncOutlined />} onClick={() => window.location.reload()} block>
-              Sync
+            <Button icon={<SyncOutlined />} onClick={loadAssignments} block>
+              Sync Tasks
             </Button>
           </Col>
         </Row>
 
+        {/* Progress Summary */}
         <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-          <Col xs={24} md={12}>
-            <Card title="Completion Progress">
-              <Progress percent={progress} status="active" />
-            </Card>
-          </Col>
-          <Col xs={24} md={12}>
-            <Card title="Overview">
-              <Progress type="circle" percent={progress} />
-            </Card>
-          </Col>
-        </Row>
+  <Col xs={24}>
+    <Card title="Completion Progress">
+      <Progress percent={progress} status="active" />
+      <div style={{ marginTop: 8 }}>{completed} of {total} tasks signed off</div>
+    </Card>
+  </Col>
+</Row>
 
-        <Card title={<><ToolOutlined /> Assigned Tasks</>}>
+
+        {/* Task List */}
+        <Card title={<><ToolOutlined /> Your Assigned Tasks</>}>
           <List
             dataSource={filteredTasks}
             renderItem={(task) => {
-              const key = `${task.taskId}-${engineerName}`;
+              const key = `${task.id}-${engineerName}`;
               const canSignOff =
                 role === "Admin" ||
-                task.discipline?.toLowerCase() === discipline?.toLowerCase();
+                task.assignedDiscipline?.toLowerCase() === discipline?.toLowerCase();
 
               return (
                 <List.Item
                   actions={[
-                    <Tooltip title={canSignOff ? "Sign off" : "Discipline mismatch"}>
+                    <Tooltip title={canSignOff ? "Click to sign off" : "Discipline mismatch"}>
                       <Checkbox
                         checked={signOffs[key]}
                         disabled={!canSignOff}
-                        onChange={() => handleSignOffToggle(task.taskId)}
+                        onChange={() => handleSignOffToggle(task.id)}
                       >
                         Sign-Off
                       </Checkbox>
-                    </Tooltip>
+                    </Tooltip>,
+                    <Button
+                      size="small"
+                      icon={<SyncOutlined />}
+                      onClick={() => message.info("Sync logic pending")}
+                    >
+                      Sync Task
+                    </Button>,
+                    <Button
+                      size="small"
+                      type="link"
+                      onClick={() => {
+                        const [locoId, wmsId, taskOnlyId] = task.id.split("-");
+                        window.location.href = `/taskdetail/${locoId}/${wmsId}/${taskOnlyId}`;
+                      }}
+                    >
+                      View Details
+                    </Button>
                   ]}
                 >
                   <List.Item.Meta

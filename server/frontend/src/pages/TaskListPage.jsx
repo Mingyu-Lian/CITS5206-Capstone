@@ -1,11 +1,9 @@
-// src/pages/TaskListPage.jsx
 import { useState, useEffect } from "react";
 import { Table, Button, Tag, Typography, Checkbox, Tooltip, Space, message } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
 import PageLayout from "../components/PageLayout";
 import { useTasks } from "../hooks/useMockData";
-import users from "../mock/mockUsers";
 import { fetchTaskSignOffs, toggleTaskSignOff, supervisorSignOffTask } from "../mock/mockApi";
 
 const { Title } = Typography;
@@ -34,7 +32,11 @@ const TaskListPage = () => {
       const stored = await fetchTaskSignOffs();
       setSignOffs(stored);
     };
+
     loadSignOffs();
+
+    const interval = setInterval(loadSignOffs, 3000); // Live sync
+    return () => clearInterval(interval);
   }, []);
 
   const applyFilters = (query) => setFilters(query);
@@ -88,31 +90,34 @@ const TaskListPage = () => {
       title: "Engineer Sign-Offs",
       key: "engineers",
       render: (_, record) => {
-        const taskKey = `${locomotiveId}-${wmsId}-${record.taskId}`;
+        const fullTaskId = `${locomotiveId}-${wmsId}-${record.taskId}`;
         const assignedTasks = JSON.parse(localStorage.getItem("assignedTasks") || "{}");
+        const assigned = Array.isArray(assignedTasks[fullTaskId]) ? assignedTasks[fullTaskId] : [];
 
-        const assignedEngineerName = assignedTasks[taskKey];
-        const assignedEngineer = users.find(
-          u => u.name === assignedEngineerName && u.role === "Engineer"
-        );
-
-        if (!assignedEngineer) {
+        if (assigned.length === 0) {
           return <i style={{ color: "gray" }}>No engineer assigned</i>;
         }
 
-        const key = `${record.taskId}-${assignedEngineer.name}`;
-        const canCheck =
-          (currentUser === assignedEngineer.name && assignedEngineer.discipline === record.discipline) ||
-          currentRole === "Admin";
-
         return (
-          <Checkbox
-            checked={signOffs[key]}
-            disabled={!canCheck}
-            onChange={() => handleEngineerToggle(record.taskId, assignedEngineer.name)}
-          >
-            {assignedEngineer.name}
-          </Checkbox>
+          <Space direction="vertical">
+            {assigned.map((eng, idx) => {
+              const key = `${fullTaskId}-${eng.name}`;
+              const canCheck =
+                (currentUser === eng.name && eng.discipline?.toLowerCase() === currentDiscipline?.toLowerCase()) ||
+                currentRole === "Admin";
+
+              return (
+                <Checkbox
+                  key={idx}
+                  checked={signOffs[key]}
+                  disabled={!canCheck}
+                  onChange={() => handleEngineerToggle(fullTaskId, eng.name)}
+                >
+                  {eng.name}
+                </Checkbox>
+              );
+            })}
+          </Space>
         );
       }
     },
@@ -124,7 +129,7 @@ const TaskListPage = () => {
         const canCheck =
           currentRole === "Admin" ||
           (currentRole === "Supervisor" &&
-            currentDiscipline === record.discipline &&
+            currentDiscipline?.toLowerCase() === record.discipline?.toLowerCase() &&
             !signed);
 
         return (
@@ -159,7 +164,8 @@ const TaskListPage = () => {
   return (
     <PageLayout>
       <div className="p-6 bg-white min-h-screen">
-        <Title level={3}>Tasks for WMS: {wmsId}</Title>
+        <Title level={3}>Assigned Tasks for Locomotive {locomotiveId}, WMS {wmsId}</Title>
+
         <QueryBuilder
           fields={[
             { label: "Title", key: "title", type: "text" },
