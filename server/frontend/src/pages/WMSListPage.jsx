@@ -25,7 +25,6 @@ const WMSListPage = () => {
   const navigate = useNavigate();
   const [filters, setFilters] = useState({});
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const { wmsList, loading, createWMS, deleteWMS } = useWMS(locomotiveId); 
