@@ -117,13 +117,13 @@ const EngineerDashboard = () => {
 
         {/* Progress Summary */}
         <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-  <Col xs={24}>
-    <Card title="Completion Progress">
-      <Progress percent={progress} status="active" />
-      <div style={{ marginTop: 8 }}>{completed} of {total} tasks signed off</div>
-    </Card>
-  </Col>
-</Row>
+          <Col xs={24}>
+            <Card title="Completion Progress">
+              <Progress percent={progress} status="active" />
+              <div style={{ marginTop: 8 }}>{completed} of {total} tasks signed off</div>
+            </Card>
+          </Col>
+        </Row>
 
 
         {/* Task List */}

@@ -134,8 +134,8 @@ const TaskListPage = () => {
       render: (status) => (
         <Tag color={
           status === "Completed" ? "green" :
-          status === "In Progress" ? "orange" :
-          status === "Pending" ? "red" : "blue"
+            status === "In Progress" ? "orange" :
+              status === "Pending" ? "red" : "blue"
         }>
           {status}
         </Tag>

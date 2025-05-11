@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Form, Input, Button, Select, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { isStrongPassword } from "../utils/validators";
-import users from "../mock/mockUsers"; // ✅ Import mock users
+import users from "../mock/mockUsers"; // Import mock users
 
 const { Option } = Select;
 

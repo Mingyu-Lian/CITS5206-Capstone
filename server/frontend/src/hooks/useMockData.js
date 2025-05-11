@@ -1,6 +1,6 @@
 // src/hooks/useMockData.js
 import { useState, useEffect } from "react";
-import { fetchLocomotives, fetchWMSByLocomotive, fetchTasksByWMS, fetchTaskDetail, addLocomotive, addWMS } from "../mock/mockApi"; // import addLocomotive, addWMS
+import { fetchLocomotives, fetchWMSByLocomotive, fetchTasksByWMS, fetchTaskDetail, addLocomotive, addWMS } from "../mock/mockApi";
 import { fetchBaselines, addBaseline, deleteBaseline } from "../mock/mockApi";
 import { updateLocomotive, deleteLocomotive as removeLocomotive } from "../mock/mockApi";
 import { deleteWMS as removeWMS } from "../mock/mockApi";
@@ -28,12 +28,12 @@ export const useLocomotives = () => {
     await updateLocomotive(locomotiveId, updatedFields);
     await reloadLocomotives();
   };
-  
+
   const deleteLocomotive = async (locomotiveId) => {
     await removeLocomotive(locomotiveId);
     await reloadLocomotives();
   };
-  
+
   return {
     locomotives,
     loading,
@@ -41,7 +41,7 @@ export const useLocomotives = () => {
     editLocomotive,
     deleteLocomotive,
   };
-  
+
 };
 
 

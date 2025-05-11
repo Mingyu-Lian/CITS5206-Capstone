@@ -5,12 +5,12 @@ import {
   removeEngineerFromTask
 } from "../mock/mockApi";
 
-// 🧩 Hook
+//  Hook
 const useAssignedEngineers = (taskId) => {
   const [assigned, setAssigned] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔁 Initial fetch
+  //  Initial fetch
   useEffect(() => {
     const load = async () => {
       const result = await fetchAssignedEngineers(taskId);
@@ -21,14 +21,14 @@ const useAssignedEngineers = (taskId) => {
     if (taskId) load();
   }, [taskId]);
 
-  // ✅ Add engineer
+  //  Add engineer
   const addEngineer = async (engineer) => {
     await assignEngineerToTask(taskId, engineer);
     const updated = await fetchAssignedEngineers(taskId);
     setAssigned(updated);
   };
 
-  // ❌ Remove engineer
+  //  Remove engineer
   const removeEngineer = async (engineerName) => {
     await removeEngineerFromTask(taskId, engineerName);
     const updated = await fetchAssignedEngineers(taskId);

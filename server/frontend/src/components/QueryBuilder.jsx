@@ -69,7 +69,7 @@ const QueryRow = ({ index, condition, fields, onChange, onDelete }) => {
   );
 };
 
-const QueryBuilder = ({ fields, onApply, onClear  }) => {
+const QueryBuilder = ({ fields, onApply, onClear }) => {
   const [conditions, setConditions] = useState([]);
   const [logic, setLogic] = useState("AND");
 
@@ -117,9 +117,9 @@ const QueryBuilder = ({ fields, onApply, onClear  }) => {
       <div className="mt-4 flex justify-end gap-2">
         <Button onClick={onClear}>Clear Filters</Button>
         <Button type="primary" onClick={handleApply} disabled={conditions.length === 0}>
-            Apply Filters
-            </Button>
-        </div>
+          Apply Filters
+        </Button>
+      </div>
 
     </div>
   );

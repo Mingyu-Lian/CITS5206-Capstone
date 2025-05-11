@@ -64,7 +64,7 @@ const AdminDashboard = () => {
             <Card>
               <Statistic
                 title="Active Users"
-                value={24} // You can replace with real user count if needed
+                value={24} 
                 prefix={<UserOutlined />}
               />
             </Card>

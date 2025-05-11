@@ -26,7 +26,7 @@ const WMSListPage = () => {
   const [filters, setFilters] = useState({});
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
-  const { wmsList, loading, createWMS, deleteWMS } = useWMS(locomotiveId); // ✅ include deleteWMS
+  const { wmsList, loading, createWMS, deleteWMS } = useWMS(locomotiveId); 
   const [deletingId, setDeletingId] = useState(null);
 
   const role = localStorage.getItem("role");
@@ -81,7 +81,7 @@ const WMSListPage = () => {
       setDeletingId(null);
     }
   };
-  
+
   if (loading) return <div>Loading WMS Documents...</div>;
 
   return (
@@ -121,16 +121,16 @@ const WMSListPage = () => {
 
                   {role === "Admin" && (
                     <Popconfirm
-                    title="Delete this WMS?"
-                    onConfirm={() => handleDelete(record.wmsId)}
-                    okText="Yes"
-                    cancelText="No"
-                    okButtonProps={{ loading: deletingId === record.wmsId }}
-                  >
-                    <Button type="link" danger disabled={deletingId === record.wmsId}>
-                      {deletingId === record.wmsId ? "Deleting..." : "Delete"}
-                    </Button>
-                  </Popconfirm>
+                      title="Delete this WMS?"
+                      onConfirm={() => handleDelete(record.wmsId)}
+                      okText="Yes"
+                      cancelText="No"
+                      okButtonProps={{ loading: deletingId === record.wmsId }}
+                    >
+                      <Button type="link" danger disabled={deletingId === record.wmsId}>
+                        {deletingId === record.wmsId ? "Deleting..." : "Delete"}
+                      </Button>
+                    </Popconfirm>
                   )}
                 </>
               ),
