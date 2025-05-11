@@ -6,8 +6,6 @@ import { UserOutlined, FileTextOutlined, PictureOutlined, InfoCircleOutlined, Le
 import loco0 from "../../../img/loco0.jpg";
 import loco1 from "../../../img/loco1.jpg";
 import loco2 from "../../../img/loco2.jpg";
-import loco3 from "../../../img/loco3.jpg";
-
 
 
 
@@ -30,23 +28,9 @@ const InstructionsTab = ({instructionData}) => {
       id: 2,
       url: loco2,
       thumbnail: loco2,
-    },
-    {
-      id: 3,
-      url: loco3,
-      thumbnail: loco3,
     }
   ];
-  const shuffle = (arr) => {
-    const copy = [...arr];
-    for (let i = copy.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [copy[i], copy[j]] = [copy[j], copy[i]];
-    }
-    return copy;
-  };
-  
-  const randomizedLoco = shuffle(images);
+
   const carouselRef = useRef();
 
   // Handle carousel navigation
@@ -103,7 +87,7 @@ const InstructionsTab = ({instructionData}) => {
               onClick={prevSlide}
             />
             <Carousel ref={carouselRef} className="photo-carousel">
-              {randomizedLoco.map((image) => (
+              {images.map((image) => (
                 <div key={image.id} className="carousel-item">
                   <img src={image.url} alt="Locomotive" className="carousel-image" />
                 </div>
