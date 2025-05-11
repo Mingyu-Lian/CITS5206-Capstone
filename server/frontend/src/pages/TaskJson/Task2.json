@@ -1,0 +1,46 @@
+{
+  "$id": "8",
+  "$type": "MVX.Domain.Work.WorkStepDefinition, RioTinto.AutoHaul.Core",
+  "ItemNumber": "1.2",
+  "SupportingImages": [
+    {
+      "$id": "9",
+      "$type": "Torq.Domain.Software.Attachment, Torq.Domain",
+      "FileName": "Image01.jpg",
+      "Folder": {
+        "$id": "10",
+        "$type": "Torq.Domain.Software.AttachmentFolder, Torq.Domain",
+        "Attachments": [
+          {
+            "$ref": "9"
+          }
+        ],
+        "Host": {
+          "$ref": "8"
+        }
+      }
+    }
+  ],
+  "Instructions": "1. [FFFFFF]This WMS provides the step by step procedure for the disconnection and reconnection of the locomotive batteries.[-]\r\n\r\n2. [FFFFFF]Each step [-][b][FFFFFF]MUST[-][/b][FFFFFF] be followed in order to safely and efficiently complete the task.[-]\r\n\r\n3. [FFFFFF]Each step is outlined clearly in the Task section of this document.[-]\r\n\r\n",
+  "Discipline": {
+    "$ref": "7"
+  },
+  "SceneViews": [],
+  "Components": "Materials:\r\nPlatform ladder/ mobile platform\r\nContainer to store nuts, bolts, and washers\r\n \r\nTools & Equipment:\r\nBattery rattle gun\r\ndeep 19mm impact socket\r\nGloves\r\nSafety glasses\r\n2 x ½ inch geared spanners\r\n300mm cable ties\r\nHearing protection",
+  "Location": "",
+  "ConversionErrorLog": "",
+  "Alerts": "[FFFF00][b]Refer to the Components tab for Material, Tools and Equipment[/b][-]",
+  "Attachments": [],
+  "PreviousWorkStepDefinitionID": "00000000-0000-0000-0000-000000000000",
+  "ReferencedTables": [],
+  "Title": "Preparation - Mandatory",
+  "ID": "6e5b983f-6f0f-4f85-94ee-e30872087430",
+  "ParentItem": {
+    "$ref": "3"
+  },
+  "ParentID": "00000000-0000-0000-0000-000000000000",
+  "ParentFolder": null,
+  "AttachmentFolder": {
+    "$ref": "10"
+  }
+}
