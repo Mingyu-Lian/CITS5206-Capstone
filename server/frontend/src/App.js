@@ -9,7 +9,7 @@ import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import Dashboard from "./pages/Dashboard";
 import UserManagement from "./pages/UserManagement";
-import CommissionDetail from './pages/commission/CommissionDetail';
+import BaselineDetail from './pages/Baseline/BaselineDetail';
 import LocomotiveListPage from "./pages/LocomotiveListPage";
 import WMSListPage from "./pages/WMSListPage";
 import TaskListPage from "./pages/TaskListPage";
@@ -31,7 +31,6 @@ function App() {
         {/* Wrapped with DashboardLayout to include NetStatus and unified UI */}
         <Route path="/dashboard" element={<DashboardLayout><Dashboard /></DashboardLayout>} />
         <Route path="/users" element={<DashboardLayout><UserManagement /></DashboardLayout>} />
-        <Route path="/commissiondetail" element={<DashboardLayout><CommissionDetail /></DashboardLayout>} />
         <Route path="/tasks" element={<DashboardLayout><LocomotiveListPage /></DashboardLayout>} />
         <Route path="/tasks/:locomotiveId/wms" element={<DashboardLayout><WMSListPage /></DashboardLayout>} />
         <Route path="/tasks/:locomotiveId/wms/:wmsId" element={<DashboardLayout><TaskListPage /></DashboardLayout>} />
@@ -42,6 +41,7 @@ function App() {
         {/* These routes likely don't need DashboardLayout */}
         <Route path="/taskjson/:subtaskId" element={<TaskJson />} />
         <Route path="/commissionjson/:commissionId" element={<CommissionJson />} />
+        <Route path="/baseline/:baselineId"  element={<BaselineDetail />} />
 
         {/* Redirect root to login */}
         <Route path="/" element={<Navigate to="/login" />} />

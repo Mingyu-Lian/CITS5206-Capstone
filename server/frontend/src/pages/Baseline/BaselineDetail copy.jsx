@@ -2,7 +2,7 @@
 import { useRef, useState } from "react"
 import { Table, Button, Input, Typography, Divider, Modal, Select, Space, Popover } from "antd"
 import { EditOutlined, SearchOutlined, PlusOutlined } from "@ant-design/icons"
-import "./CommissionDetail.css"
+import "./BaselineDetail.css"
 
 const CommissionDetail = () => {
   // State for version dropdown
