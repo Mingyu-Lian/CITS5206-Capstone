@@ -16,6 +16,8 @@ import QueryBuilder from "../components/QueryBuilder";
 import PageLayout from "../components/PageLayout";
 import { useWMS } from "../hooks/useMockData";
 import { UploadOutlined } from "@ant-design/icons";
+import localforage from "localforage";
+
 
 const { Title } = Typography;
 const { Option } = Select;

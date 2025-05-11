@@ -240,34 +240,10 @@ const TaskListPage = () => {
     },
   ];
 
-  // Load tasks from online or offline cache
-  const loadTasksData = async () => {
-    const offlineKey = `offlineTaskList-${wmsId}`;
-    if (navigator.onLine) {
-      // Simulate online task data
-      const onlineData = [
-        { id: "task1", title: "Check Fuse Box", status: "Pending" },
-        { id: "task2", title: "Install Cabling", status: "Signed Off" },
-      ];
-      setData(onlineData);
-      await localforage.setItem(offlineKey, onlineData);
-    } else {
-      // Load from offline cache
-      const cachedData = await localforage.getItem(offlineKey);
-      if (cachedData) {
-        setData(cachedData);
-      }
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    loadTasksData();
-  }, [wmsId]);
-
   if (loading) return <div>Loading Tasks...</div>;
 
   return (
+    <PageLayout>
       <div className="p-6 bg-white min-h-screen">
         <Title level={3}>Assigned Tasks for Locomotive {locomotiveId}, WMS {wmsId}</Title>
 
@@ -318,6 +294,7 @@ const TaskListPage = () => {
           </Form>
         </Modal>
       </div>
+    </PageLayout>
   );
 };
 

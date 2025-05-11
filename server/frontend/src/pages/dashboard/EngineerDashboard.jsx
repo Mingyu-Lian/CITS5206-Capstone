@@ -5,7 +5,6 @@ import {
 } from "antd";
 import { useState, useEffect } from "react";
 import { SyncOutlined, ToolOutlined } from "@ant-design/icons";
-import { useState, useEffect } from "react";
 import { useLocomotives } from "../../hooks/useMockData";
 import {
   fetchTaskSignOffs,

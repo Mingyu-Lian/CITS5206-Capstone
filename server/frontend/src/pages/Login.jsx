@@ -36,6 +36,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const [showDiscipline, setShowDiscipline] = useState(true); // hide for admin
+  const isAdmin = localStorage.getItem("role") === "Admin";
+
 
   const onFinish = async (values) => {
     

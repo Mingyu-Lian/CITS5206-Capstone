@@ -13,11 +13,11 @@ import CommissionDetail from './pages/commission/CommissionDetail';
 import LocomotiveListPage from "./pages/LocomotiveListPage";
 import WMSListPage from "./pages/WMSListPage";
 import TaskListPage from "./pages/TaskListPage";
-import SubtaskDetailPage from "./pages/SubtaskDetailPage";
 import TaskDetail from './pages/task/Taskdetail';
 import TaskJson from './pages/TaskJson/TaskJson';
 import CommissionJsonJson from './pages/CommissionJson/commissiontest';
 import DashboardLayout from "./components/DashboardLayout";
+import BaselineListPage from "./pages/BaselineListPage";
 
 function App() {
   return (
@@ -35,7 +35,6 @@ function App() {
         <Route path="/tasks" element={<DashboardLayout><LocomotiveListPage /></DashboardLayout>} />
         <Route path="/tasks/:locomotiveId/wms" element={<DashboardLayout><WMSListPage /></DashboardLayout>} />
         <Route path="/tasks/:locomotiveId/wms/:wmsId" element={<DashboardLayout><TaskListPage /></DashboardLayout>} />
-        <Route path="/tasks/:locomotiveId/wms/:wmsId/task/:taskId" element={<DashboardLayout><SubtaskDetailPage /></DashboardLayout>} />
         <Route path="/taskdetail/:subtaskId" element={<DashboardLayout><TaskDetail /></DashboardLayout>} />
         <Route path="/taskdetail" element={<DashboardLayout><TaskDetail /></DashboardLayout>} />
         <Route path="/baselines" element={<BaselineListPage />} />
