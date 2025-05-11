@@ -2,7 +2,7 @@
 import AdminDashboard from "./dashboard/AdminDashboard";
 import SupervisorDashboard from "./dashboard/SupervisorDashboard";
 import EngineerDashboard from "./dashboard/EngineerDashboard";
-import { useLocomotives } from "../hooks/useMockData"; // 👈 Import live hook for Admin
+import { useLocomotives } from "../hooks/useMockData"; // Import live hook for Admin
 import { Spin } from "antd";
 
 const Dashboard = () => {

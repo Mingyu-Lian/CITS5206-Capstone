@@ -1,11 +1,21 @@
-// src/pages/WMSListPage.jsx
-import { useState, useEffect } from "react";
-import { Table, Button, Typography, Modal, Form, Input, Select, message } from "antd";
+import { useState } from "react";
+import {
+  Table,
+  Button,
+  Typography,
+  Modal,
+  Form,
+  Input,
+  Select,
+  message,
+  Popconfirm,
+  Upload,
+} from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
+import PageLayout from "../components/PageLayout";
+import { useWMS } from "../hooks/useMockData";
 import { UploadOutlined } from "@ant-design/icons";
-import { Upload } from "antd";
-import localforage from "localforage";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -18,26 +28,34 @@ const WMSListPage = () => {
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
+  const { wmsList, loading, createWMS, deleteWMS } = useWMS(locomotiveId); 
+  const [deletingId, setDeletingId] = useState(null);
+
   const role = localStorage.getItem("role");
 
-  const fields = [
-    { label: "Title", key: "title", type: "text" },
-  ];
+  const fields = [{ label: "Title", key: "title", type: "text" }];
 
   const applyFilters = (query) => setFilters(query);
   const clearFilters = () => setFilters({});
 
-  const filtered = data.filter((item) => {
-    return (!filters.rules || filters.rules.every(r => {
-      const val = item[r.field]?.toString().toLowerCase();
-      const q = r.value.toString().toLowerCase();
-      switch (r.operator) {
-        case "Equal": return val === q;
-        case "Contains": return val.includes(q);
-        case "Starts With": return val.startsWith(q);
-        default: return true;
-      }
-    }));
+  const filtered = wmsList.filter((item) => {
+    return (
+      !filters.rules ||
+      filters.rules.every((r) => {
+        const val = item[r.field]?.toString().toLowerCase();
+        const q = r.value.toString().toLowerCase();
+        switch (r.operator) {
+          case "Equal":
+            return val === q;
+          case "Contains":
+            return val.includes(q);
+          case "Starts With":
+            return val.startsWith(q);
+          default:
+            return true;
+        }
+      })
+    );
   });
 
   const handleCreateWMS = async (values) => {
@@ -57,42 +75,30 @@ const WMSListPage = () => {
     form.resetFields();
   };
 
-  const loadWMSData = async () => {
-    const offlineKey = `offlineWMSList-${locomotiveId}`;
-
-    if (navigator.onLine) {
-      const onlineData = [
-        { wmsId: "wms1", title: "WMS - Electrical", version: "1.2", status: "In Progress", type: "Installation" },
-        { wmsId: "wms2", title: "WMS - Hydraulic", version: "1.0", status: "Pending", type: "Commissioning" },
-      ];
-
-      setData(onlineData);
-      await localforage.setItem(offlineKey, onlineData);
-    } else {
-      const cachedData = await localforage.getItem(offlineKey);
-      if (cachedData) {
-        setData(cachedData);
-        message.info("Currently viewing cached WMS documents.");
-      } else {
-        message.warning("No cached WMS data found for this locomotive.");
-      }
+  const handleDelete = async (wmsId) => {
+    setDeletingId(wmsId);
+    try {
+      await deleteWMS(wmsId);
+      message.success("WMS deleted.");
+    } catch (error) {
+      message.error("Delete failed.");
+    } finally {
+      setDeletingId(null);
     }
-    setLoading(false);
   };
-
-  useEffect(() => {
-    loadWMSData();
-  }, [locomotiveId]);
 
   if (loading) return <div>Loading WMS Documents...</div>;
 
   return (
       <div className="p-6 bg-white min-h-screen">
         <div className="flex justify-between items-center mb-4">
-          <Title level={3}>WMS Documents for Locomotive {locomotiveId}</Title>
+          <Title level={3}>Work Method Statements – Locomotive {locomotiveId}</Title>
+
 
           {role === "Admin" && (
-            <Button type="primary" onClick={() => setIsModalVisible(true)}>+ Upload WMS</Button>
+            <Button type="primary" onClick={() => setIsModalVisible(true)}>
+              + Upload WMS
+            </Button>
           )}
         </div>
 
@@ -107,9 +113,30 @@ const WMSListPage = () => {
               title: "Action",
               key: "action",
               render: (_, record) => (
-                <Button type="link" onClick={() => navigate(`/tasks/${locomotiveId}/wms/${record.wmsId}`)}>
-                  View Tasks
-                </Button>
+                <>
+                  <Button
+                    type="link"
+                    onClick={() =>
+                      navigate(`/tasks/${locomotiveId}/wms/${record.wmsId}`)
+                    }
+                  >
+                    View Tasks
+                  </Button>
+
+                  {role === "Admin" && (
+                    <Popconfirm
+                      title="Delete this WMS?"
+                      onConfirm={() => handleDelete(record.wmsId)}
+                      okText="Yes"
+                      cancelText="No"
+                      okButtonProps={{ loading: deletingId === record.wmsId }}
+                    >
+                      <Button type="link" danger disabled={deletingId === record.wmsId}>
+                        {deletingId === record.wmsId ? "Deleting..." : "Delete"}
+                      </Button>
+                    </Popconfirm>
+                  )}
+                </>
               ),
             },
           ]}
@@ -144,11 +171,7 @@ const WMSListPage = () => {
               </Select>
             </Form.Item>
 
-            <Form.Item
-              name="file"
-              label="Attach WMS File"
-              valuePropName="file"
-            >
+            <Form.Item name="file" label="Attach WMS File" valuePropName="file">
               <Upload beforeUpload={() => false}>
                 <Button icon={<UploadOutlined />}>Click to Upload</Button>
               </Upload>

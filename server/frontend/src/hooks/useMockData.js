@@ -1,6 +1,9 @@
 // src/hooks/useMockData.js
 import { useState, useEffect } from "react";
-import { fetchLocomotives, fetchWMSByLocomotive, fetchTasksByWMS, fetchTaskDetail, addLocomotive, addWMS } from "../mock/mockApi"; // import addLocomotive, addWMS
+import { fetchLocomotives, fetchWMSByLocomotive, fetchTasksByWMS, fetchTaskDetail, addLocomotive, addWMS } from "../mock/mockApi";
+import { fetchBaselines, addBaseline, deleteBaseline } from "../mock/mockApi";
+import { updateLocomotive, deleteLocomotive as removeLocomotive } from "../mock/mockApi";
+import { deleteWMS as removeWMS } from "../mock/mockApi";
 
 export const useLocomotives = () => {
   const [locomotives, setLocomotives] = useState([]);
@@ -16,14 +19,32 @@ export const useLocomotives = () => {
     reloadLocomotives();
   }, []);
 
-  // 🛠️ Here is the missing part:
   const createLocomotive = async (newLoco) => {
     await addLocomotive(newLoco);
-    await reloadLocomotives(); // refresh the list
+    await reloadLocomotives();
   };
 
-  return { locomotives, loading, createLocomotive };
+  const editLocomotive = async (locomotiveId, updatedFields) => {
+    await updateLocomotive(locomotiveId, updatedFields);
+    await reloadLocomotives();
+  };
+
+  const deleteLocomotive = async (locomotiveId) => {
+    await removeLocomotive(locomotiveId);
+    await reloadLocomotives();
+  };
+
+  return {
+    locomotives,
+    loading,
+    createLocomotive,
+    editLocomotive,
+    deleteLocomotive,
+  };
+
 };
+
+
 
 export const useWMS = (locomotiveId) => {
   const [wmsList, setWmsList] = useState([]);
@@ -45,7 +66,12 @@ export const useWMS = (locomotiveId) => {
     await reloadWMS(); // refresh
   };
 
-  return { wmsList, loading, createWMS };
+  const deleteWMS = async (wmsId) => {
+    await removeWMS(locomotiveId, wmsId);
+    await reloadWMS(); // refresh list
+  };
+
+  return { wmsList, loading, createWMS, deleteWMS };
 };
 
 export const useTasks = (locomotiveId, wmsId) => {
@@ -80,4 +106,31 @@ export const useTaskDetail = (locomotiveId, wmsId, taskId) => {
   }, [locomotiveId, wmsId, taskId]);
 
   return { taskDetail, loading };
+};
+
+export const useBaselines = () => {
+  const [baselines, setBaselines] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const reloadBaselines = async () => {
+    const data = await fetchBaselines();
+    setBaselines(data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    reloadBaselines();
+  }, []);
+
+  const createBaseline = async (newBaseline) => {
+    await addBaseline(newBaseline);
+    await reloadBaselines();
+  };
+
+  const removeBaseline = async (baselineId) => {
+    await deleteBaseline(baselineId);
+    await reloadBaselines();
+  };
+
+  return { baselines, loading, createBaseline, removeBaseline };
 };

@@ -34,12 +34,22 @@ const DashboardLayout = ({ children }) => {
     });
   }
 
+
+
   //Task Management for all roles
   if (["Admin", "Supervisor", "Engineer"].includes(role)) {
     menuItems.push({
-    label: "Task Management",
-    key: "/tasks",
-    icon: <CheckCircleOutlined />,
+      label: "Task Management",
+      key: "/tasks",
+      icon: <CheckCircleOutlined />,
+    });
+  }
+
+  if (["Admin"].includes(role)) {
+    menuItems.push({
+      label: "Baselines",
+      key: "/baselines",
+      icon: <FolderOpenOutlined />,
     });
   }
 
