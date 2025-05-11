@@ -1,0 +1,1014 @@
+{
+  "$id": "143",
+  "$type": "MVX.Domain.Work.WorkTableDefinition, RioTinto.AutoHaul.Core",
+  "ID": "89a771fc-62bf-4785-94bc-47718f70856d",
+  "Title": "Visual Inspections & Auxiliary Checks",
+  "PreviousVersionTableID": "0a3e4f50-8d15-488b-8349-9922b79d486d",
+  "ManualCompleteAllowed": false,
+  "ShowCurrentProgress": true,
+  "ApplyGlobalChanges": false,
+  "ReferenceName": "Table 3",
+  "Columns": [
+    {
+      "$id": "144",
+      "$type": "MVX.Domain.Work.ColumnDefinition, RioTinto.AutoHaul.Core",
+      "ID": 1,
+      "HeaderText": "Action",
+      "ColumnData": "",
+      "WidthWeight": 4,
+      "ColumnType": 0,
+      "IsOptional": true,
+      "IsHidden": false,
+      "ResetValueOnLocalChange": false,
+      "ForceResetValueOnGlobalChange": false,
+      "ResetValueOnGlobalChange": false,
+      "PostChangeResetAction": false
+    },
+    {
+      "$id": "145",
+      "$type": "MVX.Domain.Work.ColumnDefinition, RioTinto.AutoHaul.Core",
+      "ID": 2,
+      "HeaderText": "Expected Result",
+      "ColumnData": "",
+      "WidthWeight": 2,
+      "ColumnType": 0,
+      "IsOptional": true,
+      "IsHidden": false,
+      "ResetValueOnLocalChange": false,
+      "ForceResetValueOnGlobalChange": false,
+      "ResetValueOnGlobalChange": false,
+      "PostChangeResetAction": false
+    },
+    {
+      "$id": "146",
+      "$type": "MVX.Domain.Work.ColumnDefinition, RioTinto.AutoHaul.Core",
+      "ID": 3,
+      "HeaderText": "Outcome",
+      "ColumnData": "",
+      "WidthWeight": 1,
+      "ColumnType": 1,
+      "IsOptional": false,
+      "IsHidden": false,
+      "ResetValueOnLocalChange": false,
+      "ForceResetValueOnGlobalChange": false,
+      "ResetValueOnGlobalChange": false,
+      "PostChangeResetAction": false
+    },
+    {
+      "$id": "147",
+      "$type": "MVX.Domain.Work.ColumnDefinition, RioTinto.AutoHaul.Core",
+      "ID": 4,
+      "HeaderText": "Signature",
+      "ColumnData": "",
+      "WidthWeight": 1,
+      "ColumnType": 4,
+      "IsOptional": false,
+      "IsHidden": false,
+      "ResetValueOnLocalChange": false,
+      "ForceResetValueOnGlobalChange": false,
+      "ResetValueOnGlobalChange": false,
+      "PostChangeResetAction": false
+    },
+    {
+      "$id": "148",
+      "$type": "MVX.Domain.Work.ColumnDefinition, RioTinto.AutoHaul.Core",
+      "ID": 5,
+      "HeaderText": "Notes",
+      "ColumnData": "",
+      "WidthWeight": 1,
+      "ColumnType": 0,
+      "IsOptional": true,
+      "IsHidden": false,
+      "ResetValueOnLocalChange": false,
+      "ForceResetValueOnGlobalChange": false,
+      "ResetValueOnGlobalChange": false,
+      "PostChangeResetAction": false
+    }
+  ],
+  "Rows": [
+    {
+      "$id": "324",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 36,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "325",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "Perform a visual inspection of the equipment in the Overhead Console.\r\n\r\nIf any issues are noticed take a photo and include this with this document.",
+          "VerticalMerge": 2,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "326",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "All components are present.\r\nNo damage, abnormalities, defects, or out-of-service tags.",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "327",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "328",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 2,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "329",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 37,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "330",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "331",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "R120 DGPS Receiver",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "332",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "333",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "334",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 38,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "335",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "336",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "8002CS Recorder",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "337",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "338",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "339",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 39,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "340",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "341",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "2 Way Antenna Splitter",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "342",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "343",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "344",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 40,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "345",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "346",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "Voice Radio 1",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "347",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "348",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "349",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 41,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "350",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "351",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "Voice Radio 2",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "352",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "353",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "354",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 42,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "355",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "356",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "DCV 6",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "357",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "358",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "359",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 43,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "360",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "361",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "DCV 7",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "362",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "363",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "364",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 44,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "365",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "366",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "Triple Filter",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "367",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "368",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "369",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 45,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "370",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "371",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "Voice Radio 2 High Pass Filter",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "372",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "373",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "374",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 46,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "375",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "Perform a visual inspection of the equipment in the Engine Control Panel.\r\n\r\nIf any issues are noticed take a photo and include this with this document.",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "376",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "All components are present.\r\nNo damage, abnormalities, defects, or out-of-service tags.",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "377",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "378",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "379",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 47,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "380",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "Inspect and test the Driver Side Window.",
+          "VerticalMerge": 2,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "381",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "No damage, abnormalities or defects.",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "382",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "383",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 2,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "384",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 48,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "385",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "386",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "Window opens, closes and latches correctly.",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "387",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "388",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "389",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 49,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "390",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "391",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "Blind opens, closes and latches correctly.",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "392",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "393",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "394",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 50,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "395",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "Inspect and test the Observer Side Window.",
+          "VerticalMerge": 2,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "396",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "No damage, abnormalities or defects.",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "397",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "398",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 2,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "399",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 51,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "400",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "401",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "Window opens, closes and latches correctly.",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "402",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "403",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "404",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 52,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "405",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "406",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "Blind opens, closes and latches correctly.",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "407",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "408",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "409",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 53,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "410",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "Inspect and test the Front Window.",
+          "VerticalMerge": 2,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "411",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "No damage, abnormalities or defects.",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "412",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "413",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 2,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "414",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 54,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "415",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "416",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "Driver side blind opens, closes and latches correctly.",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "417",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "418",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "419",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 55,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "420",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "421",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "Observer side blind opens, closes and latches correctly.",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "422",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "423",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    },
+    {
+      "$id": "424",
+      "$type": "MVX.Domain.Work.RowDefinition, RioTinto.AutoHaul.Core",
+      "ID": 56,
+      "HeaderRowText": "",
+      "Cells": [
+        {
+          "$id": "425",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 1,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "426",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 2,
+          "LabelText": "Window wiper operates correctly.",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "427",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 3,
+          "LabelText": "",
+          "VerticalMerge": 1,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        },
+        {
+          "$id": "428",
+          "$type": "MVX.Domain.Work.CellDefinition, RioTinto.AutoHaul.Core",
+          "ColumnID": 5,
+          "LabelText": "",
+          "VerticalMerge": 0,
+          "Metadata": "",
+          "LegacyLabelText": ""
+        }
+      ]
+    }
+  ]
+}
