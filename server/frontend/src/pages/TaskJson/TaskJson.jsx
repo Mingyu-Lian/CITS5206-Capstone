@@ -1,25 +1,53 @@
 import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useParams, useNavigate } from 'react-router-dom';
+
 import { Layout, Button, Tabs, Badge, Select, List, Typography, Image, Alert, Spin, Card } from 'antd';
 import axios from "axios";
 import InstructionsTab from "../TaskJson/task-tabs/instruction-tab.jsx"
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons"
 
-// import ComponentsTab from "./task-tabs/components-tab"
 import NotesTab from "../TaskJson/task-tabs/notes-tab.jsx"
 import UserPhotosTab from "../TaskJson/task-tabs/user-photos-tab.jsx"
+import ComponentsTab from "../TaskJson/task-tabs/component-tab.jsx"
+
 import "./Taskdetail.css";
+import Task1 from "./Task1.json";
+// import Task2 from "./Task2.json"; 
+import Tasks from "./Task.json";
+
 const { Header, Footer, Sider, Content } = Layout
 // Mock API to fetch task data
-const fetchTaskData = () => {
-  return new Promise((resolve) => {
-    import('./OneTask.json').then((data) => {
-      resolve(data.default || data);
-    });
+// const fetchTaskData = async () => {
+//   await new Promise((resolve) => setTimeout(resolve, 1000))
+//   return Task[1]
+// }
+const fetchTaskData = (subtaskId) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const task = Tasks[subtaskId];
+      console.log("Test:", Tasks, Tasks[subtaskId])
+      if (task) {
+        resolve(task);
+      } else {
+        reject(new Error(`Task with subtaskId ${subtaskId} not found`));
+      }
+    }, 500); // Simulate network delay
   });
 };
 const parseInstructions = (instructionsRaw) => {
   // Split by lines and remove color codes
   return instructionsRaw
+    .split(/\r?\n/)
+    .filter((line) => line.trim())
+    .map((line) => {
+      // Remove color codes and [-]
+      let clean = line.replace(/\[[^\]]*\]/g, '').replace(/\[-\]/g, '').trim();
+      return clean.replace(/^\d+\.\s*/, '');
+    });
+};
+const partComponents = (componentsRaw) => {
+  // Split by lines and remove color codes
+  return componentsRaw
     .split(/\r?\n/)
     .filter((line) => line.trim())
     .map((line) => {
@@ -43,21 +71,26 @@ const Taskdetail = () => {
   const { Option } = Select;
   const [activeTab, setActiveTab] = useState("instructions")
   const [loading, setLoading] = useState(true);
-  const [task, setTask] = useState(null);
+  const [taskData, setTaskData] = useState(null);
+  const [error, setError] = useState(null);
   const [complete, setComplete] = useState(false);
-
   const [userName, setUserName] = useState(null);
   const [timeStamp, setTimeStamp] = useState(null);
+  
 
+  //"/taskjson/:subtaskId"
+  const { subtaskId } = useParams();
 
+  console.log("subtaskId", subtaskId)
+  const navigate = useNavigate();
 
   const handleTabChange = (key) => {
     setActiveTab(key)
   }
 
   const handleCompleteButton = () => {
-   const userName=localStorage.getItem("user")
-   const timeStamp = new Date().toLocaleString()
+    const userName = localStorage.getItem("name");
+    const timeStamp = new Date().toLocaleString()
     setComplete(true)
     setUserName(userName)
     setTimeStamp(timeStamp)
@@ -66,21 +99,49 @@ const Taskdetail = () => {
   }
 
   useEffect(() => {
-    fetchTaskData().then((data) => {
-      localStorage.setItem("userName", "Ross Richardson")
-      setTask(data);
-      setLoading(false);
-    });
-  }, []);
+
+    // fetchTaskData().then((data) => {
+    //   localStorage.setItem("name", "Ross Richardson")
+    //   const currentUser = localStorage.getItem("name");
+
+    //   setTask(data);
+    //   setLoading(false);
+    // });
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await fetchTaskData(subtaskId);
+        setTaskData(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, [subtaskId]);
+  const handleNavigation = (direction) => {
+    const currentId = parseInt(subtaskId);
+    const newId = direction === 'next' ? currentId + 1 : currentId - 1;
+
+    // Disable navigation beyond available data
+    if (newId in Tasks) {
+      navigate(`/taskjson/${newId}`);
+    }
+  };
 
   if (loading) {
     return <Spin style={{ marginTop: 100 }} />;
   }
-  if (!task) {
+  if (!taskData) {
     return <Alert message="Task not found" type="error" />;
   }
-  const instructions = parseInstructions(task.Instructions);
-  const alerts = parseAlerts(task.Alerts);
+  const instructions = parseInstructions(taskData.Instructions);
+  const alerts = parseAlerts(taskData.Alerts);
+  const components = partComponents(taskData.Components)
+  console.log("components:", components)
   const headerStyle = {
     // textAlign: 'center',
     // color: '#fff',
@@ -125,12 +186,12 @@ const Taskdetail = () => {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <span style={{ fontWeight: 'bold', fontSize: 18 }}>
-                {task.ItemNumber} {task.Title}
+                {taskData.ItemNumber} {taskData.Title}
               </span>
               <span style={{ color: '#ffb300', marginLeft: 16 }}>Permit Officer</span>
             </div>
             <div style={{ color: '#7fff7f', fontSize: 14 }}>
-              {complete ? `Completed by ${userName} on ${timeStamp}`:" "}
+              {complete ? `Completed by ${userName} on ${timeStamp}` : " "}
               <Button type="primary"
                 style={{ marginLeft: 16, background: complete ? "#e0e0e0" : "#1677ff" }}
 
@@ -183,8 +244,8 @@ const Taskdetail = () => {
           <Content style={contentStyle}>
             <div className="flex">
               <div className="flex-1 mr-4">
-                {activeTab === "instructions" && <InstructionsTab instructionData={instructions} />}
-                {/* {activeTab === "components" && <ComponentsTab />}*/}
+                {activeTab === "instructions" && <InstructionsTab instructionData={instructions}/>}
+                {activeTab === "components" && <ComponentsTab components={components} />}
                 {activeTab === "notes" && <NotesTab noteAlert={alerts} />}
                 {activeTab === "userPhotos" && <UserPhotosTab />}
               </div>
@@ -192,19 +253,22 @@ const Taskdetail = () => {
           </Content>
         </Layout>
         <Footer className="task-footer">
-          <Button type="primary" className="w-[120px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowLeftOutlined />}>
+          <Button type="primary" className="w-[120px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowLeftOutlined />} onClick={() => handleNavigation('prev')}
+            disabled={parseInt(subtaskId) <= 1}>
             Previous
           </Button>
 
-          <Button type="primary" className="w-[150px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowLeftOutlined />}>
+          <Button type="primary" className="w-[150px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowLeftOutlined />} onClick={() => handleNavigation('prev')}
+            disabled={parseInt(subtaskId) <= 1}>
             Prev Permit Officer
           </Button>
 
-          <Button type="primary" className="w-[150px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowRightOutlined />}>
+          <Button type="primary" className="w-[150px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowRightOutlined />} onClick={() => handleNavigation('next')}  disabled={!Tasks[parseInt(subtaskId) + 1]}>
             Next Permit Officer
           </Button>
 
-          <Button type="primary" className="w-[120px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowRightOutlined />}>
+          <Button type="primary" className="w-[120px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowRightOutlined />} onClick={() => handleNavigation('next')}
+            disabled={!Tasks[parseInt(subtaskId) + 1]}>
             Next
           </Button>
         </Footer>    </Layout>

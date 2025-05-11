@@ -1,0 +1,152 @@
+
+
+{
+  "1": {
+    "$id": "4",
+    "$type": "MVX.Domain.Work.WorkStepDefinition, RioTinto.AutoHaul.Core",
+    "ItemNumber": "1.1",
+    "SupportingImages": [
+      {
+        "$id": "5",
+        "$type": "Torq.Domain.Software.Attachment, Torq.Domain",
+        "FileName": "Image01.jpg",
+        "Folder": {
+          "$id": "6",
+          "$type": "Torq.Domain.Software.AttachmentFolder, Torq.Domain",
+          "Attachments": [
+            {
+              "$ref": "5"
+            }
+          ],
+          "Host": {
+            "$ref": "4"
+          }
+        }
+      }
+    ],
+    "Instructions": "1. [FFFFFF]Inspect Locomotive entry points.[-]\r\n\r\n2. [FFFFFF]Ensure Roads are locked out and the Locomotive isolated. [-][0070C0](Locomotive can be moved or other rolling stock can enter work area)[-]\r\n\r\n3. [FFFFFF]Ensure that safe working protection is in place. [-]\r\n\r\n4. [FFFFFF]Refer to Isolation matrix for lockout points.[-]\r\n\r\n5. [FFFFFF]Ensure entry walkways are properly secured with straps, & barriers are across any gaps. [-][0070C0](Falling down to the pit can occur[-][0070C0])[-]\r\n\r\n",
+    "Discipline": {
+      "$id": "7",
+      "$type": "MVX.Domain.Work.WorkDiscipline, RioTinto.AutoHaul.Core",
+      "ID": "70853c34-7a90-4343-ae93-1537d85327ee",
+      "Title": "",
+      "Description": "",
+      "StylisedText": ""
+    },
+    "SceneViews": [],
+    "Components": "",
+    "Location": "Step 1 over pit area",
+    "ConversionErrorLog": "",
+    "Alerts": "[FFFF00][b]Ask your Permit Isolation Officer or Administrator if unsure of isolation.  [/b][-]\r\n\r\n[FFFF00][b]Trips and falls can occur whilst boarding Locomotive, unwanted movement of walkways can occur[/b][-]",
+    "Attachments": [],
+    "PreviousWorkStepDefinitionID": "45112aa5-31f2-4310-8083-bc5c3dc09972",
+    "ReferencedTables": [],
+    "Title": "Sign on to permit of isolation and lock on",
+    "ID": "e8a475b7-28f2-4a74-ae2b-6cfd09bc85d5",
+    "ParentItem": {
+      "$ref": "3"
+    },
+    "ParentID": "00000000-0000-0000-0000-000000000000",
+    "ParentFolder": null,
+    "AttachmentFolder": {
+      "$ref": "6"
+    }
+  },
+  "2":{
+    "$id": "8",
+    "$type": "MVX.Domain.Work.WorkStepDefinition, RioTinto.AutoHaul.Core",
+    "ItemNumber": "1.2",
+    "SupportingImages": [
+      {
+        "$id": "9",
+        "$type": "Torq.Domain.Software.Attachment, Torq.Domain",
+        "FileName": "Image01.jpg",
+        "Folder": {
+          "$id": "10",
+          "$type": "Torq.Domain.Software.AttachmentFolder, Torq.Domain",
+          "Attachments": [
+            {
+              "$ref": "9"
+            }
+          ],
+          "Host": {
+            "$ref": "8"
+          }
+        }
+      }
+    ],
+    "Instructions": "1. [FFFFFF]This WMS provides the step by step procedure for the disconnection and reconnection of the locomotive batteries.[-]\r\n\r\n2. [FFFFFF]Each step [-][b][FFFFFF]MUST[-][/b][FFFFFF] be followed in order to safely and efficiently complete the task.[-]\r\n\r\n3. [FFFFFF]Each step is outlined clearly in the Task section of this document.[-]\r\n\r\n",
+    "Discipline": {
+      "$ref": "7"
+    },
+    "SceneViews": [],
+    "Components": "Materials:\r\nPlatform ladder/ mobile platform\r\nContainer to store nuts, bolts, and washers\r\n \r\nTools & Equipment:\r\nBattery rattle gun\r\ndeep 19mm impact socket\r\nGloves\r\nSafety glasses\r\n2 x ½ inch geared spanners\r\n300mm cable ties\r\nHearing protection",
+    "Location": "",
+    "ConversionErrorLog": "",
+    "Alerts": "[FFFF00][b]Refer to the Components tab for Material, Tools and Equipment[/b][-]",
+    "Attachments": [],
+    "PreviousWorkStepDefinitionID": "00000000-0000-0000-0000-000000000000",
+    "ReferencedTables": [],
+    "Title": "Preparation - Mandatory",
+    "ID": "6e5b983f-6f0f-4f85-94ee-e30872087430",
+    "ParentItem": {
+      "$ref": "3"
+    },
+    "ParentID": "00000000-0000-0000-0000-000000000000",
+    "ParentFolder": null,
+    "AttachmentFolder": {
+      "$ref": "10"
+    }
+  },
+  "3": {
+    "$id": "4",
+    "$type": "MVX.Domain.Work.WorkStepDefinition, RioTinto.AutoHaul.Core",
+    "ItemNumber": "1.3",
+    "SupportingImages": [
+      {
+        "$id": "5",
+        "$type": "Torq.Domain.Software.Attachment, Torq.Domain",
+        "FileName": "Image01.jpg",
+        "Folder": {
+          "$id": "6",
+          "$type": "Torq.Domain.Software.AttachmentFolder, Torq.Domain",
+          "Attachments": [
+            {
+              "$ref": "5"
+            }
+          ],
+          "Host": {
+            "$ref": "4"
+          }
+        }
+      }
+    ],
+    "Instructions": "1. [FFFFFF]Using the steel wire brush, clean the battery terminals of any dirt, dust, grease or debris.  [-][0070C0](Face shield may be needed, depending on the amount of dirt, dust, grease or debris)[-]\r\n\r\n2. [FFFFFF]Apply [-][FFFFFF]Penetrox “A” Electrical Joint Compound to the battery terminal.[-]\r\n\r\n",
+    "Discipline": {
+      "$id": "7",
+      "$type": "MVX.Domain.Work.WorkDiscipline, RioTinto.AutoHaul.Core",
+      "ID": "70853c34-7a90-4343-ae93-1537d85327ee",
+      "Title": "",
+      "Description": "",
+      "StylisedText": ""
+    },
+    "SceneViews": [],
+    "Components": "Tools & Equipment:\r\nSteel wire brush\r\nGloves\r\nSafety glasses\r\nHearing protection",
+    "Location": "Step 1 over pit area",
+    "ConversionErrorLog": "",
+    "Alerts": "[FFFF00][b]Ask your Permit Isolation Officer or Administrator if unsure of isolation.  [/b][-]\r\n\r\n[FFFF00][b]Trips and falls can occur whilst boarding Locomotive, unwanted movement of walkways can occur[/b][-]",
+    "Attachments": [],
+    "PreviousWorkStepDefinitionID": "45112aa5-31f2-4310-8083-bc5c3dc09972",
+    "ReferencedTables": [],
+    "Title": "Sign on to permit of isolation and lock on",
+    "ID": "e8a475b7-28f2-4a74-ae2b-6cfd09bc85d5",
+    "ParentItem": {
+      "$ref": "3"
+    },
+    "ParentID": "00000000-0000-0000-0000-000000000000",
+    "ParentFolder": null,
+    "AttachmentFolder": {
+      "$ref": "6"
+    }
+  }
+}
