@@ -38,8 +38,11 @@ function App() {
         {/* <Route path="/taskdetail" element={<DashboardLayout><TaskDetail /></DashboardLayout>} /> */}
         <Route path="/baselines" element={<BaselineListPage />} />
 
+        <Route path="/taskdetail/:locomotiveId/:wmsId/:taskId/:type" element={<TaskDetailRouter />} />
+
+
         {/* These routes likely don't need DashboardLayout */}
-        <Route path="/taskjson/:subtaskId" element={<TaskJson />} />
+        <Route path="/taskjson/:taskId" element={<TaskJson />} />
         <Route path="/commissionjson/:commissionId" element={<CommissionJson />} />
         <Route path="/baseline/:baselineId"  element={<BaselineDetail />} />
 

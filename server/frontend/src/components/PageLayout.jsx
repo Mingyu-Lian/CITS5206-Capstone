@@ -19,9 +19,12 @@ const PageLayout = ({ children }) => {
 
   const onMenuClick = ({ key }) => {
     if (key === "logout") {
-      localStorage.clear();
+      const assigned = localStorage.getItem("assignedTasks"); // ✅ Save
+      localStorage.clear(); // 🔥 Wipes all keys
+      if (assigned) localStorage.setItem("assignedTasks", assigned); // ✅ Restore
       navigate("/login");
-    } else {
+    }
+    else {
       navigate(key);
     }
   };

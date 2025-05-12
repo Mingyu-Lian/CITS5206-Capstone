@@ -60,21 +60,26 @@ const WMSListPage = () => {
   });
 
   const handleCreateWMS = async (values) => {
-    const newWMS = {
-      wmsId: `WMS-${Math.floor(1000 + Math.random() * 9000)}`,
-      title: values.title,
-      type: values.type,
-      file: values.file?.file?.name || null,
-      tasks: [],
-    };
-    const updatedList = [...data, newWMS];
-    setData(updatedList);
+  const newWMS = {
+    wmsId: `WMS-${Math.floor(1000 + Math.random() * 9000)}`,
+    title: values.title,
+    type: values.type,
+    file: values.file?.file?.name || null,
+    tasks: [],
+  };
+
+  try {
+    await createWMS(newWMS); // <-- update the mock backend
     const offlineKey = `offlineWMSList-${locomotiveId}`;
-    await localforage.setItem(offlineKey, updatedList);
+    await localforage.setItem(offlineKey, [...wmsList, newWMS]); // optionally cache offline
     message.success("WMS Document uploaded successfully!");
     setIsModalVisible(false);
     form.resetFields();
-  };
+  } catch (err) {
+    message.error("Failed to upload WMS.");
+  }
+};
+
 
   const handleDelete = async (wmsId) => {
     setDeletingId(wmsId);

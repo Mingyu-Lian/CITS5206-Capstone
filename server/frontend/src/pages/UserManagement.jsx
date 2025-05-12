@@ -1,15 +1,14 @@
 // src/pages/UserManagement.jsx
 import { useState, useEffect } from "react";
-import { Table, Button, Modal, Form, Input, Select, message, Popconfirm } from "antd";
+import { Table, Button, Modal, Form, Input, Select, message, Popconfirm, Typography } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { fetchUsers, addUser, deleteUser, updateUser } from "../mock/mockApi";
-import { Typography } from "antd";
 
 const { Title } = Typography;
 const { Option } = Select;
 
 const UserManagement = () => {
-  const role = localStorage.getItem("role"); // Get current user's role
+  const role = localStorage.getItem("role");
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchText, setSearchText] = useState("");
@@ -22,12 +21,15 @@ const UserManagement = () => {
   const loadUsers = async () => {
     const data = await fetchUsers();
     setUsers([...data]);
-    setFilteredUsers([...data]);
   };
 
   useEffect(() => {
     loadUsers();
   }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [users, filterRole, filterDiscipline, searchText]);
 
   const applyFilters = () => {
     let filtered = [...users];
@@ -150,104 +152,93 @@ const UserManagement = () => {
   ];
 
   return (
-      <div className="p-6 bg-white min-h-screen">
-        <div className="flex justify-between items-center mb-4">
-          <Title level={2}>User Management</Title>
-          {role === "Admin" && (
-            <Button type="primary" icon={<PlusOutlined />} onClick={openAddUserModal}>
-              Add User
-            </Button>
-          )}
-        </div>
-
-        {/* Filter Section */}
-        <div className="flex gap-4 mb-4">
-          <Select
-            value={filterRole}
-            onChange={(val) => {
-              setFilterRole(val);
-              applyFilters();
-            }}
-            style={{ width: 180 }}
-          >
-            <Option value="All">All Roles</Option>
-            <Option value="Admin">Admin</Option>
-            <Option value="Supervisor">Supervisor</Option>
-            <Option value="Engineer">Engineer</Option>
-          </Select>
-
-          <Select
-            value={filterDiscipline}
-            onChange={(val) => {
-              setFilterDiscipline(val);
-              applyFilters();
-            }}
-            style={{ width: 220 }}
-          >
-            <Option value="All">All Disciplines</Option>
-            <Option value="Electrical">Electrical</Option>
-            <Option value="Mechanical">Mechanical</Option>
-            <Option value="Software">Software</Option>
-            <Option value="Quality">Quality</Option>
-            <Option value="Mechanical Electrical">Mechanical Electrical</Option>
-          </Select>
-
-          <Input.Search
-            value={searchText}
-            onChange={(e) => {
-              setSearchText(e.target.value);
-              applyFilters();
-            }}
-            placeholder="Search by Name or Email"
-            allowClear
-            style={{ width: 240 }}
-          />
-        </div>
-
-        {/* User Table */}
-        <Table rowKey="id" columns={columns} dataSource={filteredUsers} bordered pagination={{ pageSize: 8 }} />
-
-        {/* Add/Edit Modal */}
-        <Modal
-          title={editingUser ? "Edit User" : "Add User"}
-          open={isModalVisible}
-          onCancel={() => setIsModalVisible(false)}
-          footer={null}
-        >
-          <Form form={form} layout="vertical" onFinish={handleFinish}>
-            <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="email" label="Email" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="password" label="Password" rules={[{ required: true }]}>
-              <Input.Password />
-            </Form.Item>
-            <Form.Item name="role" label="Role" rules={[{ required: true }]}>
-              <Select placeholder="Select Role">
-                <Option value="Admin">Admin</Option>
-                <Option value="Supervisor">Supervisor</Option>
-                <Option value="Engineer">Engineer</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item name="discipline" label="Discipline" rules={[{ required: true }]}>
-              <Select placeholder="Select Discipline">
-                <Option value="Electrical">Electrical</Option>
-                <Option value="Mechanical">Mechanical</Option>
-                <Option value="Software">Software</Option>
-                <Option value="Quality">Quality</Option>
-                <Option value="Mechanical Electrical">Mechanical Electrical</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" block>
-                {editingUser ? "Update User" : "Add User"}
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
+    <div className="p-6 bg-white min-h-screen">
+      <div className="flex justify-between items-center mb-4">
+        <Title level={2}>User Management</Title>
+        {role === "Admin" && (
+          <Button type="primary" icon={<PlusOutlined />} onClick={openAddUserModal}>
+            Add User
+          </Button>
+        )}
       </div>
+
+      {/* Filter Section */}
+      <div className="flex gap-4 mb-4">
+        <Select value={filterRole} onChange={setFilterRole} style={{ width: 180 }}>
+          <Option value="All">All Roles</Option>
+          <Option value="Admin">Admin</Option>
+          <Option value="Supervisor">Supervisor</Option>
+          <Option value="Engineer">Engineer</Option>
+        </Select>
+
+        <Select value={filterDiscipline} onChange={setFilterDiscipline} style={{ width: 220 }}>
+          <Option value="All">All Disciplines</Option>
+          <Option value="Electrical">Electrical</Option>
+          <Option value="Mechanical">Mechanical</Option>
+          <Option value="Software">Software</Option>
+          <Option value="Quality">Quality</Option>
+          <Option value="Mechanical Electrical">Mechanical Electrical</Option>
+        </Select>
+
+        <Input.Search
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          placeholder="Search by Name or Email"
+          allowClear
+          style={{ width: 240 }}
+        />
+      </div>
+
+      {/* User Table */}
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={filteredUsers}
+        bordered
+        pagination={{ pageSize: 8 }}
+      />
+
+      {/* Add/Edit Modal */}
+      <Modal
+        title={editingUser ? "Edit User" : "Add User"}
+        open={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={null}
+      >
+        <Form form={form} layout="vertical" onFinish={handleFinish}>
+          <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="email" label="Email" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="password" label="Password" rules={[{ required: true }]}>
+            <Input.Password />
+          </Form.Item>
+          <Form.Item name="role" label="Role" rules={[{ required: true }]}>
+            <Select placeholder="Select Role">
+              <Option value="Admin">Admin</Option>
+              <Option value="Supervisor">Supervisor</Option>
+              <Option value="Engineer">Engineer</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="discipline" label="Discipline" rules={[{ required: true }]}>
+            <Select placeholder="Select Discipline">
+              <Option value="Electrical">Electrical</Option>
+              <Option value="Mechanical">Mechanical</Option>
+              <Option value="Software">Software</Option>
+              <Option value="Quality">Quality</Option>
+              <Option value="Mechanical Electrical">Mechanical Electrical</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block>
+              {editingUser ? "Update User" : "Add User"}
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
   );
 };
 

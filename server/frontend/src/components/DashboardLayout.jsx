@@ -63,9 +63,12 @@ const DashboardLayout = ({ children }) => {
 
   const onMenuClick = ({ key }) => {
     if (key === "logout") {
+      const assigned = localStorage.getItem("assignedTasks");
       localStorage.clear();
+      if (assigned) localStorage.setItem("assignedTasks", assigned);
       navigate("/login");
-    } else {
+    }
+    else {
       navigate(key);
     }
   };
@@ -74,13 +77,13 @@ const DashboardLayout = ({ children }) => {
     <Layout>
       <Header
         style={{
-        background: "#fff",
-        padding: "0 24px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}
-    >
+          background: "#fff",
+          padding: "0 24px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         {/* ✅ Left: Online Status */}
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <Tag color={isOnline ? "green" : "red"} icon={<WifiOutlined />}>

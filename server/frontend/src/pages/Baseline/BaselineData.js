@@ -1,13 +1,9 @@
-{
+const baselineData = {
   "1": [
     {
       "key": "1",
       "action": "N/A",
-<<<<<<< HEAD
-      "configItem": "N - Application",
-=======
       "configItem": "Terminal Firmware",
->>>>>>> origin/main
       "aimsReference": "ATO-ATOA-01",
       "softwareGenericVersion": "5.17BUILD00-30",
       "softwareLocoSpecificData": "N/A",
@@ -24,11 +20,7 @@
       "softwareGenericVersion": "N/A",
       "softwareLocoSpecificData": "N/A",
       "installBy": "Shiyu Tang 10/05/2025, 23:33:10",
-<<<<<<< HEAD
-      "verifyBy": "Alex Wang 10/04/2024, 23:33:10 10/05/2025, 23:33:10",
-=======
       "verifyBy": "Alex Wang 10/04/2024, 23:33:10",
->>>>>>> origin/main
       "validateBy": "Roger Smith 10/05/2025, 23:33:10",
       "note": ""
     },
@@ -39,15 +31,9 @@
       "aimsReference": "ATO-ATOR-01",
       "softwareGenericVersion": "06.09",
       "softwareLocoSpecificData": "N/A",
-<<<<<<< HEAD
-      "installBy": "N/A",
-      "verifyBy": "N/A",
-      "validateBy": "N/A",
-=======
       "installBy": "Alex Wang 10/04/2024, 23:33:10",
       "verifyBy": "(Click to sign)",
       "validateBy":"(Click to sign)",
->>>>>>> origin/main
       "note": ""
     },
     {
@@ -57,15 +43,9 @@
       "aimsReference": "ATO-ATOR-01",
       "softwareGenericVersion": "N/A",
       "softwareLocoSpecificData": "N/A",
-<<<<<<< HEAD
-      "installBy": "N/A",
-      "verifyBy": "N/A",
-      "validateBy": "N/A",
-=======
       "installBy": "(Click to sign)",
       "verifyBy": "(Click to sign)",
       "validateBy": "Alex Wang 10/04/2024, 23:33:10",
->>>>>>> origin/main
       "note": ""
     }
   ],
@@ -85,11 +65,7 @@
     {
       "key": "2",
       "action": "N/A",
-<<<<<<< HEAD
-      "configItem": "N - Base",
-=======
       "configItem": "Gemini G3 Firmware",
->>>>>>> origin/main
       "aimsReference": "ATO-ATOA-01",
       "softwareGenericVersion": "06.09",
       "softwareLocoSpecificData": "N/A",
@@ -105,29 +81,14 @@
       "aimsReference": "ATO-ATOR-01",
       "softwareGenericVersion": "5.17BUILD00-30",
       "softwareLocoSpecificData": "N/A",
-<<<<<<< HEAD
-      "installBy": "N/A",
-      "verifyBy": "N/A",
-      "validateBy": "N/A",
-=======
       "installBy": "(Click to sign)",
       "verifyBy": "(Click to sign)",
       "validateBy": "Alex Wang 10/04/2024, 23:33:10",
->>>>>>> origin/main
       "note": ""
     },
     {
       "key": "4",
       "action": "N/A",
-<<<<<<< HEAD
-      "configItem": "R - Base",
-      "aimsReference": "ATO-ATOR-01",
-      "softwareGenericVersion": "5.17BUILD00-30",
-      "softwareLocoSpecificData": "N/A",
-      "installBy": "N/A",
-      "verifyBy": "N/A",
-      "validateBy": "N/A",
-=======
       "configItem": "Gemini G3 Firmware",
       "aimsReference": "ATO-ATOR-01",
       "softwareGenericVersion": "5.17BUILD00-30",
@@ -135,7 +96,6 @@
       "installBy": "(Click to sign)",
       "verifyBy": "Alex Wang 10/04/2024, 23:33:10",
       "validateBy": "(Click to sign)",
->>>>>>> origin/main
       "note": ""
     }
   ],
@@ -171,29 +131,14 @@
       "aimsReference": "ATO-ATOR-01",
       "softwareGenericVersion": "5.17BUILD00-30",
       "softwareLocoSpecificData": "N/A",
-<<<<<<< HEAD
-      "installBy": "N/A",
-      "verifyBy": "N/A",
-      "validateBy": "N/A",
-=======
       "installBy": "(Click to sign)",
       "verifyBy": "(Click to sign)",
       "validateBy": "(Click to sign)",
->>>>>>> origin/main
       "note": ""
     },
     {
       "key": "4",
       "action": "N/A",
-<<<<<<< HEAD
-      "configItem": "R - Base",
-      "aimsReference": "ATO-ATOR-01",
-      "softwareGenericVersion": "5.17BUILD00-30",
-      "softwareLocoSpecificData": "N/A",
-      "installBy": "N/A",
-      "verifyBy": "N/A",
-      "validateBy": "N/A",
-=======
       "configItem": "CCTE1 – LCAP (AP Block)",
       "aimsReference": "ATO-ATOR-01",
       "softwareGenericVersion": "5.17BUILD00-30",
@@ -201,7 +146,6 @@
       "installBy": "(Click to sign)",
       "verifyBy": "Alex Wang 10/04/2024, 23:33:10",
       "validateBy": "(Click to sign)",
->>>>>>> origin/main
       "note": ""
     }
   ],
@@ -209,11 +153,7 @@
     {
       "key": "1",
       "action": "N/A",
-<<<<<<< HEAD
-      "configItem": "N - Application",
-=======
       "configItem": "BTM-N Software",
->>>>>>> origin/main
       "aimsReference": "ATO-ATOA-01",
       "softwareGenericVersion": "5.17BUILD00-30",
       "softwareLocoSpecificData": "N/A",
@@ -225,11 +165,7 @@
     {
       "key": "2",
       "action": "N/A",
-<<<<<<< HEAD
-      "configItem": "N - Base",
-=======
       "configItem": "CCTE1 – LCAP (AP Block)",
->>>>>>> origin/main
       "aimsReference": "ATO-ATOA-01",
       "softwareGenericVersion": "06.09",
       "softwareLocoSpecificData": "N/A",
@@ -241,15 +177,6 @@
     {
       "key": "3",
       "action": "N/A",
-<<<<<<< HEAD
-      "configItem": "R - Application",
-      "aimsReference": "ATO-ATOR-01",
-      "softwareGenericVersion": "5.17BUILD00-30",
-      "softwareLocoSpecificData": "N/A",
-      "installBy": "N/A",
-      "verifyBy": "N/A",
-      "validateBy": "N/A",
-=======
       "configItem": "BTM-N Software",
       "aimsReference": "ATO-ATOR-01",
       "softwareGenericVersion": "5.17BUILD00-30",
@@ -257,7 +184,6 @@
       "installBy": "(Click to sign)",
       "verifyBy": "Alex Wang 10/04/2024, 23:33:10",
       "validateBy": "(Click to sign)",
->>>>>>> origin/main
       "note": ""
     },
     {
@@ -267,16 +193,12 @@
       "aimsReference": "ATO-ATOR-01",
       "softwareGenericVersion": "5.17BUILD00-30",
       "softwareLocoSpecificData": "N/A",
-<<<<<<< HEAD
-      "installBy": "N/A",
-      "verifyBy": "N/A",
-      "validateBy": "N/A",
-=======
       "installBy": "(Click to sign)",
       "verifyBy": "(Click to sign)",
       "validateBy": "Alex Wang 10/04/2024, 23:33:10",
->>>>>>> origin/main
       "note": ""
     }
   ]
-}
+};
+
+export default baselineData;

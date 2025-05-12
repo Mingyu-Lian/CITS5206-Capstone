@@ -1,187 +1,83 @@
+// ✅ TaskJson.jsx
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import {
+  Layout, Button, Tabs, Badge, Typography, Alert, Spin
+} from 'antd';
+import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 
-import { Layout, Button, Tabs, Badge, Select, List, Typography, Image, Alert, Spin, Card } from 'antd';
-import axios from "axios";
-import InstructionsTab from "../TaskJson/task-tabs/instruction-tab.jsx"
-import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons"
-
-import NotesTab from "../TaskJson/task-tabs/notes-tab.jsx"
-import UserPhotosTab from "../TaskJson/task-tabs/user-photos-tab.jsx"
-import ComponentsTab from "../TaskJson/task-tabs/component-tab.jsx"
+import InstructionsTab from "./task-tabs/instruction-tab.jsx";
+import NotesTab from "./task-tabs/notes-tab.jsx";
+import UserPhotosTab from "./task-tabs/user-photos-tab.jsx";
+import ComponentsTab from "./task-tabs/component-tab.jsx";
 
 import "./Taskdetail.css";
-import Task1 from "./Task1.json";
-// import Task2 from "./Task2.json"; 
 import Tasks from "./Task.json";
 
-const { Header, Footer, Sider, Content } = Layout
-// Mock API to fetch task data
-// const fetchTaskData = async () => {
-//   await new Promise((resolve) => setTimeout(resolve, 1000))
-//   return Task[1]
-// }
-const fetchTaskData = (subtaskId) => {
+const { Header, Footer, Sider, Content } = Layout;
+const { Title } = Typography;
+
+const fetchTaskData = (taskId) => {
+  const numericKey = parseInt(taskId.replace(/\D/g, ""), 10).toString();
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      const task = Tasks[subtaskId];
-      console.log("Test:", Tasks, Tasks[subtaskId])
-      if (task) {
-        resolve(task);
-      } else {
-        reject(new Error(`Task with subtaskId ${subtaskId} not found`));
-      }
-    }, 500); // Simulate network delay
+      const task = Tasks[numericKey];
+      if (task) resolve(task);
+      else reject(new Error(`Task with ID ${numericKey} not found`));
+    }, 500);
   });
 };
-const parseInstructions = (instructionsRaw) => {
-  // Split by lines and remove color codes
-  return instructionsRaw
-    .split(/\r?\n/)
-    .filter((line) => line.trim())
-    .map((line) => {
-      // Remove color codes and [-]
-      let clean = line.replace(/\[[^\]]*\]/g, '').replace(/\[-\]/g, '').trim();
-      return clean.replace(/^\d+\.\s*/, '');
-    });
-};
-const partComponents = (componentsRaw) => {
-  // Split by lines and remove color codes
-  return componentsRaw
-    .split(/\r?\n/)
-    .filter((line) => line.trim())
-    .map((line) => {
-      // Remove color codes and [-]
-      let clean = line.replace(/\[[^\]]*\]/g, '').replace(/\[-\]/g, '').trim();
-      return clean.replace(/^\d+\.\s*/, '');
-    });
-};
 
-const parseAlerts = (alertsRaw) => {
-  // Remove color codes and bold tags
-  return alertsRaw
-    .replace(/\[[^\]]*\]/g, '')
-    .replace(/\[\/b\]/g, '')
-    .replace(/\[b\]/g, '')
-    .split(/\r?\n/)
-    .filter((line) => line.trim());
-};
+const parseList = (raw) =>
+  raw?.split(/\r?\n/).filter(Boolean).map(line =>
+    line.replace(/\[[^\]]*\]/g, '').replace(/\[-\]/g, '').replace(/^\d+\.\s*/, '').trim()
+  );
 
-const Taskdetail = () => {
-  const { Option } = Select;
-  const [activeTab, setActiveTab] = useState("instructions")
+const parseAlerts = (raw) =>
+  raw?.replace(/\[[^\]]*\]/g, '').replace(/\[\/?b\]/g, '').split(/\r?\n/).filter(Boolean);
+
+const TaskJson = () => {
+  const { taskId } = useParams();
+  const [activeTab, setActiveTab] = useState("instructions");
   const [loading, setLoading] = useState(true);
   const [taskData, setTaskData] = useState(null);
-  const [error, setError] = useState(null);
   const [complete, setComplete] = useState(false);
   const [userName, setUserName] = useState(null);
   const [timeStamp, setTimeStamp] = useState(null);
-  
-
-  //"/taskjson/:subtaskId"
-  const { subtaskId } = useParams();
-
-  console.log("subtaskId", subtaskId)
-  const navigate = useNavigate();
-
-  const handleTabChange = (key) => {
-    setActiveTab(key)
-  }
-
-  const handleCompleteButton = () => {
-    const userName = localStorage.getItem("name");
-    const timeStamp = new Date().toLocaleString()
-    setComplete(true)
-    setUserName(userName)
-    setTimeStamp(timeStamp)
-    console.log(complete)
-    console.log("userName:", userName, timeStamp)
-  }
 
   useEffect(() => {
-
-    // fetchTaskData().then((data) => {
-    //   localStorage.setItem("name", "Ross Richardson")
-    //   const currentUser = localStorage.getItem("name");
-
-    //   setTask(data);
-    //   setLoading(false);
-    // });
     const loadData = async () => {
       try {
         setLoading(true);
-        setError(null);
-        const data = await fetchTaskData(subtaskId);
+        const data = await fetchTaskData(taskId);
         setTaskData(data);
       } catch (err) {
-        setError(err.message);
+        console.error("❌ Task load error:", err.message);
+        setTaskData(null);
       } finally {
         setLoading(false);
       }
     };
-
     loadData();
-  }, [subtaskId]);
-  const handleNavigation = (direction) => {
-    const currentId = parseInt(subtaskId);
-    const newId = direction === 'next' ? currentId + 1 : currentId - 1;
+  }, [taskId]);
 
-    // Disable navigation beyond available data
-    if (newId in Tasks) {
-      navigate(`/taskjson/${newId}`);
-    }
+  const instructions = parseList(taskData?.Instructions || "").map((text, index) => ({ id: index + 1, text }));
+  const components = parseList(taskData?.Components || "");
+  const alerts = parseAlerts(taskData?.Alerts || "");
+
+  const handleComplete = () => {
+    const name = localStorage.getItem("name") || "Unknown";
+    setComplete(true);
+    setUserName(name);
+    setTimeStamp(new Date().toLocaleString());
   };
 
-  if (loading) {
-    return <Spin style={{ marginTop: 100 }} />;
-  }
-  if (!taskData) {
-    return <Alert message="Task not found" type="error" />;
-  }
-  const instructions = parseInstructions(taskData.Instructions);
-  const alerts = parseAlerts(taskData.Alerts);
-  const components = partComponents(taskData.Components)
-  console.log("components:", components)
-  const headerStyle = {
-    // textAlign: 'center',
-    // color: '#fff',
-    // height: 64,
-    // paddingInline: 48,
-    // lineHeight: '64px',
-    backgroundColor: '#bf8c8c',
-  };
-  const contentStyle = {
-    textAlign: 'center',
-    minHeight: 120,
-    lineHeight: '120px',
-    color: '#fff',
-    backgroundColor: '#2e2d2d',
-  };
-  const siderStyle = {
-    // textAlign: 'center',
-    lineHeight: '120px',
-    color: '#fff',
-    backgroundColor: '#807c7c',
-    width: "10%",
-    color: '#fff',
+  if (loading) return <Spin style={{ marginTop: 100 }} tip="Loading Task..." />;
+  if (!taskData) return <Alert message="Task not found" type="error" showIcon style={{ margin: 24 }} />;
 
-
-  };
-  const footerStyle = {
-    textAlign: 'center',
-    color: '#fff',
-    backgroundColor: '#4096ff',
-  };
-  const layoutStyle = {
-    borderRadius: 8,
-    overflow: 'hidden',
-    width: 'calc(100% - 8px)',
-    maxWidth: 'calc(100% - 8px)',
-    height: '100%',
-  };
   return (
     <div className="taskdetail-container">
-      <Layout style={layoutStyle}>
+      <Layout style={{ borderRadius: 8, overflow: 'hidden', height: '100%' }}>
         <Header style={{ background: '#6d1919', color: '#fff', padding: '0 24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
@@ -190,90 +86,60 @@ const Taskdetail = () => {
               </span>
               <span style={{ color: '#ffb300', marginLeft: 16 }}>Permit Officer</span>
             </div>
-            <div style={{ color: '#7fff7f', fontSize: 14 }}>
-              {complete ? `Completed by ${userName} on ${timeStamp}` : " "}
-              <Button type="primary"
-                style={{ marginLeft: 16, background: complete ? "#e0e0e0" : "#1677ff" }}
-
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <Button onClick={() => window.history.back()} icon={<ArrowLeftOutlined />}>Back</Button>
+              <Button
+                type="primary"
+                style={{ background: complete ? "#e0e0e0" : "#1677ff" }}
                 disabled={complete}
-                onClick={handleCompleteButton}>Set Complete </Button>
+                onClick={handleComplete}
+              >
+                {complete ? "Completed" : "Set Complete"}
+              </Button>
+              {complete && (
+                <span style={{ color: "#7fff7f", fontSize: 14 }}>
+                  by {userName} on {timeStamp}
+                </span>
+              )}
             </div>
           </div>
         </Header>
+
         <Layout>
-          <Sider style={siderStyle}>
+          <Sider width="15%" style={{ backgroundColor: '#807c7c', color: '#fff' }}>
             <Tabs
-              className="left-tabs"
-              style={{ color: 'blue' }}
-              activeKey={activeTab}
-              onChange={handleTabChange}
               tabPosition="left"
+              activeKey={activeTab}
+              onChange={setActiveTab}
               type="card"
               items={[
-                {
-                  key: "instructions",
-                  label: "Instructions",
-                  children: null,
-                },
-                {
-                  key: "components",
-                  label: "Components",
-                  children: null,
-                },
-                {
-                  key: "notes",
-                  label: (
-                    <span>
-                      Notes <Badge count={alerts.length} showZero />
-                    </span>
-                  ),
-                  children: null,
-                },
-                {
-                  key: "userPhotos",
-                  label: (
-                    <span>
-                      User Photos
-                    </span>
-                  ),
-                  children: null,
-                },
+                { key: "instructions", label: "Instructions" },
+                { key: "components", label: "Components" },
+                { key: "notes", label: <span>Notes <Badge count={alerts.length} showZero /></span> },
+                { key: "userPhotos", label: "User Photos" },
               ]}
             />
           </Sider>
-          <Content style={contentStyle}>
-            <div className="flex">
-              <div className="flex-1 mr-4">
-                {activeTab === "instructions" && <InstructionsTab instructionData={instructions}/>}
-                {activeTab === "components" && <ComponentsTab components={components} />}
-                {activeTab === "notes" && <NotesTab noteAlert={alerts} />}
-                {activeTab === "userPhotos" && <UserPhotosTab />}
-              </div>
-            </div>
+
+          <Content style={{ backgroundColor: '#2e2d2d', color: '#fff', padding: '16px' }}>
+            {activeTab === "instructions" && <InstructionsTab instructionData={instructions} />}
+            {activeTab === "components" && <ComponentsTab components={components} />}
+            {activeTab === "notes" && <NotesTab noteAlert={alerts} />}
+            {activeTab === "userPhotos" && <UserPhotosTab />}
           </Content>
         </Layout>
+
         <Footer className="task-footer">
-          <Button type="primary" className="w-[120px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowLeftOutlined />} onClick={() => handleNavigation('prev')}
-            disabled={parseInt(subtaskId) <= 1}>
+          <Button icon={<ArrowLeftOutlined />} disabled>
             Previous
           </Button>
-
-          <Button type="primary" className="w-[150px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowLeftOutlined />} onClick={() => handleNavigation('prev')}
-            disabled={parseInt(subtaskId) <= 1}>
-            Prev Permit Officer
-          </Button>
-
-          <Button type="primary" className="w-[150px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowRightOutlined />} onClick={() => handleNavigation('next')}  disabled={!Tasks[parseInt(subtaskId) + 1]}>
-            Next Permit Officer
-          </Button>
-
-          <Button type="primary" className="w-[120px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowRightOutlined />} onClick={() => handleNavigation('next')}
-            disabled={!Tasks[parseInt(subtaskId) + 1]}>
+          <Button icon={<ArrowRightOutlined />} disabled>
             Next
           </Button>
-        </Footer>    </Layout>
-    </div >
-
+        </Footer>
+      </Layout>
+    </div>
   );
 };
-export default Taskdetail;
+
+export default TaskJson;

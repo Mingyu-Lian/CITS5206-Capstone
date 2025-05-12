@@ -5,12 +5,13 @@ import { BrowserRouter as Router, Routes, Route, useParams, useNavigate } from '
 
 import { Table, Button, Input, Typography, Divider,Form, message, Modal, Select, Space, Popover } from "antd"
 import "./BaselineDetail.css"
-import Baseline from "./Baseline.json"; 
+import baselineData from './BaselineData'; 
 
 const fetchBaselineData = (baselineId) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      const baseline = Baseline[baselineId];
+      const baseline = baselineData[baselineId];
+
       console.log(baseline, "baseline")
       if (baseline) {
         resolve(baseline);
