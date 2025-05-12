@@ -6,6 +6,9 @@ import { useLocomotives } from "../../hooks/useMockData";
 import localforage from "localforage";
 import { syncLogs } from "../../utils/offlineSyncHelper";
 import users from "../../mock/mockUsers";
+import useNetworkStatus from "../../utils/useNetworkStatus";
+import { getCachedLocomotiveData, cacheLocomotiveData } from "../../utils/offlineSyncHelper";
+
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -15,11 +18,96 @@ const currentUser = users.find(u => u.id === userId);
 const engineerName = currentUser?.name || "Unknown Engineer";
 
 const EngineerDashboard = () => {
+  const online = useNetworkStatus();
   const { locomotives, loading } = useLocomotives();
   const [assignedTasks, setAssignedTasks] = useState([]);
   const [pendingSubtasks, setPendingSubtasks] = useState([]);
   const [statusFilter, setStatusFilter] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const autoCacheAllLocos = async () => {
+      if (!online) return;
+
+      const locoIds = ["Loco-001", "Loco-002", "Loco-003", "Loco-004"];
+
+      for (const locoId of locoIds) {
+        const existing = await getCachedLocomotiveData(locoId);
+        if (existing) {
+          continue;
+        }
+
+        const baselineMap = {
+          "Loco-001": "v3.0",
+          "Loco-002": "v2.1",
+          "Loco-003": "v2.5",
+          "Loco-004": "v1.8",
+        };
+
+        const defaultData = {
+          locomotiveId: locoId,
+          name: `Locomotive ${locoId}`,
+          baseline: baselineMap[locoId],
+          wmsList: [
+            {
+              wmsId: "wms1",
+              title: "WMS - Electrical",
+              type: "Installation",
+              tasks: [
+                {
+                  taskId: "task1",
+                  title: "Check Fuse Box",
+                  status: "Pending",
+                  subtasks: [
+                    { id: "sub1", instruction: "Verify voltage levels.", result: "", signedOff: false, discipline: "Electrical" },
+                    { id: "sub2", instruction: "Capture photo of connected cable.", result: "", signedOff: false, discipline: "Mechanical" }
+                  ]
+                },
+                {
+                  taskId: "task2",
+                  title: "Install Cabling",
+                  status: "Signed Off",
+                  subtasks: [
+                    { id: "sub7", instruction: "Inspect insulation on cabling.", result: "", signedOff: false, discipline: "Electrical" },
+                    { id: "sub8", instruction: "Secure loose cables.", result: "", signedOff: false, discipline: "Mechanical" }
+                  ]
+                }
+              ]
+            },
+            {
+              wmsId: "wms2",
+              title: "WMS - Hydraulic",
+              type: "Commissioning",
+              tasks: [
+                {
+                  taskId: "task3",
+                  title: "Inspect Brake System",
+                  status: "Pending",
+                  subtasks: [
+                    { id: "sub3", instruction: "Inspect brake pads wear", result: "", signedOff: false, discipline: "Mechanical" },
+                    { id: "sub4", instruction: "Check brake fluid levels", result: "", signedOff: false, discipline: "Mechanical" }
+                  ]
+                },
+                {
+                  taskId: "task4",
+                  title: "Replace Battery Module",
+                  status: "In Progress",
+                  subtasks: [
+                    { id: "sub5", instruction: "Remove old battery", result: "", signedOff: false, discipline: "Electrical" },
+                    { id: "sub6", instruction: "Install new battery", result: "", signedOff: false, discipline: "Electrical" }
+                  ]
+                }
+              ]
+            }
+          ]
+        };
+
+        await cacheLocomotiveData(locoId, defaultData);
+      }
+    };
+
+    autoCacheAllLocos();
+  }, [online]);
 
   // Load tasks assigned to the current engineer
   const fetchAssignedTasks = () => {
@@ -114,7 +202,7 @@ const EngineerDashboard = () => {
 
     const handleVisibility = () => {
       if (document.visibilityState === "visible") {
-        fetchPendingSubtasks(); // 👈 重新拉取缓存的离线日志
+        fetchPendingSubtasks(); 
       }
     };
     
