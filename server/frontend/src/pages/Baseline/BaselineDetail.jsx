@@ -34,8 +34,7 @@ const BaselineDetail = () => {
 // State for the username input
   const [username, setUsername] = useState("")
   // Version options for dropdown
-  const versionOptions = ["5.17BUILD00-30", "06.09", "5.18BUILD00-31", "06.10", "07.01"]
-  const [softwareVersions, setSoftwareVersions] = useState(["5.17BUILD00-30", "06.09", "5.18BUILD00-31", "06.10", "07.01", 'softwareVersion1', 'softwareVersion2']);
+  const [softwareVersions, setSoftwareVersions] = useState([ "5.17BUILD00-30", "06.09", "5.18BUILD00-31", "COMM.SATH-S1", "07.01"]);
   const [name, setName] = useState('');
   const [currentCell, setCurrentCell] = useState({"key":null, "field":null});
   const [signatures, setSignatures] = useState({})
@@ -142,14 +141,14 @@ const BaselineDetail = () => {
     }, [baselineId]);
   // Table columns configuration
   const columns = [
-    {
-      title: "Action",
-      dataIndex: "action",
-      key: "action",
-      width: 60,
-      className: "",
-      render: (text, record) => <div className={""}>{text}</div>,
-    },
+    // {
+    //   title: "Action",
+    //   dataIndex: "action",
+    //   key: "action",
+    //   width: 60,
+    //   className: "",
+    //   render: (text, record) => <div className={""}>{text}</div>,
+    // },
     {
       title: "Configuration Item",
       dataIndex: "configItem",
@@ -173,7 +172,7 @@ const BaselineDetail = () => {
       ),
       dataIndex: "softwareGenericVersion",
       key: "softwareGenericVersion",
-      width: 200,
+      width: 160,
       className: "",
       render: (text, record) => (
         <div
@@ -196,7 +195,7 @@ const BaselineDetail = () => {
       ),
       dataIndex: "softwareLocoSpecificData",
       key: "softwareLocoSpecificData",
-      width: 200,
+      width: 100,
       className: "",
     },
     {
@@ -205,6 +204,24 @@ const BaselineDetail = () => {
       key: "installBy",
       width: 100,
       className: "",
+      render: (text, record) => {
+        if (text == "(Click to sign)") {
+          return (<Button
+            type="default"
+            icon={<UserOutlined />}
+            onClick={() => handleSignatureClick(record.key, "installBy")}
+          >
+            Sign
+          </Button>)
+        }
+        else{
+          return( <div>
+            {text}
+          </div>)
+         
+        }
+
+      }
     },
     // {
     //   title: "Verify by",
@@ -228,8 +245,6 @@ const BaselineDetail = () => {
       width: 100,
       className: "",
       render: (text, record) => {
-        
-
         if (text == "(Click to sign)") {
           return (<Button
             type="default"
@@ -238,7 +253,6 @@ const BaselineDetail = () => {
           >
             Sign
           </Button>)
-
         }
         else{
           return( <div>
@@ -282,7 +296,7 @@ const BaselineDetail = () => {
       title: "Note",
       dataIndex: "note",
       key: "note",
-      width: 100,
+      width: 200,
       className: "",
       render: (text, record) => (
         <div
@@ -293,7 +307,7 @@ const BaselineDetail = () => {
             setIsNoteModalOpen(true)
           }}
         >
-          {<TruncatedText text={text} /> || "Add note"} <EditOutlined className="" />
+          {<TruncatedText text={text  || "Add note"} /> } <EditOutlined className="" />
           {/* {text  || "Add note"} <EditOutlined className="" /> */}
 
         </div>
