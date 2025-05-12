@@ -25,6 +25,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
 import { createLogEntry, saveAndMaybeSyncLog } from "../utils/offlineSyncHelper";
 import localforage from "localforage";
+import { getCachedLocomotiveData, cacheLocomotiveData } from "../utils/offlineSyncHelper";
+
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -53,47 +55,61 @@ const SubtaskDetailPage = () => {
   const applyFilters = (query) => setFilters(query);
   const clearFilters = () => setFilters({});
 
-  useEffect(() => {
-    const loadSubtasksData = async () => {
-      const offlineKey = `offlineSubtaskList-${taskId}-${userId}`;
-      const cachedData = await localforage.getItem(offlineKey);
-
-      if (cachedData) {
-        setData(cachedData);
-
+  const loadSubtasksData = async () => {
+    const locoData = await getCachedLocomotiveData(locomotiveId);
+  
+    if (locoData) {
+      const task = locoData.wmsList
+        .flatMap(wms => wms.tasks)
+        .find(task => task.taskId === taskId || task.id === taskId);
+  
+      if (task && task.subtasks) {
+        setData(task.subtasks);
+  
         const restoredForm = {};
-        cachedData.forEach(sub => {
+        task.subtasks.forEach(sub => {
           restoredForm[sub.id] = {
             result: sub.result || "",
             signedOff: sub.signedOff || false
           };
         });
         setFormData(restoredForm);
-
-        message.info("Restored cached subtask input.");
+  
+        message.info("Loaded subtasks from cached data.");
       } else {
-        const onlineData = [
-          { id: "sub1", instruction: "Verify voltage levels.", result: "", signedOff: false, discipline: "Electrical" },
-          { id: "sub2", instruction: "Capture photo of connected cable.", result: "", signedOff: false, discipline: "Mechanical" },
-        ];
-        setData(onlineData);
-        await localforage.setItem(offlineKey, onlineData);
+        setData([]);
+        message.warning("No subtasks found for this task.");
       }
-    };
-
+    } else {
+      setData([]);
+      message.warning("No cached data for this locomotive.");
+    }
+  };  
+  
+  useEffect(() => {
     loadSubtasksData();
-  }, [taskId, userId]);
+  }, [taskId, userId, locomotiveId]);  
+
 
   const updateOfflineSubtask = async (subId, field, value) => {
-    const offlineKey = `offlineSubtaskList-${taskId}-${userId}`;
-    const cached = await localforage.getItem(offlineKey);
-    if (cached) {
-      const updated = cached.map(sub =>
-        sub.id === subId ? { ...sub, [field]: value } : sub
-      );
-      await localforage.setItem(offlineKey, updated);
+    const locoData = await getCachedLocomotiveData(locomotiveId);
+    if (!locoData) return;
+  
+    const newLocoData = { ...locoData };
+  
+    for (const wms of newLocoData.wmsList) {
+      for (const task of wms.tasks) {
+        if (task.taskId === taskId || task.id === taskId) {
+          task.subtasks = task.subtasks.map(sub =>
+            sub.id === subId ? { ...sub, [field]: value } : sub
+          );
+          break;
+        }
+      }
     }
-  };
+  
+    await cacheLocomotiveData(locomotiveId, newLocoData);
+  };  
 
   const handleSave = async (subId) => {
     setCompleted((prev) => ({ ...prev, [subId]: true }));

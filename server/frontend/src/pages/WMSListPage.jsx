@@ -6,6 +6,8 @@ import QueryBuilder from "../components/QueryBuilder";
 import { UploadOutlined } from "@ant-design/icons";
 import { Upload } from "antd";
 import localforage from "localforage";
+import { cacheLocomotiveData, getCachedLocomotiveData } from "../utils/offlineSyncHelper";
+
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -48,37 +50,103 @@ const WMSListPage = () => {
       file: values.file?.file?.name || null,
       tasks: [],
     };
-    const updatedList = [...data, newWMS];
-    setData(updatedList);
-    const offlineKey = `offlineWMSList-${locomotiveId}`;
-    await localforage.setItem(offlineKey, updatedList);
-    message.success("WMS Document uploaded successfully!");
+  
+    let locoData = await getCachedLocomotiveData(locomotiveId);
+  
+    if (!locoData) {
+      locoData = {
+        locomotiveId,
+        name: `Locomotive ${locomotiveId}`,
+        baseline: "v1.0",
+        wmsList: [],
+      };
+    }
+  
+    locoData.wmsList.push(newWMS);
+    setData(locoData.wmsList);
+  
+    await cacheLocomotiveData(locomotiveId, locoData);
+  
+    message.success("WMS Document uploaded and cached successfully!");
     setIsModalVisible(false);
     form.resetFields();
-  };
+  };  
 
   const loadWMSData = async () => {
-    const offlineKey = `offlineWMSList-${locomotiveId}`;
-
-    if (navigator.onLine) {
-      const onlineData = [
-        { wmsId: "wms1", title: "WMS - Electrical", version: "1.2", status: "In Progress", type: "Installation" },
-        { wmsId: "wms2", title: "WMS - Hydraulic", version: "1.0", status: "Pending", type: "Commissioning" },
-      ];
-
-      setData(onlineData);
-      await localforage.setItem(offlineKey, onlineData);
+    let cachedLocoData = await getCachedLocomotiveData(locomotiveId);
+  
+    if (cachedLocoData) {
+      setData(cachedLocoData.wmsList);
+      message.info("Loaded WMS documents from cache.");
+    } else if (navigator.onLine) {
+      const onlineData = {
+        locomotiveId: "Loco-001",
+        name: "Locomotive A",
+        baseline: "v3.0",
+        wmsList: [
+          {
+            wmsId: "wms1",
+            title: "WMS - Electrical",
+            type: "Installation",
+            tasks: [
+              {
+                taskId: "task1",
+                title: "Check Fuse Box",
+                status: "Pending",
+                subtasks: [
+                  { id: "sub1", instruction: "Verify voltage levels.", result: "", signedOff: false, discipline: "Electrical" },
+                  { id: "sub2", instruction: "Capture photo of connected cable.", result: "", signedOff: false, discipline: "Mechanical" },
+                ],
+              },
+              {
+                taskId: "task2",
+                title: "Install Cabling",
+                status: "Signed Off",
+                subtasks: [
+                  { id: "sub7", instruction: "Inspect insulation on cabling.", result: "", signedOff: false, discipline: "Electrical" },
+                  { id: "sub8", instruction: "Secure loose cables.", result: "", signedOff: false, discipline: "Mechanical" },
+                ],
+              },
+            ],
+          },
+          {
+            wmsId: "wms2",
+            title: "WMS - Hydraulic",
+            type: "Commissioning",
+            tasks: [
+              {
+                taskId: "task3",
+                title: "Inspect Brake System",
+                status: "Pending",
+                subtasks: [
+                  { id: "sub3", instruction: "Inspect brake pads wear", result: "", signedOff: false, discipline: "Mechanical" },
+                  { id: "sub4", instruction: "Check brake fluid levels", result: "", signedOff: false, discipline: "Mechanical" },
+                ],
+              },
+              {
+                taskId: "task4",
+                title: "Replace Battery Module",
+                status: "In Progress",
+                subtasks: [
+                  { id: "sub5", instruction: "Remove old battery", result: "", signedOff: false, discipline: "Electrical" },
+                  { id: "sub6", instruction: "Install new battery", result: "", signedOff: false, discipline: "Electrical" },
+                ],
+              },
+            ],
+          },
+        ],
+      };      
+  
+      setData(onlineData.wmsList);
+      await cacheLocomotiveData(locomotiveId, onlineData);
+      message.success("Fetched and cached online WMS documents.");
     } else {
-      const cachedData = await localforage.getItem(offlineKey);
-      if (cachedData) {
-        setData(cachedData);
-        message.info("Currently viewing cached WMS documents.");
-      } else {
-        message.warning("No cached WMS data found for this locomotive.");
-      }
+
+      message.warning("Offline and no cached data available.");
     }
+  
     setLoading(false);
-  };
+  };  
 
   useEffect(() => {
     loadWMSData();

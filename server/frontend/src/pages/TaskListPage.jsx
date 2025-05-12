@@ -4,6 +4,9 @@ import { Table, Button, Tag, Typography } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
 import localforage from "localforage";
+import { getCachedLocomotiveData, cacheLocomotiveData } from "../utils/offlineSyncHelper";
+import { message } from "antd";
+
 
 const { Title } = Typography;
 
@@ -52,7 +55,7 @@ const TaskListPage = () => {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <Button type="link" onClick={() => navigate(`/tasks/${locomotiveId}/wms/${wmsId}/task/${record.id}`)}>
+        <Button type="link" onClick={() => navigate(`/tasks/${locomotiveId}/wms/${wmsId}/task/${record.taskId || record.id}`)}>
           View Subtasks
         </Button>
       ),
@@ -61,28 +64,61 @@ const TaskListPage = () => {
 
   // Load tasks from online or offline cache
   const loadTasksData = async () => {
-    const offlineKey = `offlineTaskList-${wmsId}`;
-    if (navigator.onLine) {
-      // Simulate online task data
-      const onlineData = [
-        { id: "task1", title: "Check Fuse Box", status: "Pending" },
-        { id: "task2", title: "Install Cabling", status: "Signed Off" },
-      ];
-      setData(onlineData);
-      await localforage.setItem(offlineKey, onlineData);
-    } else {
-      // Load from offline cache
-      const cachedData = await localforage.getItem(offlineKey);
-      if (cachedData) {
-        setData(cachedData);
-      }
-    }
-    setLoading(false);
-  };
 
+    const cachedLocoData = await getCachedLocomotiveData(locomotiveId);
+  
+    if (cachedLocoData) {
+      const currentWMS = cachedLocoData.wmsList.find(wms => wms.wmsId === wmsId);
+  
+      if (currentWMS) {
+        setData(currentWMS.tasks || []);
+        message.info("Loaded tasks from cached WMS.");
+      } else {
+        setData([]);
+        message.warning("WMS not found in cached data.");
+      }
+    } else if (navigator.onLine) {
+      let defaultTasks;
+      if (wmsId === "wms2" && locomotiveId === "Loco-001") {
+        defaultTasks = [
+          { id: "task3", title: "Inspect Brake System", status: "Pending", subtasks: [] },
+          { id: "task4", title: "Replace Battery Module", status: "In Progress", subtasks: [] },
+        ];
+      } else {
+        defaultTasks = [
+          { id: "task1", title: "Check Fuse Box", status: "Pending", subtasks: [] },
+          { id: "task2", title: "Install Cabling", status: "Signed Off", subtasks: [] },
+        ];
+      }
+  
+      const newLocoData = {
+        locomotiveId,
+        name: `Locomotive ${locomotiveId}`,
+        baseline: "v1.0",
+        wmsList: [
+          {
+            wmsId,
+            title: `WMS - ${wmsId}`,
+            type: "Default Type",
+            tasks: defaultTasks,
+          },
+        ],
+      };
+  
+      setData(defaultTasks);
+      await cacheLocomotiveData(locomotiveId, newLocoData);
+      message.success("Fetched online tasks data and cached.");
+    } else {
+      setData([]);
+      message.warning("Offline and no cached data available.");
+    }
+  
+    setLoading(false);
+  };  
+  
   useEffect(() => {
     loadTasksData();
-  }, [wmsId]);
+  }, [wmsId, locomotiveId]);  
 
   if (loading) return <div>Loading Tasks...</div>;
 

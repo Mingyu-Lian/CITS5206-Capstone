@@ -5,11 +5,14 @@ import { useState, useEffect } from "react";
 import { useLocomotives } from "../../hooks/useMockData";
 import localforage from "localforage";
 import { syncLogs } from "../../utils/offlineSyncHelper";
+import users from "../../mock/mockUsers";
 
 const { Title } = Typography;
 const { Option } = Select;
 const userId = localStorage.getItem("userId") || "unknown";
 const LOG_KEY = `offlineLogs-${userId}`;
+const currentUser = users.find(u => u.id === userId);
+const engineerName = currentUser?.name || "Unknown Engineer";
 
 const EngineerDashboard = () => {
   const { locomotives, loading } = useLocomotives();
@@ -17,7 +20,6 @@ const EngineerDashboard = () => {
   const [pendingSubtasks, setPendingSubtasks] = useState([]);
   const [statusFilter, setStatusFilter] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
-  const engineerName = "Engineer A";
 
   // Load tasks assigned to the current engineer
   const fetchAssignedTasks = () => {

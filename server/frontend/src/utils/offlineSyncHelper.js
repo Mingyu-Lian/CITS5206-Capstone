@@ -74,3 +74,15 @@ export const saveAndMaybeSyncLog = async (logEntry) => {
     await syncLogs();
   }
 };
+
+
+export const cacheLocomotiveData = async (locoId, data) => {
+  const offlineKey = `cachedData-${locoId}`;
+  await localforage.setItem(offlineKey, data);
+};
+
+
+export const getCachedLocomotiveData = async (locoId) => {
+  const offlineKey = `cachedData-${locoId}`;
+  return await localforage.getItem(offlineKey);
+};
