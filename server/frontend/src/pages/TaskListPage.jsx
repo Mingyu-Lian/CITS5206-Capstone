@@ -5,7 +5,7 @@ import {
 } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
-import PageLayout from "../components/PageLayout";
+//import PageLayout from "../components/PageLayout";
 import { useTasks } from "../hooks/useMockData";
 import users from "../mock/mockUsers";
 import { fetchTaskSignOffs, toggleTaskSignOff, supervisorSignOffTask } from "../mock/mockApi";
@@ -243,7 +243,6 @@ const TaskListPage = () => {
   if (loading) return <div>Loading Tasks...</div>;
 
   return (
-    <PageLayout>
       <div className="p-6 bg-white min-h-screen">
         <Title level={3}>Assigned Tasks for Locomotive {locomotiveId}, WMS {wmsId}</Title>
 
@@ -294,7 +293,6 @@ const TaskListPage = () => {
           </Form>
         </Modal>
       </div>
-    </PageLayout>
   );
 };
 
