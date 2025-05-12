@@ -96,7 +96,7 @@ const EngineerDashboard = () => {
       fetchAssignedTasks();
     }
     fetchPendingSubtasks();
-    loadUserCachedTaskList(); // ✅ for offline identify
+    loadUserCachedTaskList(); // ✅ for offline identify   
 
     const handleStorageChange = (event) => {
       if (event.key === "assignedTasks") {
@@ -110,12 +110,21 @@ const EngineerDashboard = () => {
       }
     };
 
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        fetchPendingSubtasks(); // 👈 重新拉取缓存的离线日志
+      }
+    };
+    
     window.addEventListener("storage", handleStorageChange);
     window.addEventListener("online", handleOnline);
+    document.addEventListener("visibilitychange", handleVisibility);
+
 
     return () => {
       window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("online", handleOnline);
+      document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, [loading, pendingSubtasks]);
 
