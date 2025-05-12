@@ -28,7 +28,6 @@ const connectDB = async () => {
             Baseline.collection.drop(),
             Asset.collection.drop(),
             Project.collection.drop(),
-            WMS.collection.drop(),
             Task.collection.drop(),
             Discipline.collection.drop(),
             Log.collection.drop()
