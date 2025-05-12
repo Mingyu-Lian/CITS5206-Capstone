@@ -38,7 +38,7 @@ function App() {
         {/* <Route path="/taskdetail" element={<DashboardLayout><TaskDetail /></DashboardLayout>} /> */}
         <Route path="/baselines" element={<BaselineListPage />} />
 
-        <Route path="/taskdetail/:locomotiveId/:wmsId/:taskId/:type" element={<TaskDetailRouter />} />
+        {/* <Route path="/taskdetail/:locomotiveId/:wmsId/:taskId/:type" element={<TaskDetailRouter />} /> */}
 
 
         {/* These routes likely don't need DashboardLayout */}
