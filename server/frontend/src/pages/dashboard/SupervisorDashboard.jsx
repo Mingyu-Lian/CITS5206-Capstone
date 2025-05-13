@@ -51,8 +51,10 @@ const SupervisorDashboard = () => {
               status: task.status,
               locomotive: loco.name,
               discipline: task.discipline,
+              type: wms.type, 
             });
           });
+
         });
       });
       setAllTasks(tasks);
@@ -111,131 +113,141 @@ const SupervisorDashboard = () => {
     message.success(`Removed ${engineerName}`);
   };
 
-  const handleGoToDetail = (taskId) => {
-    const [locoId, wmsId, taskOnlyId] = taskId.split("-");
-    navigate(`/taskdetail/${locoId}/${wmsId}/${taskOnlyId}`);
+  const handleGoToDetail = (taskId, type) => {
+  const parts = taskId.split("-");
+  const locoId = `${parts[0]}-${parts[1]}`;
+  const wmsId = `${parts[2]}-${parts[3]}`;
+  const taskNumber = parseInt(parts[5], 10); // safe extraction
 
-  };
+  const destination =
+    type === "Installation"
+      ? `/taskjson/${taskNumber}`
+      : `/commissionjson/${taskNumber}`;
+
+  navigate(destination);
+};
+
+
 
   if (loading) return <Spin tip="Loading..." style={{ marginTop: "20vh" }} />;
 
   return (
-      <div style={{ padding: 24 }}>
-        <Title level={2}><TeamOutlined /> Supervisor Dashboard</Title>
+    <div style={{ padding: 24 }}>
+      <Title level={2}><TeamOutlined /> Supervisor Dashboard</Title>
 
-        {/* Filters */}
-        <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-          <Col span={8}>
-            <Select value={selectedStatus} onChange={setSelectedStatus} style={{ width: "100%" }}>
-              <Option value="All">All Statuses</Option>
-              {Object.keys(statusColors).map((s) => <Option key={s} value={s}>{s}</Option>)}
-            </Select>
-          </Col>
-          <Col span={8}>
-            <Select value={selectedLocomotive} onChange={setSelectedLocomotive} style={{ width: "100%" }}>
-              <Option value="All">All Locomotives</Option>
-              {locomotives.map((loco) => (
-                <Option key={loco.locomotiveId} value={loco.name}>{loco.name}</Option>
+      {/* Filters */}
+      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+        <Col span={8}>
+          <Select value={selectedStatus} onChange={setSelectedStatus} style={{ width: "100%" }}>
+            <Option value="All">All Statuses</Option>
+            {Object.keys(statusColors).map((s) => <Option key={s} value={s}>{s}</Option>)}
+          </Select>
+        </Col>
+        <Col span={8}>
+          <Select value={selectedLocomotive} onChange={setSelectedLocomotive} style={{ width: "100%" }}>
+            <Option value="All">All Locomotives</Option>
+            {locomotives.map((loco) => (
+              <Option key={loco.locomotiveId} value={loco.name}>{loco.name}</Option>
+            ))}
+          </Select>
+        </Col>
+        <Col span={8}>
+          <Input.Search
+            placeholder="Search Task Title"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            allowClear
+          />
+        </Col>
+      </Row>
+
+      {/* Tasks */}
+      <Card title="Tasks to Supervise">
+        <List
+          grid={{ gutter: 16, column: 1 }}
+          dataSource={filteredTasks}
+          renderItem={(task) => {
+            const engineerList = Array.isArray(assignedEngineers[task.id])
+              ? assignedEngineers[task.id]
+              : assignedEngineers[task.id]
+                ? [{ name: assignedEngineers[task.id], discipline: "N/A" }]
+                : [];
+
+            return (
+              <List.Item>
+                <Card
+                  title={
+                    <Button
+                      type="link"
+                      onClick={() => handleGoToDetail(task.id, task.type)}
+                      style={{ padding: 0 }}
+                    >
+                      <Text strong>{task.title}</Text>
+                    </Button>
+                  }
+                  extra={<Tag color={statusColors[task.status]}>{task.status}</Tag>}
+                  actions={[
+                    <Button type="link" icon={<UserAddOutlined />} onClick={() => openAssignModal(task)}>
+                      Assign / Reassign
+                    </Button>
+                  ]}
+                >
+                  {engineerList.map((eng, idx) => (
+                    <Tag
+                      key={idx}
+                      color="green"
+                      closable
+                      onClose={() => handleRemove(task.id, eng.name)}
+                    >
+                      {eng.name} ({eng.discipline})
+                    </Tag>
+                  ))}
+                </Card>
+              </List.Item>
+            );
+          }}
+        />
+      </Card>
+
+      {/* Modal */}
+      <Modal
+        title={`Assign Engineer for "${selectedTask?.title}"`}
+        open={assignModalVisible}
+        onCancel={() => setAssignModalVisible(false)}
+        footer={null}
+      >
+        <Form form={form} layout="vertical" onFinish={handleAssign}>
+          <Form.Item name="engineer" label="Engineer" rules={[{ required: true }]}>
+            <Select
+              placeholder="Select Engineer"
+              showSearch
+              optionFilterProp="children"
+            >
+              {["Mechanical", "Electrical", "Software", "Quality"].map((disc) => (
+                <OptGroup key={disc} label={disc}>
+                  {engineers
+                    .filter((e) => e.discipline === disc)
+                    .map((e) => (
+                      <Option key={e.id} value={e.name}>{e.name}</Option>
+                    ))}
+                </OptGroup>
               ))}
             </Select>
-          </Col>
-          <Col span={8}>
-            <Input.Search
-              placeholder="Search Task Title"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              allowClear
-            />
-          </Col>
-        </Row>
-
-        {/* Tasks */}
-        <Card title="Tasks to Supervise">
-          <List
-            grid={{ gutter: 16, column: 1 }}
-            dataSource={filteredTasks}
-            renderItem={(task) => {
-              const engineerList = Array.isArray(assignedEngineers[task.id])
-                ? assignedEngineers[task.id]
-                : assignedEngineers[task.id]
-                  ? [{ name: assignedEngineers[task.id], discipline: "N/A" }]
-                  : [];
-
-              return (
-                <List.Item>
-                  <Card
-                    title={
-                      <Button
-                        type="link"
-                        onClick={() => handleGoToDetail(task.id)}
-                        style={{ padding: 0 }}
-                      >
-                        <Text strong>{task.title}</Text>
-                      </Button>
-                    }
-                    extra={<Tag color={statusColors[task.status]}>{task.status}</Tag>}
-                    actions={[
-                      <Button type="link" icon={<UserAddOutlined />} onClick={() => openAssignModal(task)}>
-                        Assign / Reassign
-                      </Button>
-                    ]}
-                  >
-                    {engineerList.map((eng, idx) => (
-                      <Tag
-                        key={idx}
-                        color="green"
-                        closable
-                        onClose={() => handleRemove(task.id, eng.name)}
-                      >
-                        {eng.name} ({eng.discipline})
-                      </Tag>
-                    ))}
-                  </Card>
-                </List.Item>
-              );
-            }}
-          />
-        </Card>
-
-        {/* Modal */}
-        <Modal
-          title={`Assign Engineer for "${selectedTask?.title}"`}
-          open={assignModalVisible}
-          onCancel={() => setAssignModalVisible(false)}
-          footer={null}
-        >
-          <Form form={form} layout="vertical" onFinish={handleAssign}>
-            <Form.Item name="engineer" label="Engineer" rules={[{ required: true }]}>
-              <Select
-                placeholder="Select Engineer"
-                showSearch
-                optionFilterProp="children"
-              >
-                {["Mechanical", "Electrical", "Software", "Quality"].map((disc) => (
-                  <OptGroup key={disc} label={disc}>
-                    {engineers
-                      .filter((e) => e.discipline === disc)
-                      .map((e) => (
-                        <Option key={e.id} value={e.name}>{e.name}</Option>
-                      ))}
-                  </OptGroup>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item name="discipline" label="Discipline" rules={[{ required: true }]}>
-              <Select placeholder="Select Discipline">
-                <Option value="Mechanical">Mechanical</Option>
-                <Option value="Electrical">Electrical</Option>
-                <Option value="Software">Software</Option>
-                <Option value="Quality">Quality</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" block>Assign Engineer</Button>
-            </Form.Item>
-          </Form>
-        </Modal>
-      </div>
+          </Form.Item>
+          <Form.Item name="discipline" label="Discipline" rules={[{ required: true }]}>
+            <Select placeholder="Select Discipline">
+              <Option value="Mechanical">Mechanical</Option>
+              <Option value="Electrical">Electrical</Option>
+              <Option value="Software">Software</Option>
+              <Option value="Quality">Quality</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block>Assign Engineer</Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
   );
 };
 

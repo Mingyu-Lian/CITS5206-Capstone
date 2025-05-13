@@ -5,7 +5,7 @@ import {
 } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import QueryBuilder from "../components/QueryBuilder";
-import PageLayout from "../components/PageLayout";
+//import PageLayout from "../components/PageLayout";
 import { useTasks } from "../hooks/useMockData";
 import users from "../mock/mockUsers";
 import { fetchTaskSignOffs, toggleTaskSignOff, supervisorSignOffTask } from "../mock/mockApi";
@@ -33,10 +33,11 @@ const TaskListPage = () => {
   const currentDiscipline = localStorage.getItem("discipline");
 
   useEffect(() => {
-    if (!loading && tasks.length) {
-      setTaskList(tasks);
-    }
-  }, [loading, tasks]);
+  if (!loading) {
+    setTaskList(tasks);
+  }
+}, [loading, tasks]);
+
 
   useEffect(() => {
     const loadSignOffs = async () => {
@@ -51,15 +52,15 @@ const TaskListPage = () => {
   }, []);
 
   useEffect(() => {
-    const handleStorage = (e) => {
-      if (e.key === "assignedTasks") {
-        const parsed = JSON.parse(e.newValue || "{}");
-        setAssignedTasksMap(parsed);
-      }
-    };
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
-  }, []);
+  const handleStorage = (e) => {
+    if (e.key === "lastSignOff") {
+      fetchTaskSignOffs().then(setSignOffs);
+    }
+  };
+  window.addEventListener("storage", handleStorage);
+  return () => window.removeEventListener("storage", handleStorage);
+}, []);
+
 
   const applyFilters = (query) => setFilters(query);
   const clearFilters = () => setFilters({});
@@ -78,10 +79,15 @@ const TaskListPage = () => {
   });
 
   const handleEngineerToggle = async (taskId, engineer) => {
-    const updated = await toggleTaskSignOff(taskId, engineer);
-    setSignOffs((prev) => ({ ...prev, [`${taskId}-${engineer}`]: updated }));
-    message.success(`${engineer} ${updated ? "signed off" : "un-signed"} task`);
-  };
+  const updated = await toggleTaskSignOff(taskId, engineer);
+  setSignOffs((prev) => ({ ...prev, [`${taskId}-${engineer}`]: updated }));
+  message.success(`${engineer} ${updated ? "signed off" : "un-signed"} task`);
+
+  // ✅ Broadcast sign-off change to other dashboards
+  localStorage.setItem("lastSignOff", `${taskId}-${engineer}-${Date.now()}`);
+  window.dispatchEvent(new Event("storage"));
+};
+
 
   const handleSupervisorToggle = async (record) => {
     await supervisorSignOffTask(locomotiveId, wmsId, record.taskId);
@@ -218,11 +224,20 @@ const TaskListPage = () => {
       render: (_, record) => (
         <Space>
           <Button
-            type="link"
-            onClick={() => navigate(`/taskdetail/${locomotiveId}/${wmsId}/${record.taskId}`)}
-          >
-            View / Update Task
-          </Button>
+  type="link"
+  onClick={() => {
+    const taskNumber = parseInt(record.taskId.replace("task-", ""), 10); // removes leading zeros
+
+    const destination =
+      record.type === "Installation"
+        ? `/taskjson/${taskNumber}`
+        : `/commissionjson/${taskNumber}`;
+    navigate(destination);
+  }}
+>
+  View / Update Task
+</Button>
+
           {currentRole === "Supervisor" && (
             <Button
               type="link"
@@ -243,58 +258,56 @@ const TaskListPage = () => {
   if (loading) return <div>Loading Tasks...</div>;
 
   return (
-    <PageLayout>
-      <div className="p-6 bg-white min-h-screen">
-        <Title level={3}>Assigned Tasks for Locomotive {locomotiveId}, WMS {wmsId}</Title>
+    <div className="p-6 bg-white min-h-screen">
+      <Title level={3}>Assigned Tasks for Locomotive {locomotiveId}, WMS {wmsId}</Title>
 
-        <QueryBuilder
-          fields={[
-            { label: "Title", key: "title", type: "text" },
-            { label: "Status", key: "status", type: "select", options: ["Pending", "In Progress", "Completed", "Signed Off"] },
-          ]}
-          onApply={applyFilters}
-          onClear={clearFilters}
-        />
-        <Table rowKey="taskId" columns={columns} dataSource={filtered} bordered />
+      <QueryBuilder
+        fields={[
+          { label: "Title", key: "title", type: "text" },
+          { label: "Status", key: "status", type: "select", options: ["Pending", "In Progress", "Completed", "Signed Off"] },
+        ]}
+        onApply={applyFilters}
+        onClear={clearFilters}
+      />
+      <Table rowKey="taskId" columns={columns} dataSource={filtered} bordered />
 
-        {/* Assignment Modal */}
-        <Modal
-          title={`Assign Engineer for "${selectedTask?.title}"`}
-          open={assignModalVisible}
-          onCancel={() => setAssignModalVisible(false)}
-          footer={null}
-        >
-          <Form form={form} layout="vertical" onFinish={handleAssignEngineer}>
-            <Form.Item name="engineer" label="Engineer" rules={[{ required: true }]}>
-              <Select placeholder="Select Engineer" showSearch optionFilterProp="children">
-                {["Mechanical", "Electrical", "Software", "Quality"].map((disc) => (
-                  <OptGroup key={disc} label={disc}>
-                    {users
-                      .filter((e) => e.role === "Engineer" && e.discipline === disc)
-                      .map((e) => (
-                        <Option key={e.id} value={e.name}>{e.name}</Option>
-                      ))}
-                  </OptGroup>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item name="discipline" label="Discipline" rules={[{ required: true }]}>
-              <Select placeholder="Select Discipline">
-                <Option value="Mechanical">Mechanical</Option>
-                <Option value="Electrical">Electrical</Option>
-                <Option value="Software">Software</Option>
-                <Option value="Quality">Quality</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" block>
-                Assign Engineer
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
-      </div>
-    </PageLayout>
+      {/* Assignment Modal */}
+      <Modal
+        title={`Assign Engineer for "${selectedTask?.title}"`}
+        open={assignModalVisible}
+        onCancel={() => setAssignModalVisible(false)}
+        footer={null}
+      >
+        <Form form={form} layout="vertical" onFinish={handleAssignEngineer}>
+          <Form.Item name="engineer" label="Engineer" rules={[{ required: true }]}>
+            <Select placeholder="Select Engineer" showSearch optionFilterProp="children">
+              {["Mechanical", "Electrical", "Software", "Quality"].map((disc) => (
+                <OptGroup key={disc} label={disc}>
+                  {users
+                    .filter((e) => e.role === "Engineer" && e.discipline === disc)
+                    .map((e) => (
+                      <Option key={e.id} value={e.name}>{e.name}</Option>
+                    ))}
+                </OptGroup>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item name="discipline" label="Discipline" rules={[{ required: true }]}>
+            <Select placeholder="Select Discipline">
+              <Option value="Mechanical">Mechanical</Option>
+              <Option value="Electrical">Electrical</Option>
+              <Option value="Software">Software</Option>
+              <Option value="Quality">Quality</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block>
+              Assign Engineer
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
   );
 };
 

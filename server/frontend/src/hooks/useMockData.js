@@ -81,8 +81,14 @@ export const useTasks = (locomotiveId, wmsId) => {
   useEffect(() => {
     if (!locomotiveId || !wmsId) return;
     const loadData = async () => {
-      const data = await fetchTasksByWMS(locomotiveId, wmsId);
-      setTasks(data);
+      const loco = await fetchLocomotives().then(l => l.find(x => x.locomotiveId === locomotiveId));
+      const wms = loco?.wmsList.find(w => w.wmsId === wmsId);
+      const wmsType = wms?.type || "Unknown";
+      const tasksWithType = (wms?.tasks || []).map(task => ({
+        ...task,
+        type: wmsType, // ✅ Attach WMS type to each task
+      }));
+      setTasks(tasksWithType);
       setLoading(false);
     };
     loadData();
@@ -90,6 +96,7 @@ export const useTasks = (locomotiveId, wmsId) => {
 
   return { tasks, loading };
 };
+
 
 export const useTaskDetail = (locomotiveId, wmsId, taskId) => {
   const [taskDetail, setTaskDetail] = useState(null);
