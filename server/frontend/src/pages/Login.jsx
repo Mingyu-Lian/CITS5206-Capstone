@@ -46,9 +46,7 @@ const Login = () => {
 
    //}
 
-    if (!values.discipline && !isAdmin) {
-      return message.error("Please select a discipline.");
-    } 
+    
     //
 
     setLoading(true);

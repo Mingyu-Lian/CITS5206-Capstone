@@ -14,11 +14,11 @@ const Dashboard = () => {
   }
 
   switch (role) {
-    case "admin":
+    case "Admin":
       return <AdminDashboard locomotiveCount={locomotives.length} />;
-    case "supervisor":
+    case "Supervisor":
       return <SupervisorDashboard />;
-    case "engineer":
+    case "Engineer":
       return <EngineerDashboard />;
     default:
       return <div>Unauthorized. Please log in.</div>;
