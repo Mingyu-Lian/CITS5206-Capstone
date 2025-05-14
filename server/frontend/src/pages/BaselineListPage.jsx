@@ -1,6 +1,8 @@
 // src/pages/BaselineListPage.jsx
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import {
   Card,
   Button,
@@ -25,7 +27,9 @@ const BaselineListPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [deletingId, setDeletingId] = useState(null);
+  const navigate = useNavigate();
 
+console.log(baselines, "baselines")
   const handleCreateBaseline = async (values) => {
     const version = values.version.trim();
     const duplicate = baselines.find(b => b.version === version);
@@ -85,7 +89,20 @@ const BaselineListPage = () => {
                   </Popconfirm>
                 }
               >
-                <p><strong>ID:</strong> {baseline.id}</p>
+
+                <div style = {{ display: "flex", alignItems: "center"}}>
+                  <p><strong>ID:</strong> {baseline.id}</p>  <Button
+                    type="link"
+                    onClick={() => {
+                      const baselineNumber = parseInt(baseline.id.replace("baseline-", ""), 10); // removes leading zeros
+                      const destination =`/baseline/${baselineNumber}`
+                      navigate(destination)
+                    }}
+                    >
+
+                    View baseline
+                  </Button>
+                </div>
                 <p><strong>Description:</strong> {baseline.description}</p>
               </Card>
             </Col>

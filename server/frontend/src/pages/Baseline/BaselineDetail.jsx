@@ -3,7 +3,7 @@ import { useRef, useState,useEffect } from "react"
 import { EditOutlined, SearchOutlined, PlusOutlined, UserOutlined } from "@ant-design/icons"
 import { BrowserRouter as Router, Routes, Route, useParams, useNavigate } from 'react-router-dom';
 
-import { Table, Button, Input, Typography, Divider,Form, message, Modal, Select, Space, Popover } from "antd"
+import { Table, Button, Input, Typography, Alert, Spin,Divider,Form, message, Modal, Select, Space, Popover } from "antd"
 import "./BaselineDetail.css"
 import Baseline from "./Baseline.json"; 
 
@@ -139,16 +139,16 @@ const BaselineDetail = () => {
   
       loadData();
     }, [baselineId]);
+
+    if (loading) {
+      return <Spin style={{ display: 'flex', justifyContent: 'center', marginTop: '20%' }} size="large" tip="Loading Baseline..." />;
+    }
+    if (!data) {
+      return <Alert message="Baseline data not found" type="error" />;
+    }
   // Table columns configuration
   const columns = [
-    // {
-    //   title: "Action",
-    //   dataIndex: "action",
-    //   key: "action",
-    //   width: 60,
-    //   className: "",
-    //   render: (text, record) => <div className={""}>{text}</div>,
-    // },
+  
     {
       title: "Configuration Item",
       dataIndex: "configItem",
@@ -223,21 +223,7 @@ const BaselineDetail = () => {
 
       }
     },
-    // {
-    //   title: "Verify by",
-    //   dataIndex: "verifyBy",
-    //   key: "verifyBy",
-    //   width: 100,
-    //   className: "",
-    //   render: (text, record) => (
-    //     <div
-    //       className={text === "(Click to sign)" ? "clickToSign " : ""}
-    //       onClick={() => text === "(Click to sign)" && handleSignatureClick(record.key, "verifyBy")}
-    //     >
-    //       {text}
-    //     </div>
-    //   ),
-    // },
+
     {
       title: "Verify by",
       dataIndex: "verifyBy",
@@ -331,17 +317,8 @@ const BaselineDetail = () => {
   // Handle signing
   const handleSignatureClick = (key, field) => {
     console.log(key, field, "1")
-    const currentCellData = {"key":key, "field":field}
     setCurrentCell( {"key":key, "field":field})
-    console.log(currentCell, "2")
 
-    // const newData = [...data]
-    // const index = newData.findIndex((item) => item.key === key)
-    // if (index > -1) {
-    //   newData[index][field] = "Signed"
-    //   setData(newData)
-    // }
-    // Open the signature modal
     setIsSignatureModalOpen(true)
 
   }
@@ -376,15 +353,6 @@ const BaselineDetail = () => {
     // Show success message
     message.success(`Signed by ${username}`)
   }
-
-  // const handleSignatureClick = (key, field) => {
-  //   const newData = [...data]
-  //   const index = newData.findIndex((item) => item.key === key)
-  //   if (index > -1) {
-  //     newData[index][field] = "Signed"
-  //     setData(newData)
-  //   }
-  // }
 
   // Component to truncate text and show popover on hover
   const TruncatedText = ({ text }) => {
