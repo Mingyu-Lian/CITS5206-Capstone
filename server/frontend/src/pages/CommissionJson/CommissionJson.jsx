@@ -1,14 +1,14 @@
 
-import { useState, useEffect } from "react" 
+import { useState, useEffect } from "react"
 import { BrowserRouter as Router, Routes, Route, useParams, useNavigate } from 'react-router-dom';
 
-import { Table, Button, Modal, Input, Typography, Form, message } from "antd" 
+import { Table, Button, Modal, Input, Typography, Form, message, Alert, Spin } from "antd"
 import { UserOutlined, LoadingOutlined } from "@ant-design/icons"
-import Commissions from "./Commission.json"; 
-import oneTable from "./T5.json"; 
+import Commissions from "./Commission.json";
+import oneTable from "./T5.json";
 
 
-const { Title, Text } = Typography 
+const { Title, Text } = Typography
 const tableData = oneTable;
 
 // Mock API function to simulate fetching data from a server
@@ -70,9 +70,9 @@ export default function Home() {
   const saveTableData = async (data) => {
 
     await new Promise((resolve) => setTimeout(resolve, 1000))
-    
+
     console.log("Data saved to server:", data)
-  
+
     return { success: true, message: "Data saved successfully" }
   }
 
@@ -93,7 +93,7 @@ export default function Home() {
     loadData();
   }, [commissionId]);
 
-  
+
   const processTableData = (data) => {
     if (!data) return { columns: [], rows: [] }
 
@@ -303,19 +303,19 @@ export default function Home() {
     setIsModalOpen(false)
   }
 
- 
+
   const handleModalCancel = () => {
     // Simply close the modal without saving changes
     setIsModalOpen(false)
   }
 
- 
+
   const handleSignatureCancel = () => {
     // Close the signature modal without saving
     setIsSignatureModalOpen(false)
   }
 
-  
+
   const exportTableData = () => {
     if (!tableData) return null
 
@@ -346,7 +346,7 @@ export default function Home() {
   }
 
   //  Function to save the table data to the server
-   
+
   const saveData = async () => {
     try {
       setSaving(true)
@@ -365,12 +365,10 @@ export default function Home() {
   }
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <LoadingOutlined style={{ fontSize: 24 }} spin />
-        <span className="ml-2">Loading table data...</span>
-      </div>
-    )
+    return <Spin style={{ display: 'flex', justifyContent: 'center', marginTop: '20%' }} size="large" tip="Loading Commission Table..." />;
+  }
+  if (!tableData) {
+    return <Alert message="Task not found" type="error" />;
   }
 
   return (

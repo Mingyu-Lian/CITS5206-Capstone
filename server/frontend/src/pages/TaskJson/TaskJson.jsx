@@ -133,7 +133,7 @@ const Taskdetail = () => {
   };
 
   if (loading) {
-    return <Spin style={{ marginTop: 100 }} />;
+    return <Spin style={{ display: 'flex', justifyContent: 'center', marginTop: '20%' }} size="large" tip="Loading Task..." />;
   }
   if (!taskData) {
     return <Alert message="Task not found" type="error" />;
