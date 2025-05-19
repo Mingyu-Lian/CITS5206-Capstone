@@ -102,7 +102,9 @@ Step 2:`cd server/frontend`
 
 Step 3:`npm install`
 
-Step 4:`npm start`  or `npm run dev`
+Step 4:`npm install react-webcam` , `npm install localforage`
+
+Step 5:`npm start`  or `npm run dev`
 
 The frontend will be available at:
 http://localhost:3000
@@ -137,6 +139,20 @@ Once everything is running, visit:
 
 ### API Documentation (Swagger): http://localhost:5001/api-docs 
 
+### Login Credentials for Frontend
+
+To explore the system from different user perspectives, use the following mock credentials during login:
+
+| **Role**     | **Username** | **Password**       | **Discipline**  |
+|--------------|--------------|--------------------|-----------------|
+| Admin        | alice        | Admin@123          | Not required    |
+| Supervisor   | charlie      | Supervisor@123     | Mechanical      |
+| Supervisor   | diana        | Supervisor@123     | Electrical      |
+| Engineer     | fiona        | Engineer@123       | Mechanical      |
+| Engineer     | george       | Engineer@123       | Electrical      |
+| Engineer     | hannah       | Engineer@123       | Software        |
+
+> **Note:** Discipline is only required for Supervisor and Engineer roles.
 
 # Contributors
 
