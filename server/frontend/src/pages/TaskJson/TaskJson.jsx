@@ -253,7 +253,7 @@ const Taskdetail = () => {
           </Content>
         </Layout>
         <Footer className="task-footer">
-          <Button type="primary" className="w-[120px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowLeftOutlined />} onClick={() => handleNavigation('prev')}
+          <Button  id = "previous_task"type="primary" className="w-[120px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowLeftOutlined />} onClick={() => handleNavigation('prev')}
             disabled={parseInt(subtaskId) <= 1}>
             Previous
           </Button>
@@ -267,7 +267,7 @@ const Taskdetail = () => {
             Next Permit Officer
           </Button>
 
-          <Button type="primary" className="w-[120px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowRightOutlined />} onClick={() => handleNavigation('next')}
+          <Button id = "next_task"type="primary" className="w-[120px] bg-[#d32f2f] hover:bg-[#b71c1c]" icon={<ArrowRightOutlined />} onClick={() => handleNavigation('next')}
             disabled={!Tasks[parseInt(subtaskId) + 1]}>
             Next
           </Button>

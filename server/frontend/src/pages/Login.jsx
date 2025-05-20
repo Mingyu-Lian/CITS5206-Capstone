@@ -6,7 +6,6 @@ import { isStrongPassword } from "../utils/validators";
 import users from "../mock/mockUsers"; // ✅ Import real users list
 import axios from "axios";
 const { Option } = Select;
-
 const mockLogin = async (username, password) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -25,6 +24,7 @@ const mockLogin = async (username, password) => {
           },
         });
       } else {
+        message.error("Bad Credential")
         reject(new Error("Invalid username or password"));
       }
     }, 1000);
@@ -85,15 +85,14 @@ const Login = () => {
       localStorage.setItem("userId", data.id); // ✅ Add this line to cache user id for offline log
 
       message.success("Login successful!");
-
       switch (data.role) {
-        case "admin":
+        case "Admin":
           navigate("/dashboard?role=admin");
           break;
-        case "supervisor":
+        case "Supervisor":
           navigate("/dashboard?role=supervisor");
           break;
-        case "engineer":
+        case "Engineer":
           navigate("/dashboard?role=engineer");
           break;
         default:
@@ -134,7 +133,7 @@ const Login = () => {
           label="Username"
           rules={[{ required: true, message: "Please input your username!" }]}
         >
-          <Input />
+          <Input id="username" />
         </Form.Item>
 
         <Form.Item
@@ -142,7 +141,7 @@ const Login = () => {
           label="Password"
           rules={[{ required: true, message: "Please input your password!" }]}
         >
-          <Input.Password />
+          <Input.Password  id="password"/>
         </Form.Item>
 
         {showDiscipline && (
@@ -151,17 +150,17 @@ const Login = () => {
             label="Select Discipline"
             rules={[{ required: false }]}
           >
-            <Select placeholder="Select a discipline">
-              <Option value="Electrical">Electrical</Option>
-              <Option value="Mechanical">Mechanical</Option>
-              <Option value="Quality">Quality</Option>
-              <Option value="Mechanical Electrical">Mechanical Electrical</Option>
+            <Select id = "discipline-select" placeholder="Select a discipline">
+              <Option  id = "Electrical" value="Electrical">Electrical</Option>
+              <Option id = "Mechanical" value="Mechanical">Mechanical</Option>
+              <Option id = "Quality" value="Quality">Quality</Option>
+              <Option id = "Mechanical Electrical" value="Mechanical Electrical">Mechanical Electrical</Option>
             </Select>
           </Form.Item>
         )}
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" block loading={loading}>
+          <Button id = "login" stype="primary" htmlType="submit" block loading={loading}>
             Login
           </Button>
         </Form.Item>

@@ -13,7 +13,7 @@ const PageLayout = ({ children }) => {
 
   const menuItems = [
     { label: "Dashboard", key: "/dashboard", icon: <DashboardOutlined /> },
-    { label: "Task Management", key: "/tasks", icon: <CheckCircleOutlined /> },
+    { label: "Task Management", key: "/tasks", id: "task_management", icon: <CheckCircleOutlined /> },
     { label: "Logout", key: "logout", icon: <LogoutOutlined /> },
   ];
 
