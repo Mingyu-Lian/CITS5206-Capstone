@@ -153,6 +153,55 @@ To explore the system from different user perspectives, use the following mock c
 | Engineer     | hannah       | Engineer@123       | Software        |
 
 > **Note:** Discipline is only required for Supervisor and Engineer roles.
+## Selenium Testing 
+### 1. Install node.js for your device
+Instll node.js from the link: https://nodejs.org/en
+### 2. Install Google Chrome for Testing and chromedriver
+
+Both Chrome for Tesing and ChromeDriver can download from https://googlechromelabs.github.io/chrome-for-testing/#stable 
+
+Two way to install ChromeDriver:
+1. Use Homebrew to install ChromeDriver:
+`brew install chromedriver`
+
+2. Install from the website: 
+Link: https://googlechromelabs.github.io/chrome-for-testing/#stable
+Download the chromedriver fromt the website and go to the download folder.
+`unzip chromedriver_mac64.zip`
+Add chromedriver to your PATH (e.g. /usr/local/bin)
+`cp chromedriver /usr/local/bin`
+
+Use `chromedriver --version` to verify installed ChromeDriver successfully. This would output the installed ChromeDriver version. And confirmaddded ChromerDriver to your PATH using `which chromedriver`. This will ouput the full path to the executable. 
+**Verification example:**
+```bash
+% chromedriver --version
+ChromeDriver 136.0.7103.94 (fa0be0b33debeb378a8e6ad9c599be34e2dc3b37-refs/branch-heads/7103@{#1842})
+```
+**Note :** Homebrew automatically places executables in directories that are already included in your system's PATH (/usr/local/bin or /opt/homebrew/bin), so you don’t need to configure anything manually.
+**Detail on other operation system could be found here:**
+https://www.npmjs.com/package/selenium-webdriver
+
+### 3. Install selenium-webdriver
+#### Description
+Install selenium-webdriver inside frontend folder.
+`npm install selenium-webdriver`
+
+Official Selenium Link: https://www.selenium.dev/documentation/webdriver/getting_started/install_library/
+
+### 4. How run selenium test:
+1. Change to the frontend directory:
+`cd CITS5206-Capstone/server/frontend`
+2. Start the front end server.
+`npm start` to start the server
+3. Go to the test folder: 
+The test code is located under `test` folder.
+`cd CITS5206-Capstone/server/frontend/src/test`
+4. **Run test command:**
+`node <test file name>` to run the selenium test.
+There are two test available to test:
+  `node loginTestEngineer.js`
+  `node loginTestAdmin.js`
+
 
 # Contributors
 
