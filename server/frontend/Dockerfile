@@ -1,6 +1,6 @@
 # Use the official Node.js image as the base
 FROM node:18-alpine
-
+#
 # Set the working directory inside the container
 WORKDIR /app
 
@@ -12,7 +12,8 @@ RUN npm install
 
 # Copy the rest of the application files
 COPY . .
-
+# Set environment variable for production
+ENV NODE_OPTIONS=--openssl-legacy-provider
 # Expose port 3000 (default React port)
 EXPOSE 3000
 
