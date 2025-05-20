@@ -39,6 +39,7 @@ const DashboardLayout = ({ children }) => {
   //Task Management for all roles
   if (["Admin", "Supervisor", "Engineer"].includes(role)) {
     menuItems.push({
+      id:"task_managements",
       label: "Task Management",
       key: "/tasks",
       icon: <CheckCircleOutlined />,

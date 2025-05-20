@@ -33,10 +33,10 @@ const TaskListPage = () => {
   const currentDiscipline = localStorage.getItem("discipline");
 
   useEffect(() => {
-  if (!loading) {
-    setTaskList(tasks);
-  }
-}, [loading, tasks]);
+    if (!loading) {
+      setTaskList(tasks);
+    }
+  }, [loading, tasks]);
 
 
   useEffect(() => {
@@ -52,14 +52,14 @@ const TaskListPage = () => {
   }, []);
 
   useEffect(() => {
-  const handleStorage = (e) => {
-    if (e.key === "lastSignOff") {
-      fetchTaskSignOffs().then(setSignOffs);
-    }
-  };
-  window.addEventListener("storage", handleStorage);
-  return () => window.removeEventListener("storage", handleStorage);
-}, []);
+    const handleStorage = (e) => {
+      if (e.key === "lastSignOff") {
+        fetchTaskSignOffs().then(setSignOffs);
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
 
 
   const applyFilters = (query) => setFilters(query);
@@ -79,14 +79,14 @@ const TaskListPage = () => {
   });
 
   const handleEngineerToggle = async (taskId, engineer) => {
-  const updated = await toggleTaskSignOff(taskId, engineer);
-  setSignOffs((prev) => ({ ...prev, [`${taskId}-${engineer}`]: updated }));
-  message.success(`${engineer} ${updated ? "signed off" : "un-signed"} task`);
+    const updated = await toggleTaskSignOff(taskId, engineer);
+    setSignOffs((prev) => ({ ...prev, [`${taskId}-${engineer}`]: updated }));
+    message.success(`${engineer} ${updated ? "signed off" : "un-signed"} task`);
 
-  // ✅ Broadcast sign-off change to other dashboards
-  localStorage.setItem("lastSignOff", `${taskId}-${engineer}-${Date.now()}`);
-  window.dispatchEvent(new Event("storage"));
-};
+    // ✅ Broadcast sign-off change to other dashboards
+    localStorage.setItem("lastSignOff", `${taskId}-${engineer}-${Date.now()}`);
+    window.dispatchEvent(new Event("storage"));
+  };
 
 
   const handleSupervisorToggle = async (record) => {
@@ -224,19 +224,20 @@ const TaskListPage = () => {
       render: (_, record) => (
         <Space>
           <Button
-  type="link"
-  onClick={() => {
-    const taskNumber = parseInt(record.taskId.replace("task-", ""), 10); // removes leading zeros
+            type="link"
+            onClick={() => {
+              const taskNumber = parseInt(record.taskId.replace("task-", ""), 10); // removes leading zeros
 
-    const destination =
-      record.type === "Installation"
-        ? `/taskjson/${taskNumber}`
-        : `/commissionjson/${taskNumber}`;
-    navigate(destination);
-  }}
->
-  View / Update Task
-</Button>
+              const destination =
+                record.type === "Installation"
+                  ? `/taskjson/${taskNumber}`
+                  : `/commissionjson/${taskNumber}`;
+              navigate(destination);
+            }}
+            id={parseInt(record.taskId.replace("task-", ""), 10)}
+          >
+            View / Update Task
+          </Button>
 
           {currentRole === "Supervisor" && (
             <Button

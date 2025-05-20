@@ -128,7 +128,7 @@ const LocomotiveListPage = () => {
               <Card
                 title={loco.name}
                 actions={[
-                  <Button onClick={() => navigate(`/tasks/${loco.locomotiveId}/wms`)}>
+                  <Button id = {loco.locomotiveId}onClick={() => navigate(`/tasks/${loco.locomotiveId}/wms`)}>
                     View WMS
                   </Button>,
                   ...(role === "Admin"

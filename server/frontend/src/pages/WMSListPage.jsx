@@ -121,6 +121,7 @@ const WMSListPage = () => {
               render: (_, record) => (
                 <>
                   <Button
+                  id={record.wmsId}
                     type="link"
                     onClick={() =>
                       navigate(`/tasks/${locomotiveId}/wms/${record.wmsId}`)
