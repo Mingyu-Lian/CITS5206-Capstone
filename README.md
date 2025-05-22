@@ -1,4 +1,4 @@
-# CITS5206-Capstone
+# CITS5206-Capstone-Group1
 
 # Project Overview
 eWMS (Electronic Working Method Statement) is a web-based system designed to assist administrators, supervisors, and engineers in managing locomotive installation and commissioning tasks efficiently.
@@ -23,6 +23,8 @@ This system digitalizes traditional Working Method Statements (WMS) by leveragin
 - Node.js - Express.js Backend framework 
 - MongoDB - NoSQL database for managing WMS records
 - JWT (JSON Web Tokens) - Authentication and authorization
+- Swagger - API documentation and testing tool
+  
 
 # System Architecture
 ## Frontend (Web UI)
@@ -139,6 +141,9 @@ Once everything is running, visit:
 
 ### API Documentation (Swagger): http://localhost:5001/api-docs 
 
+
+## 4. Front-end Use
+
 ### Login Credentials for Frontend
 
 To explore the system from different user perspectives, use the following mock credentials during login:
@@ -153,12 +158,58 @@ To explore the system from different user perspectives, use the following mock c
 | Engineer     | hannah       | Engineer@123       | Software        |
 
 > **Note:** Discipline is only required for Supervisor and Engineer roles.
-## Selenium Testing 
-### 1. Install node.js for your device
-Instll node.js from the link: https://nodejs.org/en
-### 2. Install Google Chrome for Testing and chromedriver
 
-Both Chrome for Tesing and ChromeDriver can download from https://googlechromelabs.github.io/chrome-for-testing/#stable 
+## 5. Back-end Swagger Use
+
+Our backend uses **Swagger UI** for API documentation, testing, and exploration. Swagger provides an interactive interface where users can view all available endpoints, test them directly, and understand request/response formats with real-time examples.
+
+### What is Swagger?
+
+Swagger (OpenAPI) is a documentation tool that allows developers to:
+- Browse all available endpoints (GET, POST, PUT, DELETE)
+- Understand input/output formats
+- Try out APIs with sample data
+- Authenticate using JWT tokens
+- View and test CRUD operations on WMS documents
+
+### How to Use Swagger
+
+1. **Access Swagger UI:**  
+   Visit: `http://localhost:5000/api-docs`
+
+2. **Explore Endpoints:**  
+   Endpoints are grouped by features such as `/auth`, `/users`, `/wms`, etc.  
+   Click on an endpoint (e.g., `POST /auth/login`) to view details.
+
+3. **Try it Out:**
+   - Click **"Try it out"**
+   - Fill in example request data
+   - Click **"Execute"** to see the response
+
+4. **JWT Authentication:**
+   - Use `POST /auth/login` to log in and retrieve a JWT token
+   - Click **"Authorize"** (top right)
+   - Enter `Bearer <your_token_
+
+5. **Check Data Schema:**
+   - Each endpoint shows request and response schemas
+   - These reflect the MongoDB document structure
+
+### Example Use Case
+
+To create a new WMS document:
+- Navigate to `POST /wms`
+- Click **Try it out**
+- Enter the JSON payload
+- Click **Execute** to create the document and receive a response with ID and timestamps
+
+
+# Selenium Testing 
+## 1. Install node.js for your device
+Instll node.js from the link: https://nodejs.org/en
+## 2. Install Google Chrome for Testing and chromedriver
+
+Both Chrome for Testing and ChromeDriver can download from https://googlechromelabs.github.io/chrome-for-testing/#stable 
 
 Two way to install ChromeDriver:
 1. Use Homebrew to install ChromeDriver:
@@ -181,14 +232,14 @@ ChromeDriver 136.0.7103.94 (fa0be0b33debeb378a8e6ad9c599be34e2dc3b37-refs/branch
 **Detail on other operation system could be found here:**
 https://www.npmjs.com/package/selenium-webdriver
 
-### 3. Install selenium-webdriver
+## 3. Install selenium-webdriver
 #### Description
 Install selenium-webdriver inside frontend folder.
 `npm install selenium-webdriver`
 
 Official Selenium Link: https://www.selenium.dev/documentation/webdriver/getting_started/install_library/
 
-### 4. How run selenium test:
+## 4. How run selenium test:
 1. Change to the frontend directory:
 `cd CITS5206-Capstone/server/frontend`
 2. Start the front end server.
@@ -201,7 +252,6 @@ The test code is located under `test` folder.
 There are two test available to test:
   `node loginTestEngineer.js`
   `node loginTestAdmin.js`
-
 
 # Contributors
 
