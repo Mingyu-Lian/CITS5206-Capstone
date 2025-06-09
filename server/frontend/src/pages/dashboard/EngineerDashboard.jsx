@@ -4,14 +4,14 @@ import { SyncOutlined, ToolOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import { useLocomotives } from "../../hooks/useMockData";
 import localforage from "localforage";
-import { syncLogs } from "../../utils/offlineSyncHelper";
+import { syncLogs, getCachedLocomotiveData, cacheLocomotiveData } from "../../utils/offlineSyncHelper";
 import users from "../../mock/mockUsers";
 import useNetworkStatus from "../../utils/useNetworkStatus";
-import { getCachedLocomotiveData, cacheLocomotiveData } from "../../utils/offlineSyncHelper";
-
+import { defaultLocomotiveData } from "../../mock/mockEngineerTasks";
 
 const { Title } = Typography;
 const { Option } = Select;
+
 const userId = localStorage.getItem("userId") || "unknown";
 const LOG_KEY = `offlineLogs-${userId}`;
 const currentUser = users.find(u => u.id === userId);
@@ -33,75 +33,9 @@ const EngineerDashboard = () => {
 
       for (const locoId of locoIds) {
         const existing = await getCachedLocomotiveData(locoId);
-        if (existing) {
-          continue;
-        }
+        if (existing) continue;
 
-        const baselineMap = {
-          "Loco-001": "v3.0",
-          "Loco-002": "v2.1",
-          "Loco-003": "v2.5",
-          "Loco-004": "v1.8",
-        };
-
-        const defaultData = {
-          locomotiveId: locoId,
-          name: `Locomotive ${locoId}`,
-          baseline: baselineMap[locoId],
-          wmsList: [
-            {
-              wmsId: "wms1",
-              title: "WMS - Electrical",
-              type: "Installation",
-              tasks: [
-                {
-                  taskId: "task1",
-                  title: "Check Fuse Box",
-                  status: "Pending",
-                  subtasks: [
-                    { id: "sub1", instruction: "Verify voltage levels.", result: "", signedOff: false, discipline: "Electrical" },
-                    { id: "sub2", instruction: "Capture photo of connected cable.", result: "", signedOff: false, discipline: "Mechanical" }
-                  ]
-                },
-                {
-                  taskId: "task2",
-                  title: "Install Cabling",
-                  status: "Signed Off",
-                  subtasks: [
-                    { id: "sub7", instruction: "Inspect insulation on cabling.", result: "", signedOff: false, discipline: "Electrical" },
-                    { id: "sub8", instruction: "Secure loose cables.", result: "", signedOff: false, discipline: "Mechanical" }
-                  ]
-                }
-              ]
-            },
-            {
-              wmsId: "wms2",
-              title: "WMS - Hydraulic",
-              type: "Commissioning",
-              tasks: [
-                {
-                  taskId: "task3",
-                  title: "Inspect Brake System",
-                  status: "Pending",
-                  subtasks: [
-                    { id: "sub3", instruction: "Inspect brake pads wear", result: "", signedOff: false, discipline: "Mechanical" },
-                    { id: "sub4", instruction: "Check brake fluid levels", result: "", signedOff: false, discipline: "Mechanical" }
-                  ]
-                },
-                {
-                  taskId: "task4",
-                  title: "Replace Battery Module",
-                  status: "In Progress",
-                  subtasks: [
-                    { id: "sub5", instruction: "Remove old battery", result: "", signedOff: false, discipline: "Electrical" },
-                    { id: "sub6", instruction: "Install new battery", result: "", signedOff: false, discipline: "Electrical" }
-                  ]
-                }
-              ]
-            }
-          ]
-        };
-
+        const defaultData = defaultLocomotiveData(locoId);
         await cacheLocomotiveData(locoId, defaultData);
       }
     };
@@ -109,7 +43,6 @@ const EngineerDashboard = () => {
     autoCacheAllLocos();
   }, [online]);
 
-  // Load tasks assigned to the current engineer
   const fetchAssignedTasks = () => {
     const assigned = [];
     const assignedEngineers = JSON.parse(localStorage.getItem("assignedTasks") || "{}");
@@ -130,10 +63,8 @@ const EngineerDashboard = () => {
     setAssignedTasks(assigned);
   };
 
-  // Load user's cached task list (from localForage)
   const loadUserCachedTaskList = async () => {
     try {
-      const userId = localStorage.getItem("userId") || "unknown";
       const cachedTasks = await localforage.getItem(`offlineTaskList-${userId}`);
       if (cachedTasks && Array.isArray(cachedTasks)) {
         setAssignedTasks(cachedTasks);
@@ -142,9 +73,8 @@ const EngineerDashboard = () => {
     } catch (error) {
       console.error("Failed to load cached task list:", error);
     }
-  };  
+  };
 
-  // Load offline subtasks (from audit logs stored in localForage)
   const fetchPendingSubtasks = async () => {
     const allLogs = (await localforage.getItem(LOG_KEY)) || [];
     const pendingLogs = allLogs.filter((log) => log.status === "pending");
@@ -163,7 +93,6 @@ const EngineerDashboard = () => {
     setPendingSubtasks(uniqueSubtaskIds);
   };
 
-  // Sync logs and refresh data
   const handleSync = async () => {
     await syncLogs();
     message.success("Logs synced successfully.");
@@ -171,7 +100,6 @@ const EngineerDashboard = () => {
     fetchAssignedTasks();
   };
 
-  // Mark task as completed (UI only)
   const markAsCompleted = (taskId) => {
     const updatedTasks = assignedTasks.map(task =>
       task.id === taskId ? { ...task, status: "Completed" } : task
@@ -180,18 +108,15 @@ const EngineerDashboard = () => {
     message.success("Task marked as completed!");
   };
 
-  // Load data and bind event listeners
   useEffect(() => {
     if (!loading) {
       fetchAssignedTasks();
     }
     fetchPendingSubtasks();
-    loadUserCachedTaskList(); // ✅ for offline identify   
+    loadUserCachedTaskList();
 
     const handleStorageChange = (event) => {
-      if (event.key === "assignedTasks") {
-        fetchAssignedTasks();
-      }
+      if (event.key === "assignedTasks") fetchAssignedTasks();
     };
 
     const handleOnline = () => {
@@ -201,15 +126,12 @@ const EngineerDashboard = () => {
     };
 
     const handleVisibility = () => {
-      if (document.visibilityState === "visible") {
-        fetchPendingSubtasks(); 
-      }
+      if (document.visibilityState === "visible") fetchPendingSubtasks();
     };
-    
+
     window.addEventListener("storage", handleStorageChange);
     window.addEventListener("online", handleOnline);
     document.addEventListener("visibilitychange", handleVisibility);
-
 
     return () => {
       window.removeEventListener("storage", handleStorageChange);
@@ -218,116 +140,111 @@ const EngineerDashboard = () => {
     };
   }, [loading, pendingSubtasks]);
 
-  // Loading indicator
-  if (loading) return <Spin tip="Loading Engineer Tasks..." size="large" style={{ marginTop: "20vh" }} />;
+  if (loading) {
+    return <Spin tip="Loading Engineer Tasks..." size="large" style={{ marginTop: "20vh" }} />;
+  }
 
-  // Filter tasks
   const filteredTasks = assignedTasks.filter((task) => {
     const statusMatch = statusFilter === "All" || task.status === statusFilter;
     const searchMatch = task.title.toLowerCase().includes(searchTerm.toLowerCase());
     return statusMatch && searchMatch;
   });
 
-  // Calculate task completion progress
   const totalTasks = assignedTasks.length;
   const completedTasks = assignedTasks.filter(task => task.status === "Completed").length;
   const progressPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   return (
-      <div style={{ padding: 24 }}>
-        <Title level={2}>Engineer Dashboard - {engineerName}</Title>
+    <div style={{ padding: 24 }}>
+      <Title level={2}>Engineer Dashboard - {engineerName}</Title>
 
-        {/* Offline Subtasks Card */}
-        <Card
-          title={<><ToolOutlined /> Pending Subtasks (Offline)</>}
-          extra={<Button type="primary" icon={<SyncOutlined />} onClick={handleSync}>Sync</Button>}
-          style={{ marginBottom: 24 }}
-        >
-          {pendingSubtasks.length === 0 ? (
-            <p>No pending subtasks. All changes are synced.</p>
-          ) : (
-            <List
-              dataSource={pendingSubtasks}
-              renderItem={(item) => (
-                <List.Item>
-                  <List.Item.Meta title={`Subtask ID: ${item}`} />
-                </List.Item>
-              )}
-            />
-          )}
-        </Card>
-
-        {/* Filter Controls */}
-        <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-          <Col xs={24} md={8}>
-            <Select
-              value={statusFilter}
-              onChange={(val) => setStatusFilter(val)}
-              style={{ width: "100%" }}
-              placeholder="Filter by Status"
-            >
-              <Option value="All">All Statuses</Option>
-              <Option value="Pending">Pending</Option>
-              <Option value="In Progress">In Progress</Option>
-              <Option value="Completed">Completed</Option>
-            </Select>
-          </Col>
-
-          <Col xs={24} md={8}>
-            <Input.Search
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search Task Title"
-              allowClear
-            />
-          </Col>
-
-          <Col xs={24} md={8}>
-            <Button type="primary" icon={<SyncOutlined />} onClick={handleSync} block>
-              Sync Tasks
-            </Button>
-          </Col>
-        </Row>
-
-        {/* Progress Overview */}
-        <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-          <Col xs={24} md={12}>
-            <Card title="Completion Progress">
-              <Progress percent={progressPercent} status="active" />
-            </Card>
-          </Col>
-          <Col xs={24} md={12}>
-            <Card title="Overall Progress">
-              <Progress type="circle" percent={progressPercent} />
-            </Card>
-          </Col>
-        </Row>
-
-        {/* Assigned Tasks List */}
-        <Card title={<><ToolOutlined /> Your Assigned Tasks</>}>
+      <Card
+        title={<><ToolOutlined /> Pending Subtasks (Offline)</>}
+        extra={<Button type="primary" icon={<SyncOutlined />} onClick={handleSync}>Sync</Button>}
+        style={{ marginBottom: 24 }}
+      >
+        {pendingSubtasks.length === 0 ? (
+          <p>No pending subtasks. All changes are synced.</p>
+        ) : (
           <List
-            dataSource={filteredTasks}
-            renderItem={(task) => (
-              <List.Item
-                actions={
-                  task.status === "In Progress"
-                    ? [
-                        <Button type="link" onClick={() => markAsCompleted(task.id)}>
-                          Mark Completed
-                        </Button>
-                      ]
-                    : []
-                }
-              >
-                <List.Item.Meta
-                  title={task.title}
-                  description={<Tag color={task.status === "Completed" ? "green" : "blue"}>{task.status}</Tag>}
-                />
+            dataSource={pendingSubtasks}
+            renderItem={(item) => (
+              <List.Item>
+                <List.Item.Meta title={`Subtask ID: ${item}`} />
               </List.Item>
             )}
           />
-        </Card>
-      </div>
+        )}
+      </Card>
+
+      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+        <Col xs={24} md={8}>
+          <Select
+            value={statusFilter}
+            onChange={(val) => setStatusFilter(val)}
+            style={{ width: "100%" }}
+            placeholder="Filter by Status"
+          >
+            <Option value="All">All Statuses</Option>
+            <Option value="Pending">Pending</Option>
+            <Option value="In Progress">In Progress</Option>
+            <Option value="Completed">Completed</Option>
+          </Select>
+        </Col>
+
+        <Col xs={24} md={8}>
+          <Input.Search
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search Task Title"
+            allowClear
+          />
+        </Col>
+
+        <Col xs={24} md={8}>
+          <Button type="primary" icon={<SyncOutlined />} onClick={handleSync} block>
+            Sync Tasks
+          </Button>
+        </Col>
+      </Row>
+
+      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+        <Col xs={24} md={12}>
+          <Card title="Completion Progress">
+            <Progress percent={progressPercent} status="active" />
+          </Card>
+        </Col>
+        <Col xs={24} md={12}>
+          <Card title="Overall Progress">
+            <Progress type="circle" percent={progressPercent} />
+          </Card>
+        </Col>
+      </Row>
+
+      <Card title={<><ToolOutlined /> Your Assigned Tasks</>}>
+        <List
+          dataSource={filteredTasks}
+          renderItem={(task) => (
+            <List.Item
+              actions={
+                task.status === "In Progress"
+                  ? [
+                      <Button type="link" onClick={() => markAsCompleted(task.id)}>
+                        Mark Completed
+                      </Button>
+                    ]
+                  : []
+              }
+            >
+              <List.Item.Meta
+                title={task.title}
+                description={<Tag color={task.status === "Completed" ? "green" : "blue"}>{task.status}</Tag>}
+              />
+            </List.Item>
+          )}
+        />
+      </Card>
+    </div>
   );
 };
 
